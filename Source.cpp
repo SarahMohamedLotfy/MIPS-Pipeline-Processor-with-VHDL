@@ -94,7 +94,7 @@ string meniomonicOpCode(string str)
 	else if (str == "IADD")
 		return "01000"; 
 	else if (str == "SHL ")
-		return "01100";
+		return "01100"; 
 	else if (str == "SHR ")
 		return "10111";
 
@@ -113,7 +113,7 @@ string meniomonicOpCode(string str)
 int main()
 {
 	ifstream file;
-    file.open("filename.txt");
+    file.open("input.txt");
     ofstream myfile ("Ram.txt");
 	ofstream myfile2 ("Rom.txt");
 	
@@ -162,8 +162,6 @@ int main()
 	stringstream ss(address);
 	int addressInt=0;
 	ss>>addressInt;
-
-	cout <<"Address is  " <<addressInt<<"    "<<resetaddressInt<<endl;
 
     while (getline(file, str)) 
 	{
@@ -220,16 +218,16 @@ int main()
 				//ADD, SUB, OR, AND
 				if (meniomonnicOpCode == "00111" || meniomonnicOpCode =="01001" || meniomonnicOpCode =="01011" ||meniomonnicOpCode =="01010")
 				{
-				       int  i=4;
+				       int  i=5;
 						opcode[5] = opcoderegister(str[i+1])[0];
 						opcode[6]=opcoderegister(str[i+1])[1];
 						opcode[7] =opcoderegister(str[i+1])[2];
 				 
-					    i=7;
+					    i=8;
 						   opcode[8] = opcoderegister(str[i+1])[0];
 						   opcode[9]=opcoderegister(str[i+1])[1];
 						   opcode[10] =opcoderegister(str[i+1])[2];
-				        i=10;
+				        i=11;
 						   opcode[11] = opcoderegister(str[i+1])[0];
 						   opcode[12]=opcoderegister(str[i+1])[1];
 						   opcode[13] =opcoderegister(str[i+1])[2];
@@ -252,18 +250,36 @@ int main()
 				  opcode[11] ='0'; opcode[12] ='0'; opcode[13] ='0'; opcode[14] ='0'; opcode[15] ='0';
 				}
 
-				///IADD, SHL, SHR,LDM
-				if (meniomonnicOpCode == "01000"||meniomonnicOpCode =="01100"||meniomonnicOpCode =="10111"||meniomonnicOpCode =="01111" )
+				///SHL, SHR,LDM
+				if (meniomonnicOpCode =="01100"||meniomonnicOpCode =="10111"||meniomonnicOpCode =="01111" )
 				{
 				 opcode[5] ='0'; opcode[6] ='0'; opcode[7] ='0'; 
-				int i=4;
+				int i=5;
 						   opcode[8] = opcoderegister(str[i+1])[0];
 						   opcode[9]=opcoderegister(str[i+1])[1];
 						   opcode[10] =opcoderegister(str[i+1])[2]; 
 				   
 				  opcode[11] ='0'; opcode[12] ='0'; opcode[13] ='0'; opcode[14] ='0'; opcode[15] ='0';
 				  string IMM = "";
-				  IMM = str.substr(7,str.size());
+				  IMM = str.substr(8,str.size());
+	              stringstream ss(IMM); 
+                  ss >> IMMint; 
+				}
+				//IADD
+				if (meniomonnicOpCode == "01000" )
+				{
+					int i=5;
+						   opcode[5] = opcoderegister(str[i+1])[0];
+						   opcode[6]=opcoderegister(str[i+1])[1];
+						   opcode[7] =opcoderegister(str[i+1])[2]; 
+				  i=8;
+						   opcode[8] = opcoderegister(str[i+1])[0];
+						   opcode[9]=opcoderegister(str[i+1])[1];
+						   opcode[10] =opcoderegister(str[i+1])[2];
+				   
+				  opcode[11] ='0'; opcode[12] ='0'; opcode[13] ='0'; opcode[14] ='0'; opcode[15] ='0';
+				  string IMM = "";
+				  IMM = str.substr(8,str.size());
 	              stringstream ss(IMM); 
                   ss >> IMMint; 
 				}
@@ -271,27 +287,29 @@ int main()
 				if (meniomonnicOpCode == "10000"||meniomonnicOpCode =="10001" )
 				{
 				 opcode[5] ='0'; opcode[6] ='0'; opcode[7] ='0'; 
-				int i=4;
+				int i=5;
 						   opcode[8] = opcoderegister(str[i+1])[0];
 						   opcode[9]=opcoderegister(str[i+1])[1];
 						   opcode[10] =opcoderegister(str[i+1])[2]; 
 				  string EA = "";
-				  EA = str.substr(7,str.size());
+				  EA = str.substr(8,str.size());
 	              stringstream ss(EA); 
                   ss >> EAint; 
 				  std::string binary = std::bitset<20>(EAint).to_string(); //to binary
-				  opcode[11] ='1'; opcode[12] =binary[16]; opcode[13] =binary[17]; opcode[14] =binary[18]; 
-				  opcode[15] =binary[19];
+				  opcode[11] ='1'; opcode[12] =binary[0]; opcode[13] =binary[1]; opcode[14] =binary[2]; 
+				  opcode[15] =binary[3];
 				}
 				}
 	else
 	{
 	// This is one operand
-		int i=4;
+	
+		int i=5;
 		opcode[8] = opcoderegister(str[i+1])[0];
 		opcode[9]=opcoderegister(str[i+1])[1];
 		opcode[10] =opcoderegister(str[i+1])[2];
-		opcode[11] ='0';opcode[12] ='0';opcode[13] ='0';opcode[14] ='0'; opcode[15] ='0';  
+		opcode[11] ='0';opcode[12] ='0';opcode[13] ='0';opcode[14] ='0'; opcode[15] ='0'; 
+		
   }
 }
 }
@@ -313,7 +331,7 @@ int main()
 	if (EAint!=0)
 	{
 	std::string binary = std::bitset<20>(EAint).to_string(); //to binary
-    myfile <<binary.substr(0,15)<<endl;
+    myfile <<binary.substr(4,19)<<endl;
 	}
 	IMMint=0;
 	EAint=0;
