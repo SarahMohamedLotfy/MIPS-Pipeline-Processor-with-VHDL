@@ -131,11 +131,12 @@ int main()
 	int resetaddressInt=0;
 	ss1>>resetaddressInt;
 
-	string resetAddstrafter="";
+	int resetAddstrafter=0;
 	file >>resetAddstrafter;
 	for (int i=0;i<resetaddressInt;i++)
 		 myfile2 << " "<<endl;
-    myfile2 << resetAddstrafter;
+    std::string binary2 = std::bitset<16>(resetAddstrafter).to_string(); //to binary
+    myfile2 << binary2;
 
 	//Interupt Address
 	string interAddstr="";
@@ -145,13 +146,14 @@ int main()
 	int intraddressInt=0;
 	ss2>>intraddressInt;
 
-	string intrAddstrafter="";
+	int intrAddstrafter=0;
 	file >>intrAddstrafter;
 	for (int i=0;i<intraddressInt;i++)
 		 myfile2 << " "<<endl;
-    myfile2 << intrAddstrafter;
+    std::string binary3 = std::bitset<16>(intrAddstrafter).to_string(); //to binary
+    myfile2 << binary3;
 
-  
+  cout <<resetAddstrafter<<"          "<<intrAddstrafter<" ";
 	string addressStr="";
 	file >> addressStr;
     string address = addressStr.substr(4, 2);
