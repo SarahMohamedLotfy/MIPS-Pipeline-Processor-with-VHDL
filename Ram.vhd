@@ -1,42 +1,47 @@
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.numeric_std.all;
-use STD.TEXTIO.all;
-
 
 ENTITY Ram IS
-	GENERIC (word_size : integer := 16;
-	        address_width: integer := 16;
-		    RAM_size: integer := 65536); --2^14 slot
-	PORT(	
-		CLK,WR,EN  : IN std_logic;
-		address: IN  std_logic_vector(address_width-1 DOWNTO 0);
-        data_in : IN  std_logic_vector(word_size-1 DOWNTO 0);
-		data_out : OUT  std_logic_vector(word_size-1 DOWNTO 0));
-		
+	--n is the number of lines retrieved. ex => if n = 1 -> dataOut holds 16 bits
+	--if n = 2 -> dataOut holds 32 bits and so on
+	GENERIC(n : INTEGER := 1);
+	PORT(
+		CLK : IN std_logic;
+		W,R : IN std_logic;
+
+		address : IN  std_logic_vector(15 DOWNTO 0);
+
+		dataIn  : IN  std_logic_vector(15 DOWNTO 0);
+		dataOut : OUT std_logic_vector(16*n-1 DOWNTO 0));
 END ENTITY Ram;
 
-ARCHITECTURE RAM_arch OF Ram IS
-        type ram_type is array (0 to RAM_size-1) of std_logic_vector(word_size - 1 DOWNTO 0) ;
+ARCHITECTURE syncrama OF Ram IS
 
-shared variable RAM_data : ram_type:= (others => (others =>'0'));
-BEGIN
-
-process(CLK,EN)--for port 3  IO Read/Write port
-begin 
-if EN='0'  then
-    data_out <=(others=>'Z');
-elsif(EN ='1') then
-    if (falling_edge(CLK)) then
-        if(WR ='1') then
-            RAM_data(to_integer(unsigned(address))) := data_in;
-        end if;
-    end if;
-    if WR = '0' then
-        data_out <= RAM_data(to_integer(unsigned(address)));
-    end if;    
-end if;
-end process;
-
- 
-end architecture;
+	TYPE ram_type IS ARRAY(0 TO 1048575) OF std_logic_vector(15 DOWNTO 0);
+	SIGNAL ram : ram_type ;
+	
+	BEGIN
+		PROCESS(CLK, W, R , address) IS
+		VARIABLE k, j, adds:INTEGER;
+			BEGIN
+				k := -16;
+				j := -1;
+				IF falling_edge(CLK) THEN  
+					IF W = '1' THEN
+						ram(to_integer(unsigned(address))) <= dataIn;
+					END IF;
+				END IF;
+				IF R = '1' THEN
+					loop0: for i in 0 to n-1 loop
+						k := k + 16;
+						j := j + 16;
+						adds := i + to_integer(unsigned(address));
+						dataOut(j downto k) <= ram(adds);
+					end loop;
+				ELSE 
+					dataOut <= (OTHERS=>'Z');
+				END IF;
+		END PROCESS;
+		
+END syncrama;

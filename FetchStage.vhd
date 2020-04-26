@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 
 
 ENTITY FetchStage IS
-    Generic(addressBits: integer := 5;
+    Generic(addressBits: integer := 16;
             wordSize: integer :=16;
             PCSize: integer :=16;
 			IFIDLength: integer :=16);
@@ -26,7 +26,7 @@ signal data_out:std_logic_vector(15 downto 0);
 
 BEGIN
 
-   instruction_memory: entity work.Ram  port map (clk,'0','1',PCReg,tmp,data_out);
+   instruction_memory: entity work.ram  port map (clk,'0','1',PCReg,tmp,data_out);
    instruction<=data_out;
 --   IFIDBuffer<=instruction;
 
