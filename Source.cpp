@@ -94,7 +94,7 @@ string meniomonicOpCode(string str)
 	else if (str == "IADD")
 		return "01000"; 
 	else if (str == "SHL ")
-		return "01100";
+		return "01100"; 
 	else if (str == "SHR ")
 		return "10111";
 
@@ -107,13 +107,12 @@ string meniomonicOpCode(string str)
 		return "10000";
 	else if (str == "STD ")
 		return "10001";
-
 }
 
 int main()
 {
 	ifstream file;
-    file.open("filename.txt");
+    file.open("input.txt");
     ofstream myfile ("Ram.txt");
 	ofstream myfile2 ("Rom.txt");
 	
@@ -132,11 +131,12 @@ int main()
 	int resetaddressInt=0;
 	ss1>>resetaddressInt;
 
-	string resetAddstrafter="";
+	int resetAddstrafter=0;
 	file >>resetAddstrafter;
 	for (int i=0;i<resetaddressInt;i++)
 		 myfile2 << " "<<endl;
-    myfile2 << resetAddstrafter;
+    std::string binary2 = std::bitset<16>(resetAddstrafter).to_string(); //to binary
+    myfile2 << binary2;
 
 	//Interupt Address
 	string interAddstr="";
@@ -146,24 +146,20 @@ int main()
 	int intraddressInt=0;
 	ss2>>intraddressInt;
 
-	string intrAddstrafter="";
+	int intrAddstrafter=0;
 	file >>intrAddstrafter;
 	for (int i=0;i<intraddressInt;i++)
 		 myfile2 << " "<<endl;
-    myfile2 << intrAddstrafter;
+    std::string binary3 = std::bitset<16>(intrAddstrafter).to_string(); //to binary
+    myfile2 << binary3;
 
-   
-
-
-   
+  cout <<resetAddstrafter<<"          "<<intrAddstrafter<" ";
 	string addressStr="";
 	file >> addressStr;
     string address = addressStr.substr(4, 2);
 	stringstream ss(address);
 	int addressInt=0;
 	ss>>addressInt;
-
-	cout <<"Address is  " <<addressInt<<"    "<<resetaddressInt<<endl;
 
     while (getline(file, str)) 
 	{
@@ -202,7 +198,7 @@ int main()
 			{
 				for (int i=0;i<4;i++)
 				{
-				meniomonic= meniomonic+ str[i];
+					meniomonic= meniomonic+ str[i];
 				}
 			    cout <<meniomonic<<endl;
 			    string meniomonnicOpCode= meniomonicOpCode(meniomonic);
@@ -220,78 +216,95 @@ int main()
 				//ADD, SUB, OR, AND
 				if (meniomonnicOpCode == "00111" || meniomonnicOpCode =="01001" || meniomonnicOpCode =="01011" ||meniomonnicOpCode =="01010")
 				{
-				       int  i=4;
-						opcode[5] = opcoderegister(str[i+1])[0];
-						opcode[6]=opcoderegister(str[i+1])[1];
-						opcode[7] =opcoderegister(str[i+1])[2];
+					int  i=5;
+				    opcode[5] = opcoderegister(str[i+1])[0];
+				    opcode[6]=opcoderegister(str[i+1])[1];
+				    opcode[7] =opcoderegister(str[i+1])[2];
 				 
-					    i=7;
-						   opcode[8] = opcoderegister(str[i+1])[0];
-						   opcode[9]=opcoderegister(str[i+1])[1];
-						   opcode[10] =opcoderegister(str[i+1])[2];
-				        i=10;
-						   opcode[11] = opcoderegister(str[i+1])[0];
-						   opcode[12]=opcoderegister(str[i+1])[1];
-						   opcode[13] =opcoderegister(str[i+1])[2];
+					i=8;
+				    opcode[8] = opcoderegister(str[i+1])[0];
+				    opcode[9]=opcoderegister(str[i+1])[1];
+					opcode[10] =opcoderegister(str[i+1])[2];
+				    i=11;
+				    opcode[11] = opcoderegister(str[i+1])[0];
+				    opcode[12]=opcoderegister(str[i+1])[1];
+					opcode[13] =opcoderegister(str[i+1])[2];
 				  
-				   opcode[14] ='0';
-				   opcode[15] ='0';
+				    opcode[14] ='0';
+				    opcode[15] ='0';
 				}
 
 				//SWAP
 				if (meniomonnicOpCode == "00110" )
 				{
-				int i=5;
-						   opcode[5] = opcoderegister(str[i+1])[0];
-						   opcode[6]=opcoderegister(str[i+1])[1];
-						   opcode[7] =opcoderegister(str[i+1])[2]; 
-				  i=8;
-						   opcode[8] = opcoderegister(str[i+1])[0];
-						   opcode[9]=opcoderegister(str[i+1])[1];
-						   opcode[10] =opcoderegister(str[i+1])[2];
-				  opcode[11] ='0'; opcode[12] ='0'; opcode[13] ='0'; opcode[14] ='0'; opcode[15] ='0';
+					int i=5;
+				    opcode[5] = opcoderegister(str[i+1])[0];
+				    opcode[6]=opcoderegister(str[i+1])[1];
+					opcode[7] =opcoderegister(str[i+1])[2]; 
+				    i=8;
+					opcode[8] = opcoderegister(str[i+1])[0];
+					opcode[9]=opcoderegister(str[i+1])[1];
+					opcode[10] =opcoderegister(str[i+1])[2];
+				    opcode[11] ='0'; opcode[12] ='0'; opcode[13] ='0'; opcode[14] ='0'; opcode[15] ='0';
 				}
 
-				///IADD, SHL, SHR,LDM
-				if (meniomonnicOpCode == "01000"||meniomonnicOpCode =="01100"||meniomonnicOpCode =="10111"||meniomonnicOpCode =="01111" )
+				///SHL, SHR,LDM
+				if (meniomonnicOpCode =="01100"||meniomonnicOpCode =="10111"||meniomonnicOpCode =="01111" )
 				{
-				 opcode[5] ='0'; opcode[6] ='0'; opcode[7] ='0'; 
-				int i=4;
-						   opcode[8] = opcoderegister(str[i+1])[0];
-						   opcode[9]=opcoderegister(str[i+1])[1];
-						   opcode[10] =opcoderegister(str[i+1])[2]; 
+				    opcode[5] ='0'; opcode[6] ='0'; opcode[7] ='0'; 
+				    int i=5;
+				    opcode[8] = opcoderegister(str[i+1])[0];
+					opcode[9]=opcoderegister(str[i+1])[1];
+					opcode[10] =opcoderegister(str[i+1])[2]; 
+				    opcode[11] ='0'; opcode[12] ='0'; opcode[13] ='0'; opcode[14] ='0'; opcode[15] ='0';
+				    string IMM = "";
+				    IMM = str.substr(8,str.size());
+	                stringstream ss(IMM); 
+                    ss >> IMMint; 
+				}
+				//IADD
+				if (meniomonnicOpCode == "01000" )
+				{
+					int i=5;
+					opcode[5] = opcoderegister(str[i+1])[0];
+					opcode[6]=opcoderegister(str[i+1])[1];
+				    opcode[7] =opcoderegister(str[i+1])[2]; 
+				    i=8;
+					opcode[8] = opcoderegister(str[i+1])[0];
+					opcode[9]=opcoderegister(str[i+1])[1];
+					opcode[10] =opcoderegister(str[i+1])[2];
 				   
-				  opcode[11] ='0'; opcode[12] ='0'; opcode[13] ='0'; opcode[14] ='0'; opcode[15] ='0';
-				  string IMM = "";
-				  IMM = str.substr(7,str.size());
-	              stringstream ss(IMM); 
-                  ss >> IMMint; 
+				    opcode[11] ='0'; opcode[12] ='0'; opcode[13] ='0'; opcode[14] ='0'; opcode[15] ='0';
+				    string IMM = "";
+				    IMM = str.substr(8,str.size());
+	                stringstream ss(IMM); 
+                    ss >> IMMint; 
 				}
 				///LDD, SDD
 				if (meniomonnicOpCode == "10000"||meniomonnicOpCode =="10001" )
 				{
-				 opcode[5] ='0'; opcode[6] ='0'; opcode[7] ='0'; 
-				int i=4;
-						   opcode[8] = opcoderegister(str[i+1])[0];
-						   opcode[9]=opcoderegister(str[i+1])[1];
-						   opcode[10] =opcoderegister(str[i+1])[2]; 
-				  string EA = "";
-				  EA = str.substr(7,str.size());
-	              stringstream ss(EA); 
-                  ss >> EAint; 
-				  std::string binary = std::bitset<20>(EAint).to_string(); //to binary
-				  opcode[11] ='1'; opcode[12] =binary[16]; opcode[13] =binary[17]; opcode[14] =binary[18]; 
-				  opcode[15] =binary[19];
+				    opcode[5] ='0'; opcode[6] ='0'; opcode[7] ='0'; 
+				    int i=5;
+					opcode[8] = opcoderegister(str[i+1])[0];
+					opcode[9]=opcoderegister(str[i+1])[1];
+					opcode[10] =opcoderegister(str[i+1])[2]; 
+				    string EA = "";
+				    EA = str.substr(8,str.size());
+	                stringstream ss(EA); 
+                    ss >> EAint; 
+				    std::string binary = std::bitset<20>(EAint).to_string(); //to binary
+				    opcode[11] ='1'; opcode[12] =binary[0]; opcode[13] =binary[1]; opcode[14] =binary[2]; 
+				    opcode[15] =binary[3];
 				}
 				}
 	else
 	{
 	// This is one operand
-		int i=4;
+		int i=5;
 		opcode[8] = opcoderegister(str[i+1])[0];
 		opcode[9]=opcoderegister(str[i+1])[1];
 		opcode[10] =opcoderegister(str[i+1])[2];
-		opcode[11] ='0';opcode[12] ='0';opcode[13] ='0';opcode[14] ='0'; opcode[15] ='0';  
+		opcode[11] ='0';opcode[12] ='0';opcode[13] ='0';opcode[14] ='0'; opcode[15] ='0'; 
   }
 }
 }
@@ -313,7 +326,7 @@ int main()
 	if (EAint!=0)
 	{
 	std::string binary = std::bitset<20>(EAint).to_string(); //to binary
-    myfile <<binary.substr(0,15)<<endl;
+    myfile <<binary.substr(4,19)<<endl;
 	}
 	IMMint=0;
 	EAint=0;
