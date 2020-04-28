@@ -1,0 +1,252 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+dH:/equ/third year/second term/VLSI
+Eadder
+Z0 w1588096414
+Z1 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z2 DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
+Z3 dH:/equ/third year/second term/arch/MIPS_processor
+Z4 8H:/equ/third year/second term/arch/MIPS_processor/Adder.vhd
+Z5 FH:/equ/third year/second term/arch/MIPS_processor/Adder.vhd
+l0
+L5
+VFMdNQFjSb>a?Yn8JV^Qcg2
+!s100 OCRKNN>2X=3?h<3;e3]9I3
+Z6 OV;C;10.5b;63
+32
+Z7 !s110 1588100622
+!i10b 1
+Z8 !s108 1588100622.000000
+Z9 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|H:/equ/third year/second term/arch/MIPS_processor/Adder.vhd|
+Z10 !s107 H:/equ/third year/second term/arch/MIPS_processor/Adder.vhd|
+!i113 1
+Z11 o-work work -2002 -explicit
+Z12 tExplicit 1 CvgOpt 0
+Aadderarch
+R1
+R2
+DEx4 work 5 adder 0 22 FMdNQFjSb>a?Yn8JV^Qcg2
+l28
+L15
+VZ9UiE2l@l_H60ECnfMIXj0
+!s100 GRUV7`@c6eGGE^XF?dG<Y3
+R6
+32
+R7
+!i10b 1
+R8
+R9
+R10
+!i113 1
+R11
+R12
+Edecoder
+R0
+Z13 DPx4 ieee 11 numeric_std 0 22 :ASDNFgHXf_ih3J@9F3Ze1
+Z14 DPx4 ieee 9 math_real 0 22 Sk6CSihbPL<f[^Shm]=KX0
+R1
+R2
+R3
+Z15 8H:/equ/third year/second term/arch/MIPS_processor/Decoder.vhd
+Z16 FH:/equ/third year/second term/arch/MIPS_processor/Decoder.vhd
+l0
+L7
+VoZ>QkHda?KATDnk6[I>?H0
+!s100 2<KDPlTnTPA7W`bB>fb6>0
+R6
+32
+R7
+!i10b 1
+R8
+Z17 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|H:/equ/third year/second term/arch/MIPS_processor/Decoder.vhd|
+Z18 !s107 H:/equ/third year/second term/arch/MIPS_processor/Decoder.vhd|
+!i113 1
+R11
+R12
+Adecoder_arch
+R13
+R14
+R1
+R2
+DEx4 work 7 decoder 0 22 oZ>QkHda?KATDnk6[I>?H0
+l20
+L19
+V2Uk=gVPmYk<YM0Og4N>H23
+!s100 [l3D2aF=_O:FFZd6DUNnB1
+R6
+32
+R7
+!i10b 1
+R8
+R17
+R18
+!i113 1
+R11
+R12
+Efetchstage
+R0
+R1
+R2
+R3
+Z19 8H:/equ/third year/second term/arch/MIPS_processor/FetchStage.vhd
+Z20 FH:/equ/third year/second term/arch/MIPS_processor/FetchStage.vhd
+l0
+L5
+V^_3Q@:n<_VNl1?gh=jL[Z1
+!s100 PalUA1VOzd53DK`K>TCHQ3
+R6
+32
+Z21 !s110 1588100626
+!i10b 1
+Z22 !s108 1588100626.000000
+Z23 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|H:/equ/third year/second term/arch/MIPS_processor/FetchStage.vhd|
+Z24 !s107 H:/equ/third year/second term/arch/MIPS_processor/FetchStage.vhd|
+!i113 1
+R11
+R12
+Afetchstagearch
+R13
+Z25 DEx4 work 3 ram 0 22 5ADCA4`8IT5FBHM26OljV3
+R1
+R2
+DEx4 work 10 fetchstage 0 22 ^_3Q@:n<_VNl1?gh=jL[Z1
+l27
+L22
+VQaDPhOV3jU]V=I@do_4=F3
+!s100 Sh_M3KhGZ=HTDJBL1WDfA2
+R6
+32
+R21
+!i10b 1
+R22
+R23
+R24
+!i113 1
+R11
+R12
+Efulladder
+R0
+R1
+R2
+R3
+Z26 8H:/equ/third year/second term/arch/MIPS_processor/FullAdder.vhd
+Z27 FH:/equ/third year/second term/arch/MIPS_processor/FullAdder.vhd
+l0
+L6
+VHXW3?PaLc2D`0V7d8AX^H0
+!s100 6>9TDf2I^nWXzO8QF7Pjd0
+R6
+32
+R7
+!i10b 1
+R8
+Z28 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|H:/equ/third year/second term/arch/MIPS_processor/FullAdder.vhd|
+Z29 !s107 H:/equ/third year/second term/arch/MIPS_processor/FullAdder.vhd|
+!i113 1
+R11
+R12
+Afulladderarch
+R1
+R2
+DEx4 work 9 fulladder 0 22 HXW3?PaLc2D`0V7d8AX^H0
+l19
+L17
+VWBe0XK9W3=NSj0PQgQe@Z3
+!s100 mKVj@`@OMh[QB>gz?iI100
+R6
+32
+R7
+!i10b 1
+R8
+R28
+R29
+!i113 1
+R11
+R12
+Eram
+R0
+R13
+R1
+R2
+R3
+Z30 8H:/equ/third year/second term/arch/MIPS_processor/Ram.vhd
+Z31 FH:/equ/third year/second term/arch/MIPS_processor/Ram.vhd
+l0
+L5
+V5ADCA4`8IT5FBHM26OljV3
+!s100 17LT73dHD7P[AhFzRzGK:3
+R6
+32
+R7
+!i10b 1
+R8
+Z32 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|H:/equ/third year/second term/arch/MIPS_processor/Ram.vhd|
+Z33 !s107 H:/equ/third year/second term/arch/MIPS_processor/Ram.vhd|
+!i113 1
+R11
+R12
+Asyncrama
+R13
+R1
+R2
+R25
+l24
+L19
+VEmMcmf6effDklIh:_CTgC1
+!s100 AHfN;;?Rdl0zaSBz410hl3
+R6
+32
+R7
+!i10b 1
+R8
+R32
+R33
+!i113 1
+R11
+R12
+Ereg
+R0
+R1
+R2
+R3
+Z34 8H:/equ/third year/second term/arch/MIPS_processor/Register.vhd
+Z35 FH:/equ/third year/second term/arch/MIPS_processor/Register.vhd
+l0
+L4
+V81NGmVmA:c:Z@^GA_a55T2
+!s100 a]ah5<TZI3ec<ndbSJ?jJ2
+R6
+32
+R7
+!i10b 1
+Z36 !s108 1588100621.000000
+Z37 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|H:/equ/third year/second term/arch/MIPS_processor/Register.vhd|
+Z38 !s107 H:/equ/third year/second term/arch/MIPS_processor/Register.vhd|
+!i113 1
+R11
+R12
+Aregarch
+R1
+R2
+DEx4 work 3 reg 0 22 81NGmVmA:c:Z@^GA_a55T2
+l14
+L13
+VVW2jT`zM@_IYP9cJ24FJO0
+!s100 LLn>WY6KLfVVZEkbLojDS2
+R6
+32
+R7
+!i10b 1
+R36
+R37
+R38
+!i113 1
+R11
+R12

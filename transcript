@@ -1,0 +1,87 @@
+# Compile of Register.vhd was successful.
+# Compile of Adder.vhd was successful.
+# Compile of Decoder.vhd was successful.
+# Compile of FullAdder.vhd was successful.
+# Compile of Ram.vhd was successful.
+# 5 compiles, 0 failed with no errors.
+# Compile of FetchStage.vhd was successful.
+quit -sim
+vsim -gui work.fetchstage
+# vsim -gui work.fetchstage 
+# Start time: 21:03:51 on Apr 28,2020
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Loading work.fetchstage(fetchstagearch)
+# Loading work.ram(syncrama)
+# WARNING: No extended dataflow license exists
+
+add wave -position insertpoint sim:/fetchstage/*
+
+force -freeze sim:/fetchstage/PCReg 16'h0 0
+force -freeze sim:/fetchstage/clk 1 0, 0 {50 ps} -r 100
+force -freeze sim:/fetchstage/PCReg 0000000000000000 0
+mem load -i ram.mem  /fetchstage/instruction_memory/ram
+# (vsim-3650) Format not specified for file 'ram.mem'.
+
+run
+#  Trace back: can't read "vsimMem(dataRadix:/fetchstage/instruction_memory/ram)": no such element in array
+#     while executing
+# "lappend cmd "-fillradix" $vsimMem(dataRadix:$memHeadName)"
+#     (procedure "Memtool::DoMemoryLoad" line 35)
+#     invoked from within
+# "Memtool::DoMemoryLoad .main_pane.memory.interior.cs.body "
+#     invoked from within
+# ".memloaddialog.bb.ok invoke"
+#     ("uplevel" body line 1)
+#     invoked from within
+# "uplevel #0 [list $w invoke]"
+#     (procedure "tk::ButtonUp" line 24)
+#     invoked from within
+# "tk::ButtonUp .memloaddialog.bb.ok"
+#     (command bound to event)
+#    <2:C:/intelFPGA/19.1/modelsim_ase/win32aloem/tk8.5/bgerror.tcl:92: ::tkerror {can't read "vsimMem(dataRadix:/fetchstage/instruction_memory/ram)": no such element in array}
+#    <1:proc:70: ::tk::dialog::error::bgerror {can't read "vsimMem(dataRadix:/fetchstage/instruction_memory/ram)": no such element in array}
+# Load canceled
+quit -sim
+# End time: 21:06:42 on Apr 28,2020, Elapsed time: 0:02:51
+# Errors: 2, Warnings: 1
+vsim -gui work.ram
+# vsim -gui work.ram 
+# Start time: 21:06:51 on Apr 28,2020
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Loading work.ram(syncrama)
+# WARNING: No extended dataflow license exists
+quit -sim
+# End time: 21:08:57 on Apr 28,2020, Elapsed time: 0:02:06
+# Errors: 0, Warnings: 1
+# Load canceled
+mem load -i ram.mem  Ram.vhd
+# Error while executing: mem load
+# Usage: mem load {-infile <infile> | -filldata <data_word> [-infile <infile>]} [-endaddress <end>] [-fillradix <radix_type>] [-filltype {dec | inc | rand | value}] [-format [bin | hex | mti]] [<path>] [-skip <Nwords>] [-startaddress <st>] [-truncate]
+vsim -gui work.ram
+# vsim -gui work.ram 
+# Start time: 21:11:04 on Apr 28,2020
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Loading work.ram(syncrama)
+# WARNING: No extended dataflow license exists
+mem load -i ram.mem  Ram.vhd
+# ** Error: (vsim-3730) Invalid index or field: 'vhd'.
+# 
+mem load -i ram.mem  Ram
+# (vsim-3650) Format not specified for file 'ram.mem'.
+mem load -i ram.mem 
+# (vsim-3650) Format not specified for file 'ram.mem'.
+mem load -i ram.mem ram.mem
+# ** Error: (vsim-3730) Invalid index or field: 'mem'.
+# 
+mem load -i ram.mem Ram.vhd
+# ** Error: (vsim-3730) Invalid index or field: 'vhd'.
+# 
