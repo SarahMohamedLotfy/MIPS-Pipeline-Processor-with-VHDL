@@ -1,25 +1,28 @@
-.ORG 0
+# all numbers in hex format
+# we always start by reset signal
+#this is a commented line
+.ORG 0  #this means the the following line would be  at address  0 , and this is the reset address
 10
-.ORG 2
+#you should ignore empty lines
+
+.ORG 2  #this is the interrupt address
 100
+
 .ORG 10
-NOP
-INC  R2
-OUT  R1
-IN   R3
-NOT  R4
-ADD  R3,R4,R5
-SUB  R5,R2,R1
-OR   R1,R2,R3
+NOP            #No change
+NOT R1         #R1 =FFFFFFFF , C--> no change, N --> 1, Z --> 0
+INC R1	       #R1 =00000000 , C --> 1 , N --> 0 , Z --> 1
+IN R1	       #R1= 5,add 5 on the in port,flags no change	
+IN R2          #R2= 10,add 10 on the in port, flags no change
+NOT R2	       #R2= FFFFFFEF, C--> no change, N -->1,Z-->0
+INC R1         #R1= 6, C --> 0, N -->0, Z-->0
+DEC R2         #R2= FFEE,C-->1 , N-->1, Z-->0
+OUT R1
+OUT R2
+
+ADD R1,R2,R3
+IADD R1,R5,2000
 SWAP R1,R2
-SHL  R5,5
-PUSH R4
-POP  R1
-LDM  R3,12
-LDD  R3,14
-STD  R4,15
-JZ   R2
-JMP  R6
-CALL R3
-RTI
-RET
+LDD R7,30000
+
+
