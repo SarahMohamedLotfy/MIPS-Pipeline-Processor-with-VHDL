@@ -14,27 +14,21 @@ entity pa is
 end pa; 
  
 architecture DataFlow of pa is
-   Component full_adder is
-      port (a,b,c : in STD_LOGIC; 
-         sum : out STD_LOGIC; 
-         carry : out STD_LOGIC
-      ); 
-   end component;          
+           
    SIGNAL temp : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-   SIGNAL tmpSum:STD_LOGIC_VECTOR(n-1 DOWNTO 0);
 BEGIN
 
 loop1: FOR i IN 0 TO n-1 GENERATE
 
 g0: IF i = 0 GENERATE
 
-f0: full_adder PORT MAP (a(i) ,b(i) ,cin, sum(0), temp(i));
+f0: entity work.Full_Adder PORT MAP (a(i) ,b(i) ,cin, sum(0), temp(i));
 
 END GENERATE g0;
 
 gx: IF i > 0 GENERATE
 
-fx: full_adder PORT MAP (a(i),b(i),temp(i-1),sum(i),temp(i));
+fx: entity work.Full_Adder PORT MAP (a(i),b(i),temp(i-1),sum(i),temp(i));
 
 END GENERATE gx;
 

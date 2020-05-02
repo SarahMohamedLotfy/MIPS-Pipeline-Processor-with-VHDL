@@ -65,7 +65,9 @@ for instruction in instructionList:
 
 instrFile =open("instructionMemory.mem",'w') 
 DataFile =open("DataMemory.mem",'w') 
-
+#format line to be read in modelsim 
+DataFile.writelines("// format=mti addressradix=h dataradix=b version=1.0 wordsperline=1"+"\n")
+instrFile.writelines("// format=mti addressradix=h dataradix=b version=1.0 wordsperline=1"+"\n")
 #to count org apperance count
 ORGCount=-1
 instrCount=0
@@ -164,9 +166,8 @@ for instr in instrComponent:
 	elif len(instr) == 1:
 		if instr[0] not in NoOperandInstructions:
 			if ORGCount in [0,1]:
-				
 				Value="{0:032b}".format((int(instr[0]))&0xffff)
-				DataFile.write(("{}: "+Value+"\n").format(ORGCount))
+				DataFile.write(("{}: "+Value+"\n").format(dataCount))
 		else:
 			#no operand 
 			STR= NoOperandInstructions[instr[0]]
