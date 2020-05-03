@@ -24,7 +24,7 @@ END component;
 begin
 
 
-a0:adder port map(PCreg,"0000000000000001",'0',PCnext,dummy);--incrment pc by 2 
+a0:adder port map(PCreg,"0000000000000001",'0',PCnext,dummy);--incrment pc by 1 
 
 END ARCHITECTURE;
 
