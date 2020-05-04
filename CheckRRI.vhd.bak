@@ -24,13 +24,13 @@ if rising_edge(clk) then
      
     -- Initialization
      RRI<='0';
-     PCwrite <='1';
+     PCwrite <='0';
 	  
    else  
       -- CALL  RET RTI
      if (OpCode = "01101") or (OpCode = "10101") or (OpCode = "10111") then
        RRI<='1';
-       PCwrite <='0';
+       PCwrite <='1';
    
       end if;
    end if;
