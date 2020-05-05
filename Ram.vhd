@@ -5,12 +5,13 @@ USE IEEE.numeric_std.all;
 ENTITY Ram IS
 	--n is the number of lines retrieved. ex => if n = 1 -> dataOut holds 16 bits
 	--if n = 2 -> dataOut holds 32 bits and so on
-	GENERIC(n : INTEGER := 1);
+	GENERIC(n : INTEGER := 1;
+	        addressBits : integer :=32);
 	PORT(
 		CLK : IN std_logic;
 		W,R : IN std_logic;
 
-		address : IN  std_logic_vector(15 DOWNTO 0);
+		address : IN  std_logic_vector(addressBits-1 DOWNTO 0);
 
 		dataIn  : IN  std_logic_vector(15 DOWNTO 0);
 		dataOut : OUT std_logic_vector(16*n-1 DOWNTO 0));

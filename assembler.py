@@ -1,4 +1,6 @@
-f = open("input.txt","r")
+fileName=input("enter file name : ")
+f = open(fileName,"r")
+
 instructionList = []
 
 TwoOperandInstructions2 ={
@@ -44,7 +46,7 @@ for instr in f:
 	instr = instr.replace("\t",'')
 	instructionComponents =instr.split("#")
 	actualInstructionComponents = instructionComponents[0]
-	if len(actualInstructionComponents) is not 0:
+	if len(actualInstructionComponents) != 0:
 		instructionList.append(actualInstructionComponents)
 	else:
 		instructionList.append(instructionComponents)
