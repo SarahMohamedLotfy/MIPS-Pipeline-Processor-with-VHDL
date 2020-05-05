@@ -7,8 +7,7 @@ ENTITY FetchStage IS
             PCSize: integer :=16);
 			
 	PORT(
-            PCReg: in STD_LOGIC_VECTOR(PCSize-1 DOWNTO 0);
-			clk: in STD_LOGIC;
+            clk: in STD_LOGIC;
 			reset: in std_logic:='0';
 			interrupt: in std_logic:='0';
  
@@ -25,7 +24,7 @@ ARCHITECTURE FetchStageArch of FetchStage is
 
 SIGNAL tmp:std_logic_vector(15 downto 0); --not used just dummpy variable
 signal dummy: std_logic;
-
+signal PCReg: STD_LOGIC_VECTOR(PCSize-1 DOWNTO 0):="00000000000000000000000000001010";
 BEGIN
 
    instruction_memory: entity work.ram  port map (clk,'0','1',PCReg,tmp,instruction);
@@ -35,6 +34,11 @@ BEGIN
 	intSignal <=interrupt;
 	--reset signal output 
 	rstSignal <=reset;
+	process(CLK)
+	begin
+	if(falling_edge(CLK))then 
+		PCReg <=Pcnew;
+	end process;
 
 
 END ARCHITECTURE;
