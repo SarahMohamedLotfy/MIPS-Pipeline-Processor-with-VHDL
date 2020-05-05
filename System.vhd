@@ -17,7 +17,7 @@ signal probINTsignal,probRstSignal,RRI:std_logic;--signals to propagte in the ne
 ------------------------------------------------------------------------------------------------
 
 -----------------------------------------Decode stage signals------------------------------------ 
-
+signal RegWriteinput,Swapinput:std_logic;
 ------------------------------------------------------------------------------------------------
 
 -----------------------------------------Execute stage signals------------------------------------ 
@@ -65,6 +65,34 @@ IF_ID:entity work.Reg  generic map(n=>50) port map(input=>IF_IDRegIN,en=>IF_IDwr
 -----------------------------------------------------------------------------------------------------------------------------------------
 
 --------------------------------------------------------------Decode ->>Execute ------------------------------------------
+Decode:entity work.Alldecoder Generic map (n=>32) 
+port map (
+    interrupt=>INT,reset=>rst, clk=>clk,
+	IF_ID=>IF_IDRegOUT,
+	RegWriteinput=>RegWriteinput,
+	Swapinput=>Swapinput,
+	Mem_Wb_Rd=>,Mem_Wb_Rs=>,
+    value1=>,value2=>
+    Target_Address=>,
+	Rsrc=>,
+	Rdst=> ,
+	RegWrite=>,
+	RegDST=>,
+	MemToReg=>,
+	MemRd=>,
+	MemWR=>,
+	SP=>,
+	ALU=>,
+	PCWrite=>,
+	IMM_EA=>,
+	sign=>,
+	CRR=>,
+	In_enable=>,
+	Out_enable=>,
+	thirtyTwo_Sixteen=>,
+	RRI=>RRI,
+	SWAP=>,
+	CALL=>);
 -----------------------------------------------------------------------------------------------------------------------------------------
 
 --------------------------------------------------------------Execute ->> Memory ------------------------------------------
@@ -75,6 +103,13 @@ MEM_WBRegisterRd=>MEM_WBRegisterRd,EX_MEMRegisterRd=>EX_MEMRegisterRd,
 EX_MEMRegWrite=>EX_MEMRegWrite,MEM_WBRegWrite=>MEM_WBRegWrite,EX_MEMSWAP=>EX_MEMSWAP,MEM_WBSWAP=>MEM_WBSWAP,
 RegDst=>RegDst,CCR=>CCR,ZF=>ZF,
 DataOut=>DataOut,AddrressEA_IMM=>AddrressEA_IMM);
+
+
+EX_MEMRegIN(0) <=probINTsignal;--interrupt signal
+EX_MEMRegIN(1) <=probRstSignal;--reset signal
+EX_MEMRegIN(2) <=RRI; --RRI signal 
+EX_MEMRegIN(34 downto 3) <=EXALUResult; --ALU result 4bytes 
+--EX_MEMRegIN(35) <=EX_MEMRegWrite;
 -----------------------------------------------------------------------------------------------------------------------------------------
 
 
