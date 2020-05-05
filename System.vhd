@@ -18,6 +18,14 @@ signal probINTsignal,probRstSignal,RRI:std_logic;--signals to propagte in the ne
 
 -----------------------------------------Decode stage signals------------------------------------ 
 signal RegWriteinput,Swapinput:std_logic;
+signal Mem_Wb_Rd,Mem_Wb_Rs: std_logic_vector(2 downto 0);
+signal value1,value2: std_logic_vector(2 downto 0);
+signal Target_Address,Rsrc,Rdst: std_logic_vector(31 downto 0);
+signal RegWrite,RegDST,MemToReg,MemRd,MemWR: std_logic;
+signal SP: std_logic_vector(1 downto 0);
+signal ALU: std_logic_vector(3 downto 0);
+signal PCWrite,IMM_EA,sign,CRR: std_logic;
+signal In_enable,Out_enable,thirtyTwo_Sixteen,SWAP, CALL: std_logic;
 ------------------------------------------------------------------------------------------------
 
 -----------------------------------------Execute stage signals------------------------------------ 
@@ -36,10 +44,6 @@ signal AddrressEA_IMM:std_logic_vector(31 downto 0);
 signal MEMALUResult:std_logic_vector(31 downto 0);
 signal MEM_WBRegisterRd:std_logic_vector(2 downto 0);
 signal MEM_WBRegWrite,MEM_WBSWAP:std_logic;
-------------------------------------------------------------------------------------------------
-
------------------------------------------Decode stage signals------------------------------------ 
-
 ------------------------------------------------------------------------------------------------
 
 
@@ -72,27 +76,47 @@ port map (
 	RegWriteinput=>RegWriteinput,
 	Swapinput=>Swapinput,
 	Mem_Wb_Rd=>,Mem_Wb_Rs=>,
-    value1=>,value2=>
-    Target_Address=>,
-	Rsrc=>,
-	Rdst=> ,
-	RegWrite=>,
-	RegDST=>,
-	MemToReg=>,
-	MemRd=>,
-	MemWR=>,
-	SP=>,
-	ALU=>,
-	PCWrite=>,
-	IMM_EA=>,
-	sign=>,
-	CRR=>,
-	In_enable=>,
-	Out_enable=>,
-	thirtyTwo_Sixteen=>,
+    value1=>value1,value2=>value2
+    Target_Address=>Target_Address,
+	Rsrc=>Rsrc,
+	Rdst=>Rdst ,
+	RegWrite=>RegWrite,
+	RegDST=>RegDST,
+	MemToReg=>MemToReg,
+	MemRd=>MemRd,
+	MemWR=>MemWR,
+	SP=>SP,
+	ALU=>ALU,
+	PCWrite=>PCWrite,
+	IMM_EA=>IMM_EA,
+	sign=>sign,
+	CRR=>CRR,
+	In_enable=>In_enable,
+	Out_enable=>Out_enable,
+	thirtyTwo_Sixteen=>thirtyTwo_Sixteen,
 	RRI=>RRI,
-	SWAP=>,
-	CALL=>);
+	SWAP=>SWAP,
+	CALL=>CALL);
+	
+---------------------------------------ID_EX Buffer -----------------------------------------------------------------
+ID_EXRegIN(31 downto 0) <= Rsrc; --Rscr1 
+ID_EXRegIN(63 downto 32) <= Rdst; -- Rscr2 
+ID_EXRegIN(95 downto 64) <= pcnew; --PC after incremented 
+ID_EXRegIN(96) <= RRI; --RRI signal 
+ID_EXRegIN(97) <= SWAP;
+ID_EXRegIN(98) <= CALL;
+ID_EXRegIN(99) <= probINTsignal;
+ID_EXRegIN(100) <=MemToReg;
+ID_EXRegIN(101) <=RegWrite;
+ID_EXRegIN(102) <=Out_enable;
+ID_EXRegIN(106 downto 103) <=ALU;
+ID_EXRegIN(107) <=sign;
+ID_EXRegIN(108) <=IMM_EA;
+ID_EXRegIN(109) <=RegDST;
+ID_EXRegIN(110) <=In_enable;
+ID_EXRegIN(111) <=MemRd;
+ID_EXRegIN(112) <=MemWR;
+ID_EXRegIN(114 downto 113) <=SP;
 -----------------------------------------------------------------------------------------------------------------------------------------
 
 --------------------------------------------------------------Execute ->> Memory ------------------------------------------
