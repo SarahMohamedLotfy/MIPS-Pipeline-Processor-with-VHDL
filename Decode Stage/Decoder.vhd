@@ -1,26 +1,85 @@
-LIBRARY IEEE;
-USE IEEE.std_logic_1164.all;
-USE IEEE.math_real.all;
-USE ieee.numeric_std.all;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
--- Generic decoder that can be used for any number of selection lines
-ENTITY decoder IS
-	GENERIC (n : integer := 3;
-			 m : integer := 8);
+entity decoder is 
+generic (n:integer := 32);
+port(	
+  interrupt: in std_logic;
+	reset : in std_logic ; 
+	clk: in std_logic ;
+	flush_decoderInput: in std_logic ;
+	
+	RegWrite:in std_logic ;
+	Swap:    in std_logic ;
+	Rt_from_fetch	: in std_logic_vector(3-1 downto 0);
+	IF_ID_Rt	: in std_logic_vector(3-1 downto 0);
+	IF_ID_Rs	: in std_logic_vector(3-1 downto 0);
+	Mem_Wb_Rd	: in std_logic_vector(3-1 downto 0);
+	value1:in std_logic_vector(n-1 downto 0);
+	Mem_Wb_Rs	: in std_logic_vector(3-1 downto 0);
+	value2:in std_logic_vector(n-1 downto 0);
+	
+	Target_Address :out std_logic_vector(n-1 downto 0);
+	Rsrc :out std_logic_vector(n-1 downto 0);
+	Rdst :out std_logic_vector(n-1 downto 0);
+	flush_decoder:out std_logic
+);
+end entity;
 
-	PORT(	
-		    enable           : IN std_logic;
-	     	selection_lines  : IN std_logic_vector(n - 1 DOWNTO 0);
-            output           : OUT std_logic_vector(m- 1 DOWNTO 0)
-	    );
+architecture decoder_arch of decoder is
+  type registerFile is array(0 to 6) of std_logic_vector(n-1 downto 0);
+  signal registers : registerFile;
+  
+begin
+process (clk)
+begin
+if rising_edge(clk) then
+   if (reset ='1')then 
+     
+     -- Initialization
+     Target_Address <= "00000000000000000000000000000000";
+     Rsrc <= "00000000000000000000000000000000";
+     Rdst <= "00000000000000000000000000000000";
+     registers(0) <= "00000000000000000000000000000000";
+     registers(1) <= "00000000000000000000000000000000";
+     registers(2) <= "00000000000000000000000000000000";
+     registers(3) <= "00000000000000000000000000000000";
+     registers(4) <= "00000000000000000000000000000000";
+     registers(5) <= "00000000000000000000000000000000";
+     registers(6) <= "00000000000000000000000000000000";
+    
+   elsif (flush_decoderInput='1')
+         flush_decoder<='1';
+   
+   
+   else  
+      -- Read registers
+      if (RegWrite = '0') and (Swap = '0') then
+        
+         Target_Address <= registers(to_integer(unsigned(Rt_from_fetch)));
+         Rsrc <= registers(to_integer(unsigned(IF_ID_Rt)));
+         Rdst <= registers(to_integer(unsigned(IF_ID_Rs)));
+       
+         
+      -- Write in registers
+      elsif (RegWrite = '1') and (Swap = '1') then
+        registers(to_integer(unsigned(Mem_Wb_Rd))) <= value1;  
+        registers(to_integer(unsigned(Mem_Wb_Rs))) <= value2; 
+        
+      elsif (RegWrite ='1') then
+        registers(to_integer(unsigned(Mem_Wb_Rd))) <= value1;
+	
+      else 
+	      registers(to_integer(unsigned(Mem_Wb_Rs))) <= value2; 
 
-END ENTITY decoder;
+      end if; 
+    
+    end if;
+  end if;
+  end process;
+end architecture;
 
-ARCHITECTURE decoder_arch of decoder IS
-BEGIN
-        -- The selection lines are the index of the output bit that should be set.
-		loop1: for i in 0 to m-1  generate
-		     output(i)<='1' when (to_integer(unsigned(selection_lines))=i) and enable = '1' else '0';
-		end generate;
 
-END decoder_arch;
+
+
