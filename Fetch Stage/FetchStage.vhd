@@ -3,10 +3,8 @@ use ieee.std_logic_1164.all;
 
 
 ENTITY FetchStage IS
-    Generic(addressBits: integer := 16;
-            wordSize: integer :=16;
-            PCSize: integer :=16;
-			IFIDLength: integer :=16);
+    Generic(wordSize: integer :=16;
+            PCSize: integer :=16);
 			
 	PORT(
             PCReg: in STD_LOGIC_VECTOR(PCSize-1 DOWNTO 0);
@@ -15,7 +13,7 @@ ENTITY FetchStage IS
 			interrupt: in std_logic:='0';
  
 			instruction: out STD_LOGIC_VECTOR(wordSize-1 DOWNTO 0);
-			PCnew : out std_logic_vector(wordSize-1 downto 0);
+			PCnew : out std_logic_vector(PCSize-1 downto 0);
 			intSignal : out std_logic; --interrupt signal output 
 			rstSignal : out std_logic --restet signal output 
 		);
@@ -32,7 +30,7 @@ BEGIN
 
    instruction_memory: entity work.ram  port map (clk,'0','1',PCReg,tmp,instruction);
   --PCnew is a value of pc after incremented 
-   PCAdder:entity work.adder port map(PCreg,"0000000000000001",'0',PCnew,dummy);
+   PCAdder:entity work.adder generic map(PCSize)port map(PCreg,"0000000000000001",'0',PCnew,dummy);
 
 	intSignal <=interrupt;
 	--reset signal output 
