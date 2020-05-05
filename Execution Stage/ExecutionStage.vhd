@@ -12,7 +12,6 @@ entity ExeStage is
     RegDst,CCR:out std_logic_vector(2 downto 0);--CCR output of reg , but ZF output direct from ALU to use in feedback check in branch decision.
     ZF:OUT std_logic;
     DataOut,AddrressEA_IMM:out std_logic_vector(31 downto 0)
-  
 ) ;
 end ExeStage ;
 
@@ -45,7 +44,7 @@ WBsignals <= ID_EX(130 downto 128);
 
 ALUSelectors<=ID_EX(134 downto 131);
 signType<=ID_EX(135);
-IMM_EAbit(0)<=ID_EX(136);
+IMM_EAbit(0)<=ID_EX(136);-- zero for rs
 REGdstSignal(0)<=ID_EX(137);
 INEnableSignal(0)<=ID_EX(138);
 --memRead,memWrite,spType
