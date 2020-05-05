@@ -17,7 +17,8 @@ port(
 	SP: out std_logic_vector(2-1 downto 0) ;
 	ALU: out std_logic_vector(4-1 downto 0) ;
 	PCWrite,IMM_EA,sign,CRR: out std_logic;
-	In_enable,Out_enable,thirtyTwo_Sixteen,RRI,SWAP, CALL: out std_logic
+	In_enable,Out_enable,thirtyTwo_Sixteen,RRI,SWAP, CALL: out std_logic;
+	Rs: out std_logic_vector(2 downto 0)
 );
 end entity;
 
@@ -87,6 +88,7 @@ value1,value2,Target_Addresss,Rsrcs,Rdsts);
 	SWAP<= SWAPs;
 	CALL<= CALLs;
 	PC <= IF_ID(50 downto 19 );
+	Rs <= IF_ID(10 downto 8 );
 end architecture;
 
   
