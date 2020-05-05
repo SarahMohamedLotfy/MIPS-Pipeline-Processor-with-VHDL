@@ -21,8 +21,8 @@ port(
 	value2:in std_logic_vector(n-1 downto 0);
 	
 	Target_Address :out std_logic_vector(n-1 downto 0);
-	Rsrc :out std_logic_vector(n-1 downto 0);
-	Rdst :out std_logic_vector(n-1 downto 0);
+	Rsrc1 :out std_logic_vector(n-1 downto 0);
+	Rsrc2 :out std_logic_vector(n-1 downto 0);
 	flush_decoder:out std_logic
 );
 end entity;
@@ -58,9 +58,13 @@ if rising_edge(clk) then
       if (RegWrite = '0') and (Swap = '0') then
         
          Target_Address <= registers(to_integer(unsigned(Rt_from_fetch)));
-         Rsrc <= registers(to_integer(unsigned(IF_ID_Rt)));
-         Rdst <= registers(to_integer(unsigned(IF_ID_Rs)));
-       
+         if Rs ="000" and Rt /="000" then
+          Rsrc1 <= registers(to_integer(unsigned(IF_ID_Rt)));
+          Rsrc2 <= (others=>'0');
+          else
+          Rsrc1 <= registers(to_integer(unsigned(IF_ID_Rs)));
+          Rsrc2 <= registers(to_integer(unsigned(IF_ID_Rt)));
+        end if;
          
       -- Write in registers
       elsif (RegWrite = '1') and (Swap = '1') then
@@ -73,7 +77,8 @@ if rising_edge(clk) then
       else 
 	      registers(to_integer(unsigned(Mem_Wb_Rs))) <= value2; 
 
-      end if; 
+      end if;
+
     
     end if;
   end if;
