@@ -3,36 +3,60 @@ instructionList = []
 
 TwoOperandInstructions2 ={
 "SWAP":6,
+"swap":6,
 "SHL":12,
+"shl":12,
 "SHR":13,
+"shr":13,
 "LDM":16,
+"ldm":16,
 "LDD":17,
-"STD":18
+"ldd":17,
+"STD":18,
+"std":18
 }
 
 TwoOperandInstructions3 ={
 	"ADD":7,
+	"add":7,
 	"IADD":8,
+	"iadd":8,
 	"SUB":9,
+	"sub":9,
 	"AND":10,
-	"OR":11
+	"and":10,
+	"OR":11,
+	"or":11
 }
 OneOperandInstructions = {
 	"NOT":1,
+	"not":1,
 	"INC":2,
+	"inc":2,
 	"DEC":3,
+	"dec":3,
 	"OUT":4,
+	"out":4,
 	"IN":5,
+	"in":5,
 	"PUSH":14,
+	"push":14,
 	"POP":15,
+	"pop":15,
 	"JZ":19,
+	"jz":19,
 	"JMP":20,
-	"CALL":21
+	"jmp":20,
+	"CALL":21,
+	"call":21
 }
 NoOperandInstructions ={
 	"NOP":"0000000000000000",
+	"nop":"0000000000000000",
 	"RET":"1011000000000000",
-	"RTI":"1011100000000000"	
+	"ret":"1011000000000000",
+	"RTI":"1011100000000000",
+	"rti":"1011100000000000"	
 } 
 
 instructionsOutput = []
@@ -166,7 +190,7 @@ for instr in instrComponent:
 	elif len(instr) == 1:
 		if instr[0] not in NoOperandInstructions:
 			if ORGCount in [0,1]:
-				Value="{0:032b}".format((int(instr[0]))&0xffff)
+				Value="{0:016b}".format((int(instr[0]))&0xffff)
 				DataFile.write(("{}: "+Value+"\n").format(dataCount))
 		else:
 			#no operand 

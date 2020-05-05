@@ -31,21 +31,19 @@ CCR_Reg:entity work.Reg generic map(n=>3) port map(input=>CCRRegister,en=>'1',rs
 ZF<=CCRRegister(0);
 SRC1<=ID_EX(31 downto 0);
 SRC2 <= ID_EX(63 downto 32);
-Rt <= ID_EX(71 downto 69);
-Rd <= ID_EX(68 downto 66);
-EA_Part<=ID_EX(68 downto 65);
-UpperInstr(19 downto 16) <=ID_EX(68 downto 65);-- 20 bits represent EA or IMM.
-UpperInstr(15 downto 0) <=ID_EX(95 downto 80);-- 20 bits represent EA or IMM.
+Rt <= ID_EX(74 downto 72);
+Rd <= ID_EX(77 downto 75);
+EA_Part<=ID_EX(79 downto 76);
+UpperInstr <=ID_EX(95 downto 76);-- 20 bits represent EA or IMM.
 PC_1 <= ID_EX(127 downto 96);
---WB signals memtoReg,regWrite,outenable
+--WB signals
 WBsignals <= ID_EX(130 downto 128);
-
 ALUSelectors<=ID_EX(134 downto 131);
 signType<=ID_EX(135);
 IMM_EAbit(0)<=ID_EX(136);
 REGdstSignal(0)<=ID_EX(137);
 INEnableSignal(0)<=ID_EX(138);
---memRead,memWrite,spType
+
 MEMSignals<=ID_EX(142 downto 139);
 RRI<=ID_EX(143);
 SWAP<=ID_EX(144);
@@ -91,7 +89,7 @@ MUXResult:entity work.mux generic map(bus_width=>32,sel_width=>1) port map(input
 
 AddrressEA_IMM<=B;
 
-ALU:entity work.ALU2 generic map (size=>32) port map(S=>ALUSelectors,A=>A,B=>B,F=>ALUResult,ZF=>CCRRegister(0),SignF=>CCRRegister(1),OVF=>OVF,Cout=>CCRRegister(2));
+ALU:entity work.ALU2 generic mao (size=>32) port map(S=>ALUSelectors,A=>A,B=>B,F=>ALUResult,ZF=>CCRRegister(0),SignF=>CCRRegister(1),OVF=>OVF,Cout=>CCRRegister(2));
 
 
 
