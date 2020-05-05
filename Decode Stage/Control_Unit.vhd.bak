@@ -5,7 +5,7 @@ use ieee.numeric_std.all;
 entity control_unit is 
 generic (n:integer := 32);
 port(	
-  interrupt: in std_logic;
+  interrupt,reset,clk: in std_logic;
 	reset : in std_logic ; 
 	clk: in std_logic ;
 	OpCode: in std_logic_vector(5-1 downto 0) ;
@@ -14,20 +14,11 @@ port(
 	 -- DEC:0100 ADD:0101  SUB:0110  NOT: 0111  AND: 1000  OR:    1001  SHL:1010  SHR:  1011
 
 	--Control signals
-	RegWrite: out std_logic;
-	RegDST: out std_logic;
-	MemToReg : out std_logic;
-	MemRd : out std_logic;
-	MemWR: out std_logic;
+	RegWrite,RegDST,MemToReg,MemRd,MemWR: out std_logic;
 	SP: out std_logic_vector(2-1 downto 0) ;
 	ALU: out std_logic_vector(4-1 downto 0) ;
-	PCWrite: out std_logic;
-	IMM_EA: out std_logic;
-	sign: out std_logic;
-	CRR: out std_logic;
-	In_enable: out std_logic;
-	Out_enable: out std_logic;
-	thirtyTwo_Sixteen :  out std_logic
+	PCWrite,IMM_EA,sign,CRR: out std_logic;
+	In_enable,Out_enable,thirtyTwo_Sixteen,RRI,SWAP, CALL: out std_logic
 );
 end entity;
 
@@ -55,6 +46,9 @@ if rising_edge(clk) then
 	  In_enable <= '0';
 	  Out_enable <= '0';
 	  thirtyTwo_Sixteen<= '0';
+	  RRI<= '0';
+	  SWAP<= '0';
+	  CALL <= '0';
     
    else  
     
@@ -84,7 +78,7 @@ if rising_edge(clk) then
 	     MemRd <= '0';
 	     MemWR <= '0';
 	     SP <= "11";
-	     ALU <= "0001";
+	     ALU <= "0111";
 	     PCWrite <= '1';
 	     IMM_EA <= '0';
 	     sign <= '0';
@@ -299,7 +293,8 @@ if rising_edge(clk) then
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     thirtyTwo_Sixteen <='0';
-       
+       CALL <='1';
+       RRI <='1';
      
      --  RET
      elsif (OpCode = "10101") then
@@ -317,6 +312,7 @@ if rising_edge(clk) then
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     thirtyTwo_Sixteen <='0';
+	     RRI<='1';
 	     
 	     -- RTI
      elsif (OpCode = "10111") then
@@ -334,7 +330,7 @@ if rising_edge(clk) then
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     thirtyTwo_Sixteen <='0';
-	     
+	     RRI<='1';
 	     
      
 	     -- SWAP
@@ -352,6 +348,7 @@ if rising_edge(clk) then
 	     CRR <= '0';
 	     In_enable <= '0';
 	     Out_enable <= '0';
+	     SWAP<='1';
 	     
 	     -- ADD
      elsif (OpCode = "00111") then

@@ -5,38 +5,28 @@ use ieee.numeric_std.all;
 entity decoder is 
 generic (n:integer := 32);
 port(	
-  interrupt,reset, clk: in std_logic;
-	flush_decoderInput: in std_logic ;
-	IF_ID:in std_logic_vector(80 downto 0);
-	
-	Target_Address :out std_logic_vector(n-1 downto 0);
-	Rsrc :out std_logic_vector(n-1 downto 0);
-	Rdst :out std_logic_vector(n-1 downto 0);
-	flush_decoder:out std_logic
+	interrupt,reset, clk: in std_logic;
+	IF_ID:in std_logic_vector(8 downto 0);
+	RegWriteinput,Swapinput:in std_logic;
+	Mem_Wb_Rd,Mem_Wb_Rs: in std_logic_vector(2 downto 0);
+  value1,value2 :in std_logic_vector(31 downto 0);
+ 
+  Target_Address,Rsrc,Rdst :out std_logic_vector(n-1 downto 0)
 );
 end entity;
 
 architecture decoder_arch of decoder is
   type registerFile is array(0 to 6) of std_logic_vector(n-1 downto 0);
   signal registers : registerFile;
-  signal RegWrite,Swap : std_logic ;
-	signal Rt_from_fetch,IF_ID_Rt,IF_ID_Rs,Mem_Wb_Rd,Mem_Wb_Rs:  std_logic_vector(3-1 downto 0);
-	signal value1,value2: std_logic_vector(n-1 downto 0);
-
-
+  signal OpCode:std_logic_vector(5-1 downto 0);
+	signal Rt_from_fetch,IF_ID_Rt,IF_ID_Rs:  std_logic_vector(3-1 downto 0);
+  
 begin
   
-RegWrite<=IF_ID(0);
-Swap <= IF_ID(1);
-Rt_from_fetch <=IF_ID(4 downto 2);
-IF_ID_Rt <= IF_ID(7 downto 5);
-IF_ID_Rs <= IF_ID(10 downto 8);
-Mem_Wb_Rd <= IF_ID(13 downto 11);
-Mem_Wb_Rs <= IF_ID(16 downto 14);
-value1 <= IF_ID(48 downto 17);
-value2 <= IF_ID(80 downto 49);
-  
-  
+Rt_from_fetch <=IF_ID(2 downto 0);
+IF_ID_Rt <= IF_ID(5 downto 3);
+IF_ID_Rs <= IF_ID(8 downto 6);
+
 process (clk)
 begin
 if rising_edge(clk) then
@@ -53,14 +43,11 @@ if rising_edge(clk) then
      registers(4) <= "00000000000000000000000000000000";
      registers(5) <= "00000000000000000000000000000000";
      registers(6) <= "00000000000000000000000000000000";
-    
-   elsif (flush_decoderInput='1')then
-         flush_decoder<='1';
-   
+ 
    
    else  
       -- Read registers
-      if (RegWrite = '0') and (Swap = '0') then
+      if (RegWriteinput= '0') and (Swapinput = '0') then
         
          Target_Address <= registers(to_integer(unsigned(Rt_from_fetch)));
          Rsrc <= registers(to_integer(unsigned(IF_ID_Rs)));
@@ -68,19 +55,18 @@ if rising_edge(clk) then
        
          
       -- Write in registers
-      elsif (RegWrite = '1') and (Swap = '1') then
+      elsif (RegWriteinput = '1') and (Swapinput = '1') then
         registers(to_integer(unsigned(Mem_Wb_Rd))) <= value1;  
         registers(to_integer(unsigned(Mem_Wb_Rs))) <= value2; 
         
-      elsif (RegWrite ='1') then
+      elsif (RegWriteinput='1') then
         registers(to_integer(unsigned(Mem_Wb_Rd))) <= value1;
 	
       else 
 	      registers(to_integer(unsigned(Mem_Wb_Rs))) <= value2; 
 
       end if;
-       
-    
+         
     end if;
   end if;
   end process;
