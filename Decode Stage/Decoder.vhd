@@ -17,7 +17,7 @@ end entity;
 
 architecture decoder_arch of decoder is
   type registerFile is array(0 to 6) of std_logic_vector(n-1 downto 0);
-  signal registers : registerFile;
+  signal registers : registerFile:=(others=>(others=>'0'));
   signal OpCode:std_logic_vector(5-1 downto 0);
 	signal IF_ID_Rt,IF_ID_Rs:  std_logic_vector(3-1 downto 0);
   
@@ -48,14 +48,10 @@ if rising_edge(clk) then
       -- Read registers
       Rsrc <= registers(to_integer(unsigned(IF_ID_Rs)));
       Rdst <= registers(to_integer(unsigned(IF_ID_Rt)));
-      if (RegWriteinput= '0') and (Swapinput = '0') then
-        
-         Target_Address <= registers(to_integer(unsigned(Rt_from_fetch)));
-         
-       
-         
+      Target_Address <= registers(to_integer(unsigned(Rt_from_fetch)));  
+      
       -- Write in registers
-      elsif (RegWriteinput = '1') and (Swapinput = '1') then
+      if (RegWriteinput = '1') and (Swapinput = '1') then
         registers(to_integer(unsigned(Mem_Wb_Rd))) <= value1;  
         registers(to_integer(unsigned(Mem_Wb_Rs))) <= value2; 
         

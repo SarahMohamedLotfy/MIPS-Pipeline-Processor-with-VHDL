@@ -76,7 +76,7 @@ port map (
 	IF_ID=>IF_IDRegOUT,
 	RegWriteinput=>RegWriteinput,
 	Swapinput=>Swapinput,
-	Mem_Wb_Rd=>MEM_WBRegOUT(38 downto 36),Mem_Wb_Rs=>MEM_WBRegOUT(35 downto 33),
+	Mem_Wb_Rd=>Mem_Wb_Rd,Mem_Wb_Rs=>Mem_Wb_Rs,
 	Rt_from_fetch =>instruction(10 downto 8),
     value1=>value1,value2=>value2,
     Target_Address=>Target_Address,
@@ -103,6 +103,8 @@ port map (
 	Rs =>Rs);
 
 Rt_from_fetch<=instruction(10 downto 8);
+MEM_WBRegOUT(38 downto 36) <= Mem_Wb_Rd;
+MEM_WBRegOUT(35 downto 33) <= Mem_Wb_Rs;
 ID_EX:entity work.Reg  generic map(n=>147) port map(input=>ID_EXRegIN,en=>ID_EXwrite,rst=>rst,clk=>clk,output=>ID_EXRegOUT);
 	
 ---------------------------------------ID_EX Buffer -----------------------------------------------------------------
@@ -133,15 +135,45 @@ ID_EXRegIN(142 downto 141) <=SP;
 --------------------------------------------------------------Execute ->> Memory ------------------------------------------
 Execute:entity work.ExeStage port map(clk=>clk,rst=>rst,INT=>INT,
 ID_EX=>ID_EXRegOUT,
-EXALUResult=>EXALUResult,MEMALUResult=>MEMALUResult,INPORTValue=>INPORT,
-MEM_WBRegisterRd=>MEM_WBRegisterRd,EX_MEMRegisterRd=>EX_MEMRegisterRd,
-EX_MEMRegWrite=>EX_MEMRegWrite,MEM_WBRegWrite=>MEM_WBRegWrite,EX_MEMSWAP=>EX_MEMSWAP,MEM_WBSWAP=>MEM_WBSWAP,
-RegDst=>EX_MEMRegIN(102 downto 100),CCR=>EX_MEMRegIN(107 downto 105),RsReg=>EX_MEMRegIN(35 downto 33),WBsignals=>EX_MEMRegIN(114 downto 112),
-MEMSignals=>EX_MEMRegIN(111 downto 108),ZF=>ZFToCheck,SWAP=>EX_MEMRegIN(32),
-INTSignal=>EX_MEMRegIN(103),RRI=>EX_MEMRegIN(104),DataOut=>EX_MEMRegIN(67 downto 36),
-AddrressEA_IMM=>EX_MEMRegIN(99 downto 68),SRC2out=>EX_MEMRegIN(31 downto 0));
+EXALUResult=>EXALUResult,
+MEMALUResult=>MEMALUResult,
+INPORTValue=>INPORT,
+MEM_WBRegisterRd=>MEM_WBRegisterRd
+,EX_MEMRegisterRd=>EX_MEMRegisterRd,
+EX_MEMRegWrite=>EX_MEMRegWrite,
+MEM_WBRegWrite=>MEM_WBRegWrite,
+EX_MEMSWAP=>EX_MEMSWAP,
+MEM_WBSWAP=>MEM_WBSWAP,
+
+
+RegDst=>EX_MEMRegIN(102 downto 100),
+CCR=>CCR,
+RsReg=>RegDst,
+WBsignals=>EX_MEMRegIN(114 downto 112),
+MEMSignals=>EX_MEMRegIN(111 downto 108),
+ZF=>ZFToCheck,
+SWAP=>EX_MEMRegIN(32),
+INTSignal=>EX_MEMRegIN(103),RRI=>EX_MEMRegIN(104)
+,DataOut=>DataOut,
+AddrressEA_IMM=>AddrressEA_IMM 
+,SRC2out=>EX_MEMRegIN(31 downto 0));
+
+
+EX_MEMRegIN(35 downto 33)<=RegDst;
+EX_MEMRegIN(107 downto 105)<=CCR;
+EX_MEMRegIN(67 downto 36)<=DataOut;
+EX_MEMRegIN(99 downto 68)<=AddrressEA_IMM;
+EXALUResult <= EX_MEMRegOUT( 67 downto 36);
+EX_MEMRegisterRd<=EX_MEMRegOUT( 102 downto 100);
+EX_MEMRegWrite<=EX_MEMRegOUT(113);
+EX_MEMSWAP<=EX_MEMRegOUT(32);
+MEMALUResult <=MEM_WBRegOUT(73 downto 42);
+MEM_WBRegisterRd<=MEM_WBRegOUT(38 downto 36);
+MEM_WBRegWrite<=MEM_WBRegOUT(40);
+MEM_WBSWAP<=MEM_WBRegOUT(32);
 
 EX_MEM:entity work.Reg  generic map(n=>115) port map(input=>EX_MEMRegIN,en=>EX_MEMwrite,rst=>rst,clk=>clk,output=>EX_MEMRegOUT);
+
 -----------------------------------------------------------------------------------------------------------------------------------------
 
 --------------------------------------------------------------Memory ->> Write Back ------------------------------------------
