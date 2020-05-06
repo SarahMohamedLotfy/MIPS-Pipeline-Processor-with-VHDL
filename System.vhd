@@ -138,19 +138,17 @@ MEMSignals=>EX_MEMRegIN(111 downto 108),ZF=>ZFToCheck,SWAP=>EX_MEMRegIN(32),
 INTSignal=>EX_MEMRegIN(103),RRI=>EX_MEMRegIN(104),DataOut=>EX_MEMRegIN(67 downto 36),
 AddrressEA_IMM=>EX_MEMRegIN(99 downto 68),SRC2out=>EX_MEMRegIN(31 downto 0));
 
-IF_ID:entity work.Reg  generic map(n=>115) port map(input=>EX_MEMRegIN,en=>EX_MEMwrite,rst=>rst,clk=>clk,output=>EX_MEMRegOUT);
+EX_MEM:entity work.Reg  generic map(n=>115) port map(input=>EX_MEMRegIN,en=>EX_MEMwrite,rst=>rst,clk=>clk,output=>EX_MEMRegOUT);
 -----------------------------------------------------------------------------------------------------------------------------------------
 
 --------------------------------------------------------------Memory ->> Write Back ------------------------------------------
+MemoryStage:entity work.memory port map(reset=>rst, clk=>clk,
+EX_MEM=>EX_MEMRegOUT,Rsrc2=>MEM_WBRegIN(31 downto 0),ALUresult=>MEM_WBRegIN(105 downto 73), MemoryReuslt=>MEM_WBRegIN(73 downto 42) ,SWAP=>MEM_WBRegIN(32),Rs=>MEM_WBRegIN(35 downto 33),Rd=>MEM_WBRegIN(38 downto 36),WBsignals=>MEM_WBRegIN(41 downto 39));
+
+MEM_WB:entity work.Reg  generic map(n=>106) port map(input=>MEM_WBRegIN,en=>MEM_WBwrite,rst=>rst,clk=>clk,output=>MEM_WBRegOUT);
+
 WBStage:entity work.WBStage port map (clk=>clk,rst=>rst,MEM_WB=>MEM_WBRegOUT,RegWriteToRegisterFile=>RegWriteinput,Swap=>Swapinput,PortOut=>OUTPort,Value1=>value1,Value2=>value2);
 -----------------------------------------------------------------------------------------------------------------------------------------
------------------------------------mem/wb buffer --------------------------------
-MEM_WBRegIN(31 downto 0) <= Rsrc;--Rscr1 
-MEM_WBRegIN(63 downto 32) <= Rdst;--Rscr2 
-MEM_WBRegIN(64) <=SWAP; --swap 
---MEM_WBRegIN(96 downto 65) <=address; 
---MEM_WBRegIN(128 downto 97) <=memory; 
---MEM_WBRegIN(160 downto 129) <=ALUresult; 
 
 
 
