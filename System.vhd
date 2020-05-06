@@ -17,7 +17,8 @@ signal probINTsignal,probRstSignal,RRI:std_logic;--signals to propagte in the ne
 ------------------------------------------------------------------------------------------------
 
 -----------------------------------------Decode stage signals------------------------------------ 
-signal RegWriteinput,Swapinput:std_logic;
+signal RegWriteinput,Swapinput,ZFToCheck:std_logic;
+
 ------------------------------------------------------------------------------------------------
 
 -----------------------------------------Execute stage signals------------------------------------ 
@@ -46,8 +47,8 @@ signal MEM_WBRegWrite,MEM_WBSWAP:std_logic;
 -----------------------------------------intermediate registers signals------------------------------------ 
 signal IF_IDRegIN,IF_IDRegOut:std_logic_vector(50 downto 0);
 signal ID_EXRegIN,ID_EXRegOUT:in std_logic_vector(146 downto 0);
-signal EX_MEMRegIN,EX_MEMRegOUT:in std_logic_vector(83 downto 0);
-signal MEM_WBRegIN,MEM_WBRegOUT:in std_logic_vector(103 downto 0);
+signal EX_MEMRegIN,EX_MEMRegOUT:in std_logic_vector(114 downto 0);
+signal MEM_WBRegIN,MEM_WBRegOUT:in std_logic_vector(101 downto 0);
 signal IF_IDFlush,ID_EXFlush,EX_MEMFlush,MEM_WBFlush:std_logic:='0';
 signal IF_IDwrite,ID_EXwrite,EX_MEMwrite,MEM_WBwrite:std_logic:='1';
 ------------------------------------------------------------------------------------------------
@@ -101,17 +102,17 @@ ID_EX=>ID_EXRegOUT,
 EXALUResult=>EXALUResult,MEMALUResult=>MEMALUResult,INPORTValue=>INPORT,
 MEM_WBRegisterRd=>MEM_WBRegisterRd,EX_MEMRegisterRd=>EX_MEMRegisterRd,
 EX_MEMRegWrite=>EX_MEMRegWrite,MEM_WBRegWrite=>MEM_WBRegWrite,EX_MEMSWAP=>EX_MEMSWAP,MEM_WBSWAP=>MEM_WBSWAP,
-RegDst=>RegDst,CCR=>CCR,ZF=>ZF,
-DataOut=>DataOut,AddrressEA_IMM=>AddrressEA_IMM);
+RegDst=>EX_MEMRegIN(102 downto 100),CCR=>EX_MEMRegIN(107 downto 105),RsReg=>EX_MEMRegIN(35 downto 33),WBsignals=>EX_MEMRegIN(114 downto 112),
+MEMSignals=>EX_MEMRegIN(111 downto 108),ZF=>ZFToCheck,SWAP=>EX_MEMRegIN(32),
+INTSignal=>EX_MEMRegIN(103),RRI=>EX_MEMRegIN(104),DataOut=>EX_MEMRegIN(67 downto 36),
+AddrressEA_IMM=>EX_MEMRegIN(99 downto 68),SRC2out=>EX_MEMRegIN(31 downto 0));
 
-
-EX_MEMRegIN(0) <=probINTsignal;--interrupt signal
-EX_MEMRegIN(1) <=probRstSignal;--reset signal
-EX_MEMRegIN(2) <=RRI; --RRI signal 
-EX_MEMRegIN(34 downto 3) <=EXALUResult; --ALU result 4bytes 
---EX_MEMRegIN(35) <=EX_MEMRegWrite;
+IF_ID:entity work.Reg  generic map(n=>115) port map(input=>EX_MEMRegIN,en=>EX_MEMwrite,rst=>rst,clk=>clk,output=>EX_MEMRegOUT);
 -----------------------------------------------------------------------------------------------------------------------------------------
 
+--------------------------------------------------------------Memory ->> Write Back ------------------------------------------
+
+-----------------------------------------------------------------------------------------------------------------------------------------
 
 
 
