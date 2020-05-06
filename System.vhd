@@ -18,7 +18,15 @@ signal probINTsignal,probRstSignal,RRI:std_logic;--signals to propagte in the ne
 
 -----------------------------------------Decode stage signals------------------------------------ 
 signal RegWriteinput,Swapinput,ZFToCheck:std_logic;
-
+signal Mem_Wb_Rd,Mem_Wb_Rs: std_logic_vector(2 downto 0);
+signal value1,value2: std_logic_vector(2 downto 0);
+signal Target_Address,Rsrc,Rdst,instructionDecodeout: std_logic_vector(31 downto 0);
+signal RegWrite,RegDST,MemToReg,MemRd,MemWR: std_logic;
+signal SP: std_logic_vector(1 downto 0);
+signal ALU: std_logic_vector(3 downto 0);
+signal PCWrite,IMM_EA,sign,CRR: std_logic;
+signal In_enable,Out_enable,thirtyTwo_Sixteen,SWAP, CALL: std_logic;
+signal Rs: std_logic_vector(2 downto 0);
 ------------------------------------------------------------------------------------------------
 
 -----------------------------------------Execute stage signals------------------------------------ 
@@ -39,16 +47,12 @@ signal MEM_WBRegisterRd:std_logic_vector(2 downto 0);
 signal MEM_WBRegWrite,MEM_WBSWAP:std_logic;
 ------------------------------------------------------------------------------------------------
 
------------------------------------------Decode stage signals------------------------------------ 
-
-------------------------------------------------------------------------------------------------
-
 
 -----------------------------------------intermediate registers signals------------------------------------ 
 signal IF_IDRegIN,IF_IDRegOut:std_logic_vector(50 downto 0);
 signal ID_EXRegIN,ID_EXRegOUT:in std_logic_vector(146 downto 0);
 signal EX_MEMRegIN,EX_MEMRegOUT:in std_logic_vector(114 downto 0);
-signal MEM_WBRegIN,MEM_WBRegOUT:in std_logic_vector(101 downto 0);
+signal MEM_WBRegIN,MEM_WBRegOUT:in std_logic_vector(102 downto 0);
 signal IF_IDFlush,ID_EXFlush,EX_MEMFlush,MEM_WBFlush:std_logic:='0';
 signal IF_IDwrite,ID_EXwrite,EX_MEMwrite,MEM_WBwrite:std_logic:='1';
 ------------------------------------------------------------------------------------------------
@@ -57,12 +61,12 @@ begin
 --------------------------------------------------------------Fetch ->> Decode------------------------------------------
 Fetch:entity work.FetchStage  Generic map (wordSize=>16,PCSize=>32) 
 port map(clk=>clk,reset=>rst,interrupt=>INT,instruction=>instruction,PCnew=>pcnew,intSignal=>probINTsignal,rstSignal=>probRstSignal);
- (15 downto 0) <=instruction;
+IF_IDRegIN(15 downto 0) <=instruction;
 IF_IDRegIN(47 downto 16) <=pcnew;
 IF_IDRegIN(48) <=probINTsignal;
 IF_IDRegIN(49) <=RRI;
 IF_IDRegIN(50) <=probRstSignal;
-IF_ID:entity work.Reg  generic map(n=>50) port map(input=>IF_IDRegIN,en=>IF_IDwrite,rst=>rst,clk=>clk,output=>IF_IDRegOUT);
+IF_ID:entity work.Reg  generic map(n=>51) port map(input=>IF_IDRegIN,en=>IF_IDwrite,rst=>rst,clk=>clk,output=>IF_IDRegOUT);
 -----------------------------------------------------------------------------------------------------------------------------------------
 
 --------------------------------------------------------------Decode ->>Execute ------------------------------------------
@@ -73,27 +77,54 @@ port map (
 	RegWriteinput=>RegWriteinput,
 	Swapinput=>Swapinput,
 	Mem_Wb_Rd=>,Mem_Wb_Rs=>,
-    value1=>,value2=>
-    Target_Address=>,
-	Rsrc=>,
-	Rdst=> ,
-	RegWrite=>,
-	RegDST=>,
-	MemToReg=>,
-	MemRd=>,
-	MemWR=>,
-	SP=>,
-	ALU=>,
-	PCWrite=>,
-	IMM_EA=>,
-	sign=>,
-	CRR=>,
-	In_enable=>,
-	Out_enable=>,
-	thirtyTwo_Sixteen=>,
+    value1=>value1,value2=>value2
+    Target_Address=>Target_Address,
+	Rsrc=>Rsrc,
+	Rdst=>Rdst ,
+	instruction=>instructionDecodeout,
+	RegWrite=>RegWrite,
+	RegDST=>RegDST,
+	MemToReg=>MemToReg,
+	MemRd=>MemRd,
+	MemWR=>MemWR,
+	SP=>SP,
+	ALU=>ALU,
+	PCWrite=>PCWrite,
+	IMM_EA=>IMM_EA,
+	sign=>sign,
+	CRR=>CRR,
+	In_enable=>In_enable,
+	Out_enable=>Out_enable,
+	thirtyTwo_Sixteen=>thirtyTwo_Sixteen,
 	RRI=>RRI,
-	SWAP=>,
-	CALL=>);
+	SWAP=>SWAP,
+	CALL=>CALL,
+	Rs =>Rs);
+ID_EX:entity work.Reg  generic map(n=>147) port map(input=>ID_EXRegIN,en=>ID_EXwrite,rst=>rst,clk=>clk,output=>ID_EXRegOUT);
+	
+---------------------------------------ID_EX Buffer -----------------------------------------------------------------
+ID_EXRegIN(31 downto 0) <= Rsrc; --Rscr1 
+ID_EXRegIN(63 downto 32) <= Rdst; -- Rscr2 
+ID_EXRegIN(95 downto 64) <=instructionDecodeout;
+ID_EXRegIN(127 downto 96) <= pcnew; --PC after incremented 
+
+ID_EXRegIN(143) <= RRI; --RRI signal 
+ID_EXRegIN(144) <= SWAP;
+ID_EXRegIN(145) <= CALL;
+ID_EXRegIN(146) <= probINTsignal;
+ID_EXRegIN(128) <=MemToReg;
+ID_EXRegIN(129) <=RegWrite;
+ID_EXRegIN(130) <=Out_enable;
+ID_EXRegIN(134 downto 131) <=ALU;
+ID_EXRegIN(135) <=sign;
+ID_EXRegIN(136) <=IMM_EA;
+ID_EXRegIN(137) <=RegDST;
+ID_EXRegIN(138) <=In_enable;
+ID_EXRegIN(139) <=MemRd;
+ID_EXRegIN(140) <=MemWR;
+ID_EXRegIN(142 downto 141) <=SP;
+
+
 -----------------------------------------------------------------------------------------------------------------------------------------
 
 --------------------------------------------------------------Execute ->> Memory ------------------------------------------
@@ -111,7 +142,7 @@ IF_ID:entity work.Reg  generic map(n=>115) port map(input=>EX_MEMRegIN,en=>EX_ME
 -----------------------------------------------------------------------------------------------------------------------------------------
 
 --------------------------------------------------------------Memory ->> Write Back ------------------------------------------
-
+WBStage:entity work.WBStage port map (clk=>clk,rst=>rst,MEM_WB=>MEM_WBRegOUT,RegWriteToRegisterFile=>RegWriteinput,Swap=>Swapinput,PortOut=>OUTPort,Value1=>value1,Value2=>value2);
 -----------------------------------------------------------------------------------------------------------------------------------------
 
 

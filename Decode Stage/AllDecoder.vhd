@@ -4,25 +4,21 @@ use ieee.numeric_std.all;
 entity Alldecoder is 
 generic (n:integer := 32);
 port(	
-<<<<<<< HEAD
-  interrupt,reset, clk: in std_logic;
-	IF_ID:in std_logic_vector(13 downto 0);
-=======
   clk: in std_logic;
 	IF_ID:in std_logic_vector(50 downto 0);
->>>>>>> 53f7a0318c4503e9776e37dd719f248fa46ea5bb
 	RegWriteinput,Swapinput:in std_logic;
 	Mem_Wb_Rd,Mem_Wb_Rs: in std_logic_vector(2 downto 0);
   value1,value2 :in std_logic_vector(31 downto 0);
  
-  Target_Address,Rsrc,Rdst :out std_logic_vector(n-1 downto 0);
+  Target_Address,Rsrc,Rdst,instruction,PC :out std_logic_vector(n-1 downto 0);
 	
 	--Control signals
 	RegWrite,RegDST,MemToReg,MemRd,MemWR: out std_logic;
 	SP: out std_logic_vector(2-1 downto 0) ;
 	ALU: out std_logic_vector(4-1 downto 0) ;
 	PCWrite,IMM_EA,sign,CRR: out std_logic;
-	In_enable,Out_enable,thirtyTwo_Sixteen,RRI,SWAP, CALL: out std_logic
+	In_enable,Out_enable,thirtyTwo_Sixteen,RRI,SWAP, CALL: out std_logic;
+	Rs: out std_logic_vector(2 downto 0)
 );
 end entity;
 
@@ -32,7 +28,7 @@ component decoder is
 generic (n:integer := 32);
 port(	
   interrupt,reset, clk: in std_logic;
-	IF_ID:in std_logic_vector(8 downto 0);
+	IF_ID:in std_logic_vector(5 downto 0);
 	RegWriteinput,Swapinput:in std_logic;
 	Mem_Wb_Rd,Mem_Wb_Rs: in std_logic_vector(2 downto 0);
   value1,value2 :in std_logic_vector(31 downto 0);
@@ -61,20 +57,12 @@ signal ALUs: std_logic_vector(4-1 downto 0);
 signal Target_Addresss,Rsrcs,Rdsts : std_logic_vector(n-1 downto 0);
 
 begin
-<<<<<<< HEAD
-contol_unitt : control_unit port map ( interrupt, reset, clk, IF_ID(4 downto 0),RegWrites,
-=======
 contol_unitt : control_unit port map ( IF_ID(18), IF_ID(16), clk, IF_ID(15 downto 11),RegWrites,
->>>>>>> 53f7a0318c4503e9776e37dd719f248fa46ea5bb
 RegDSTs,MemToRegs,MemRds,MemWRs,SPs,ALUs,PCWrites,IMM_EAs,signs,CRRs,
 In_enables,Out_enables,thirtyTwo_Sixteens,RRIs,SWAPs, CALLs
 	);
 	
-<<<<<<< HEAD
-decoderr : decoder port map ( interrupt,reset, clk,IF_ID(13 downto 5 ),RegWriteinput,Swapinput,Mem_Wb_Rd,Mem_Wb_Rs,
-=======
-decoderr : decoder port map ( IF_ID(18),IF_ID(16), clk,IF_ID(27 downto 19 ),RegWriteinput,Swapinput,Mem_Wb_Rd,Mem_Wb_Rs,
->>>>>>> 53f7a0318c4503e9776e37dd719f248fa46ea5bb
+decoderr : decoder port map ( IF_ID(18),IF_ID(16), clk,IF_ID(10 downto 5 ),RegWriteinput,Swapinput,Mem_Wb_Rd,Mem_Wb_Rs,
 value1,value2,Target_Addresss,Rsrcs,Rdsts); 
     
   Target_Address <= Target_Addresss;
@@ -99,6 +87,10 @@ value1,value2,Target_Addresss,Rsrcs,Rdsts);
 	RRI<=RRIs;
 	SWAP<= SWAPs;
 	CALL<= CALLs;
+	PC <= IF_ID(50 downto 19 );
+	Rs <= IF_ID(10 downto 8 );
+	instruction(15 downto 0) <= IF_ID(15 downto 0);
+	instruction(31 downto 16)<=(others=>'0');
 end architecture;
 
   

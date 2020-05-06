@@ -174,7 +174,7 @@ if rising_edge(clk) then
      elsif (OpCode = "01111") then 
        RegWrite <= '1';
 	     RegDST <= '1';
-	     MemToReg <= '0';
+	     MemToReg <= '1';
 	     MemRd <= '1';
 	     MemWR <= '0';
 	     SP <= "01";
@@ -191,7 +191,7 @@ if rising_edge(clk) then
      elsif (OpCode = "10000") then 
        RegWrite <= '1';
 	     RegDST <= '1';
-	     MemToReg <= '0';
+	     MemToReg <= '1';
 	     MemRd <= '0';
 	     MemWR <= '0';
 	     SP <= "10";
@@ -209,7 +209,7 @@ if rising_edge(clk) then
      elsif (OpCode = "10001") then 
        RegWrite <= '1';
 	     RegDST <= '1';
-	     MemToReg <= '0';
+	     MemToReg <= '1';
 	     MemRd <= '1';
 	     MemWR <= '0';
 	     SP <= "10";
@@ -339,7 +339,7 @@ if rising_edge(clk) then
 	     MemRd <= '0';
 	     MemWR <= '0';
 	     SP <= "11";
-	     ALU <= "0000";
+	     ALU <= "0010";
 	     PCWrite <= '0';
 	     IMM_EA <= '0';
 	     sign <= '0';

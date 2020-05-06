@@ -6,11 +6,11 @@ entity decoder is
 generic (n:integer := 32);
 port(	
 	interrupt,reset, clk: in std_logic;
-	IF_ID:in std_logic_vector(8 downto 0);
+	IF_ID:in std_logic_vector(5 downto 0);
 	RegWriteinput,Swapinput:in std_logic;
-	Mem_Wb_Rd,Mem_Wb_Rs: in std_logic_vector(2 downto 0);
+	Mem_Wb_Rd,Mem_Wb_Rs,Rt_from_fetch: in std_logic_vector(2 downto 0);
   value1,value2 :in std_logic_vector(31 downto 0);
- 
+  
   Target_Address,Rsrc,Rdst :out std_logic_vector(n-1 downto 0)
 );
 end entity;
@@ -19,13 +19,12 @@ architecture decoder_arch of decoder is
   type registerFile is array(0 to 6) of std_logic_vector(n-1 downto 0);
   signal registers : registerFile;
   signal OpCode:std_logic_vector(5-1 downto 0);
-	signal Rt_from_fetch,IF_ID_Rt,IF_ID_Rs:  std_logic_vector(3-1 downto 0);
+	signal IF_ID_Rt,IF_ID_Rs:  std_logic_vector(3-1 downto 0);
   
 begin
   
-Rt_from_fetch <=IF_ID(2 downto 0);
-IF_ID_Rt <= IF_ID(5 downto 3);
-IF_ID_Rs <= IF_ID(8 downto 6);
+IF_ID_Rt <= IF_ID( 2 downto 0);
+IF_ID_Rs <= IF_ID(5 downto 3);
 
 process (clk)
 begin
