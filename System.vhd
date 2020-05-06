@@ -26,7 +26,7 @@ signal SP: std_logic_vector(1 downto 0);
 signal ALU: std_logic_vector(3 downto 0);
 signal PCWrite,IMM_EA,sign,CRR: std_logic;
 signal In_enable,Out_enable,thirtyTwo_Sixteen,SWAP, CALL: std_logic;
-signal Rs: std_logic_vector(2 downto 0);
+signal Rs,Rt_from_fetch: std_logic_vector(2 downto 0);
 ------------------------------------------------------------------------------------------------
 
 -----------------------------------------Execute stage signals------------------------------------ 
@@ -77,6 +77,7 @@ port map (
 	RegWriteinput=>RegWriteinput,
 	Swapinput=>Swapinput,
 	Mem_Wb_Rd=>MEM_WBRegOUT(38 downto 36),Mem_Wb_Rs=>MEM_WBRegOUT(35 downto 33),
+	Rt_from_fetch =>instruction(10 downto 8),
     value1=>value1,value2=>value2,
     Target_Address=>Target_Address,
 	Rsrc=>Rsrc,

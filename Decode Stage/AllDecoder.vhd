@@ -7,7 +7,7 @@ port(
   clk: in std_logic;
 	IF_ID:in std_logic_vector(50 downto 0);
 	RegWriteinput,Swapinput:in std_logic;
-	Mem_Wb_Rd,Mem_Wb_Rs: in std_logic_vector(2 downto 0);
+	Mem_Wb_Rd,Mem_Wb_Rs,Rt_from_fetch: in std_logic_vector(2 downto 0);
   value1,value2 :in std_logic_vector(31 downto 0);
  
   Target_Address,Rsrc,Rdst,instruction,PC :out std_logic_vector(n-1 downto 0);
@@ -30,7 +30,7 @@ port(
   interrupt,reset, clk: in std_logic;
 	IF_ID:in std_logic_vector(5 downto 0);
 	RegWriteinput,Swapinput:in std_logic;
-	Mem_Wb_Rd,Mem_Wb_Rs: in std_logic_vector(2 downto 0);
+	Mem_Wb_Rd,Mem_Wb_Rs,Rt_from_fetch: in std_logic_vector(2 downto 0);
   value1,value2 :in std_logic_vector(31 downto 0);
  
   Target_Address,Rsrc,Rdst :out std_logic_vector(n-1 downto 0)
@@ -63,7 +63,7 @@ In_enables,Out_enables,thirtyTwo_Sixteens,RRIs,SWAPs, CALLs
 	);
 	
 decoderr : decoder port map ( IF_ID(18),IF_ID(16), clk,IF_ID(10 downto 5 ),RegWriteinput,Swapinput,Mem_Wb_Rd,Mem_Wb_Rs,
-value1,value2,Target_Addresss,Rsrcs,Rdsts); 
+Rt_from_fetch, value1,value2,Target_Addresss,Rsrcs,Rdsts); 
     
   Target_Address <= Target_Addresss;
 	Rsrc <=Rsrcs ;
