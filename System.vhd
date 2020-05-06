@@ -138,6 +138,13 @@ EX_MEMRegIN(34 downto 3) <=EXALUResult; --ALU result 4bytes
 --EX_MEMRegIN(35) <=EX_MEMRegWrite;
 -----------------------------------------------------------------------------------------------------------------------------------------
 
+-----------------------------------mem/wb buffer --------------------------------
+MEM_WBRegIN(31 downto 0) <= Rsrc;--Rscr1 
+MEM_WBRegIN(63 downto 32) <= Rdst;--Rscr2 
+MEM_WBRegIN(64) <=SWAP; --swap 
+--MEM_WBRegIN(96 downto 65) <=address; 
+--MEM_WBRegIN(128 downto 97) <=memory; 
+--MEM_WBRegIN(160 downto 129) <=ALUresult; 
 
 
 
