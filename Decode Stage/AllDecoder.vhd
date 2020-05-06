@@ -4,13 +4,8 @@ use ieee.numeric_std.all;
 entity Alldecoder is 
 generic (n:integer := 32);
 port(	
-<<<<<<< HEAD
-  interrupt,reset, clk: in std_logic;
-	IF_ID:in std_logic_vector(13 downto 0);
-=======
   clk: in std_logic;
 	IF_ID:in std_logic_vector(50 downto 0);
->>>>>>> 53f7a0318c4503e9776e37dd719f248fa46ea5bb
 	RegWriteinput,Swapinput:in std_logic;
 	Mem_Wb_Rd,Mem_Wb_Rs: in std_logic_vector(2 downto 0);
   value1,value2 :in std_logic_vector(31 downto 0);
@@ -61,20 +56,12 @@ signal ALUs: std_logic_vector(4-1 downto 0);
 signal Target_Addresss,Rsrcs,Rdsts : std_logic_vector(n-1 downto 0);
 
 begin
-<<<<<<< HEAD
-contol_unitt : control_unit port map ( interrupt, reset, clk, IF_ID(4 downto 0),RegWrites,
-=======
 contol_unitt : control_unit port map ( IF_ID(18), IF_ID(16), clk, IF_ID(15 downto 11),RegWrites,
->>>>>>> 53f7a0318c4503e9776e37dd719f248fa46ea5bb
 RegDSTs,MemToRegs,MemRds,MemWRs,SPs,ALUs,PCWrites,IMM_EAs,signs,CRRs,
 In_enables,Out_enables,thirtyTwo_Sixteens,RRIs,SWAPs, CALLs
 	);
 	
-<<<<<<< HEAD
-decoderr : decoder port map ( interrupt,reset, clk,IF_ID(13 downto 5 ),RegWriteinput,Swapinput,Mem_Wb_Rd,Mem_Wb_Rs,
-=======
 decoderr : decoder port map ( IF_ID(18),IF_ID(16), clk,IF_ID(27 downto 19 ),RegWriteinput,Swapinput,Mem_Wb_Rd,Mem_Wb_Rs,
->>>>>>> 53f7a0318c4503e9776e37dd719f248fa46ea5bb
 value1,value2,Target_Addresss,Rsrcs,Rdsts); 
     
   Target_Address <= Target_Addresss;
