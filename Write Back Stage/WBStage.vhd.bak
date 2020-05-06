@@ -23,7 +23,7 @@ Rd<=MEM_WB(38 downto 36);
 -- memtoreg , regwrite , outenable
 WBsignals<=MEM_WB(41 downto 39);
 MemResult<=MEM_WB(73 downto 42);
-ALUResult<=MEM_WB(105 downto 74);
+ALUResult<=MEM_WB(105 downto 73);
 
 RegWriteToRegisterFile<=WBsignals(1);
 Value1 <= ALUResult when ( (WBsignals(1) ='1' and WBsignals(0) ='0' ) or (tempSwap='1' and WBsignals(1) = '1')) else MemResult when ( WBsignals(1) ='1' and WBsignals(0) ='1')  ;
