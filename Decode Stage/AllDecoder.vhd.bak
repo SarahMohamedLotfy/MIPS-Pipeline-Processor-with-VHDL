@@ -46,7 +46,7 @@ port(
 	SP: out std_logic_vector(2-1 downto 0) ;
 	ALU: out std_logic_vector(4-1 downto 0) ;
 	PCWrite,IMM_EA,sign,CRR: out std_logic;
-	In_enable,Out_enable,thirtyTwo_Sixteen,SWAP, CALL: out std_logic
+	In_enable,Out_enable,thirtyTwo_Sixteen,RRI,SWAP, CALL: out std_logic
 );
 end component;
 
