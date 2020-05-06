@@ -33,7 +33,7 @@ signal Rs: std_logic_vector(2 downto 0);
 signal EXALUResult:std_logic_vector(31 downto 0);
 signal EX_MEMRegisterRd:std_logic_vector(2 downto 0);
 signal EX_MEMRegWrite,EX_MEMSWAP:std_logic;
-signal RegDst std_logic_vector(2 downto 0);
+signal RegDst :std_logic_vector(2 downto 0);
 signal CCR:std_logic_vector(2 downto 0);
 signal ZF:std_logic;
 signal DataOut:std_logic_vector(31 downto 0);
@@ -50,9 +50,9 @@ signal MEM_WBRegWrite,MEM_WBSWAP:std_logic;
 
 -----------------------------------------intermediate registers signals------------------------------------ 
 signal IF_IDRegIN,IF_IDRegOut:std_logic_vector(50 downto 0);
-signal ID_EXRegIN,ID_EXRegOUT:in std_logic_vector(146 downto 0);
-signal EX_MEMRegIN,EX_MEMRegOUT:in std_logic_vector(114 downto 0);
-signal MEM_WBRegIN,MEM_WBRegOUT:in std_logic_vector(105 downto 0);
+signal ID_EXRegIN,ID_EXRegOUT: std_logic_vector(146 downto 0);
+signal EX_MEMRegIN,EX_MEMRegOUT: std_logic_vector(114 downto 0);
+signal MEM_WBRegIN,MEM_WBRegOUT: std_logic_vector(105 downto 0);
 signal IF_IDFlush,ID_EXFlush,EX_MEMFlush,MEM_WBFlush:std_logic:='0';
 signal IF_IDwrite,ID_EXwrite,EX_MEMwrite,MEM_WBwrite:std_logic:='1';
 ------------------------------------------------------------------------------------------------
@@ -77,7 +77,7 @@ port map (
 	RegWriteinput=>RegWriteinput,
 	Swapinput=>Swapinput,
 	Mem_Wb_Rd=>MEM_WBRegOUT(38 downto 36),Mem_Wb_Rs=>MEM_WBRegOUT(35 downto 33),
-    value1=>value1,value2=>value2
+    value1=>value1,value2=>value2,
     Target_Address=>Target_Address,
 	Rsrc=>Rsrc,
 	Rdst=>Rdst ,
