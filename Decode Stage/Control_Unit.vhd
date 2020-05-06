@@ -8,15 +8,15 @@ port(
   interrupt,reset,clk: in std_logic;
 	OpCode: in std_logic_vector(5-1 downto 0) ;
 	
-	 -- nop:0000    A: 0001    B :0010   INC:0011
-	 -- DEC:0100 ADD:0101  SUB:0110  NOT: 0111  AND: 1000  OR:    1001  SHL:1010  SHR:  1011
-
+	 
 	--Control signals
 	RegWrite,RegDST,MemToReg,MemRd,MemWR: out std_logic;
 	SP: out std_logic_vector(2-1 downto 0) ;
+	-- nop:0000    A: 0001    B :0010   INC:0011
+	 -- DEC:0100 ADD:0101  SUB:0110  NOT: 0111  AND: 1000  OR:    1001  SHL:1010  SHR:  1011
 	ALU: out std_logic_vector(4-1 downto 0) ;
 	PCWrite,IMM_EA,sign,CRR: out std_logic;
-	In_enable,Out_enable,thirtyTwo_Sixteen,RRI,SWAP, CALL: out std_logic
+	In_enable,Out_enable,thirtyTwo_Sixteen,SWAP, CALL: out std_logic
 );
 end entity;
 
@@ -44,7 +44,7 @@ if rising_edge(clk) then
 	  In_enable <= '0';
 	  Out_enable <= '0';
 	  thirtyTwo_Sixteen<= '0';
-	  RRI<= '0';
+	  
 	  SWAP<= '0';
 	  CALL <= '0';
     
@@ -67,7 +67,8 @@ if rising_edge(clk) then
 	     CRR <= '0';
 	     In_enable <= '0';
 	     Out_enable <= '0';
-	     
+	     SWAP<= '0';
+	  	CALL <= '0';
 	    -- NOT
      elsif (OpCode = "00001") then 
        RegWrite <= '1';
@@ -83,7 +84,8 @@ if rising_edge(clk) then
 	     CRR <= '0';
 	     In_enable <= '0';
 	     Out_enable <= '0';
-	     
+		 SWAP<= '0';
+		 CALL <= '0'; 
 	     
 	     -- INC
      elsif (OpCode = "00010") then 
@@ -100,7 +102,8 @@ if rising_edge(clk) then
 	     CRR <= '0';
 	     In_enable <= '0';
 	     Out_enable <= '0';
-	     
+	     SWAP<= '0';
+	  	CALL <= '0';
 	     -- DEC
      elsif (OpCode = "00011") then 
        RegWrite <= '1';
@@ -116,7 +119,8 @@ if rising_edge(clk) then
 	     CRR <= '0';
 	     In_enable <= '0';
 	     Out_enable <= '0';
-	     
+		 SWAP<= '0';
+		 CALL <= '0'; 
 	     -- OUT
      elsif (OpCode = "00100") then
        RegWrite <= '0';
@@ -132,7 +136,8 @@ if rising_edge(clk) then
 	     CRR <= '0';
 	     In_enable <= '0';
 	     Out_enable <= '1';
-	     
+	     SWAP<= '0';
+	  	CALL <= '0';
 	     
 	     -- IN
      elsif (OpCode = "00101") then
@@ -149,7 +154,8 @@ if rising_edge(clk) then
 	     CRR <= '0';
 	     In_enable <= '1';
 	     Out_enable <= '0'; 
-               
+		 SWAP<= '0';
+		 CALL <= '0';       
                
      -- Two Operand   
        -- PUSH       
@@ -167,7 +173,8 @@ if rising_edge(clk) then
 	     CRR <= '0';
 	     In_enable <= '0';
 	     Out_enable <= '0';
-	     
+	     SWAP<= '0';
+	  	CALL <= '0';
 	     
 	     
 	     -- POP
@@ -186,7 +193,8 @@ if rising_edge(clk) then
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     thirtyTwo_Sixteen <='0';
-	     
+		 SWAP<= '0';
+		 CALL <= '0'; 
 	     -- LDM
      elsif (OpCode = "10000") then 
        RegWrite <= '1';
@@ -203,7 +211,8 @@ if rising_edge(clk) then
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     thirtyTwo_Sixteen <='1';
-	     
+	     SWAP<= '0';
+	  CALL <= '0';
 	     
 	     -- LDD
      elsif (OpCode = "10001") then 
@@ -221,7 +230,8 @@ if rising_edge(clk) then
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     thirtyTwo_Sixteen <='1';
-	     
+	     SWAP<= '0';
+	  CALL <= '0';
 	     -- STD
      elsif (OpCode = "10010") then
        RegWrite <= '0';
@@ -238,7 +248,8 @@ if rising_edge(clk) then
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     thirtyTwo_Sixteen <='1';
-	     
+	     SWAP<= '0';
+	  CALL <= '0';
 	     
 	     -- JZ
      elsif (OpCode = "10011") then
@@ -256,7 +267,8 @@ if rising_edge(clk) then
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     thirtyTwo_Sixteen <='0';
-	     
+	     SWAP<= '0';
+	  CALL <= '0';
 	     -- JMP
      elsif (OpCode = "10100") then
        RegWrite <= '0';
@@ -273,7 +285,8 @@ if rising_edge(clk) then
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     thirtyTwo_Sixteen <='0';
-	     
+	     SWAP<= '0';
+	  CALL <= '0';
 	     
 	     -- CALL
      elsif (OpCode = "01101") then
@@ -291,8 +304,9 @@ if rising_edge(clk) then
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     thirtyTwo_Sixteen <='0';
-       CALL <='1';
-       RRI <='1';
+       
+	   SWAP<= '0';
+	   CALL <= '1';
      
      --  RET
      elsif (OpCode = "10101") then
@@ -310,7 +324,8 @@ if rising_edge(clk) then
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     thirtyTwo_Sixteen <='0';
-	     RRI<='1';
+		 SWAP<= '0';
+		 CALL <= '0';
 	     
 	     -- RTI
      elsif (OpCode = "10111") then
@@ -328,7 +343,8 @@ if rising_edge(clk) then
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     thirtyTwo_Sixteen <='0';
-	     RRI<='1';
+	     SWAP<= '0';
+	  	 CALL <= '0';
 	     
      
 	     -- SWAP
@@ -346,8 +362,9 @@ if rising_edge(clk) then
 	     CRR <= '0';
 	     In_enable <= '0';
 	     Out_enable <= '0';
-	     SWAP<='1';
 	     
+	     SWAP<= '1';
+	  CALL <= '0';
 	     -- ADD
      elsif (OpCode = "00111") then
        RegWrite <= '1';
@@ -363,7 +380,8 @@ if rising_edge(clk) then
 	     CRR <= '0';
 	     In_enable <= '0';
 	     Out_enable <= '0';
-	     
+	     SWAP<= '0';
+	  CALL <= '0';
        
      -- IADD
      elsif (OpCode = "01000") then
@@ -380,7 +398,8 @@ if rising_edge(clk) then
 	     CRR <= '0';
 	     In_enable <= '0';
 	     Out_enable <= '0';
-	     
+	     SWAP<= '0';
+	  CALL <= '0';
 	     -- SUB 
      elsif (OpCode = "01001") then
        RegWrite <= '1';
@@ -396,7 +415,8 @@ if rising_edge(clk) then
 	     CRR <= '0';
 	     In_enable <= '0';
 	     Out_enable <= '0';
-	     
+	     SWAP<= '0';
+	  CALL <= '0';
 	     --AND
      elsif (OpCode = "01010") then
        RegWrite <= '1';
@@ -412,7 +432,8 @@ if rising_edge(clk) then
 	     CRR <= '0';
 	     In_enable <= '0';
 	     Out_enable <= '0';
-	     
+	     SWAP<= '0';
+	  CALL <= '0';
 	     -- OR
      elsif (OpCode = "01011") then
        RegWrite <= '1';
@@ -428,7 +449,8 @@ if rising_edge(clk) then
 	     CRR <= '0';
 	     In_enable <= '0';
 	     Out_enable <= '0';
-	     
+	     SWAP<= '0';
+	  CALL <= '0';
        
        -- SHL
      elsif (OpCode = "01100") then
@@ -445,7 +467,8 @@ if rising_edge(clk) then
 	     CRR <= '0';
 	     In_enable <= '0';
 	     Out_enable <= '0';
-	    
+		 SWAP<= '0';
+		 CALL <= '0';
 	    -- SHR 
 	  else
        RegWrite <= '1';
@@ -461,7 +484,8 @@ if rising_edge(clk) then
 	     CRR <= '0';
 	     In_enable <= '0';
 	     Out_enable <= '0';
-	     
+	     SWAP<= '0';
+	  CALL <= '0';
                         
       
     

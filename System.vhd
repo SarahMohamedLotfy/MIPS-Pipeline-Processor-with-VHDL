@@ -13,7 +13,7 @@ architecture arch of system is
 -----------------------------------------fetch stage signals------------------------------------ 
 signal instruction:std_logic_vector(15 downto 0);
 signal pcnew:std_logic_vector(31 downto 0);
-signal probINTsignal,probRstSignal,RRI:std_logic;--signals to propagte in the next stages.
+signal probINTsignal,probRstSignal,RRIsignal:std_logic;--signals to propagte in the next stages.
 ------------------------------------------------------------------------------------------------
 
 -----------------------------------------Decode stage signals------------------------------------ 
@@ -25,7 +25,7 @@ signal RegWrite,REGdstSignal,MemToReg,MemRd,MemWR: std_logic;
 signal SP: std_logic_vector(1 downto 0);
 signal ALU: std_logic_vector(3 downto 0);
 signal PCWrite,IMM_EA,sign,CRR: std_logic;
-signal In_enable,Out_enable,thirtyTwo_Sixteen,SWAP, CALL: std_logic;
+signal In_enable,Out_enable,thirtyTwo_Sixteen,RRI,SWAP, CALL: std_logic;
 signal Rs,Rt_from_fetch: std_logic_vector(2 downto 0);
 ------------------------------------------------------------------------------------------------
 
@@ -60,11 +60,11 @@ signal IF_IDwrite,ID_EXwrite,EX_MEMwrite,MEM_WBwrite:std_logic:='1';
 begin
 --------------------------------------------------------------Fetch ->> Decode------------------------------------------
 Fetch:entity work.FetchStage  Generic map (wordSize=>16,PCSize=>32) 
-port map(clk=>clk,reset=>rst,interrupt=>INT,instruction=>instruction,PCnew=>pcnew,intSignal=>probINTsignal,rstSignal=>probRstSignal);
+port map(clk=>clk,reset=>rst,interrupt=>INT,instruction=>instruction,PCnew=>pcnew,RRI=>RRIsignal,intSignal=>probINTsignal,rstSignal=>probRstSignal);
 IF_IDRegIN(15 downto 0) <=instruction;
 IF_IDRegIN(47 downto 16) <=pcnew;
 IF_IDRegIN(48) <=probINTsignal;
-IF_IDRegIN(49) <=RRI;
+IF_IDRegIN(49) <=RRIsignal;
 IF_IDRegIN(50) <=probRstSignal;
 IF_ID:entity work.Reg  generic map(n=>51) port map(input=>IF_IDRegIN,en=>IF_IDwrite,rst=>rst,clk=>clk,output=>IF_IDRegOUT);
 -----------------------------------------------------------------------------------------------------------------------------------------

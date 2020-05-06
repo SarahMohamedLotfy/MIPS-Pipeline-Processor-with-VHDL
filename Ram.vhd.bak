@@ -31,6 +31,7 @@ ARCHITECTURE syncrama OF Ram IS
 				IF falling_edge(CLK) THEN  
 					IF W = '1' THEN
 						ram(to_integer(unsigned(address))) <= dataIn;
+					END IF;
 					elsIF R = '1' THEN
 						loop0: for i in 0 to n-1 loop
 							k := k + 16;

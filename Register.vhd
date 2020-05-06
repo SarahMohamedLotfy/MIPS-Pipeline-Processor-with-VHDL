@@ -17,7 +17,7 @@ BEGIN
 	BEGIN
 		IF (rst='1') THEN
 			output <= (others =>'0');
-		ELSIF (falling_edge(clk)) THEN 
+		ELSIF (rising_edge(clk)) THEN 
 		
 			IF (en='1') THEN
 				output <= input;
