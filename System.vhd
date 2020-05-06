@@ -52,7 +52,7 @@ signal MEM_WBRegWrite,MEM_WBSWAP:std_logic;
 signal IF_IDRegIN,IF_IDRegOut:std_logic_vector(50 downto 0);
 signal ID_EXRegIN,ID_EXRegOUT:in std_logic_vector(146 downto 0);
 signal EX_MEMRegIN,EX_MEMRegOUT:in std_logic_vector(114 downto 0);
-signal MEM_WBRegIN,MEM_WBRegOUT:in std_logic_vector(102 downto 0);
+signal MEM_WBRegIN,MEM_WBRegOUT:in std_logic_vector(105 downto 0);
 signal IF_IDFlush,ID_EXFlush,EX_MEMFlush,MEM_WBFlush:std_logic:='0';
 signal IF_IDwrite,ID_EXwrite,EX_MEMwrite,MEM_WBwrite:std_logic:='1';
 ------------------------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ port map (
 	IF_ID=>IF_IDRegOUT,
 	RegWriteinput=>RegWriteinput,
 	Swapinput=>Swapinput,
-	Mem_Wb_Rd=>,Mem_Wb_Rs=>,
+	Mem_Wb_Rd=>MEM_WBRegOUT(38 downto 36),Mem_Wb_Rs=>MEM_WBRegOUT(35 downto 33),
     value1=>value1,value2=>value2
     Target_Address=>Target_Address,
 	Rsrc=>Rsrc,
@@ -144,6 +144,13 @@ IF_ID:entity work.Reg  generic map(n=>115) port map(input=>EX_MEMRegIN,en=>EX_ME
 --------------------------------------------------------------Memory ->> Write Back ------------------------------------------
 WBStage:entity work.WBStage port map (clk=>clk,rst=>rst,MEM_WB=>MEM_WBRegOUT,RegWriteToRegisterFile=>RegWriteinput,Swap=>Swapinput,PortOut=>OUTPort,Value1=>value1,Value2=>value2);
 -----------------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------mem/wb buffer --------------------------------
+MEM_WBRegIN(31 downto 0) <= Rsrc;--Rscr1 
+MEM_WBRegIN(63 downto 32) <= Rdst;--Rscr2 
+MEM_WBRegIN(64) <=SWAP; --swap 
+--MEM_WBRegIN(96 downto 65) <=address; 
+--MEM_WBRegIN(128 downto 97) <=memory; 
+--MEM_WBRegIN(160 downto 129) <=ALUresult; 
 
 
 
