@@ -10,7 +10,7 @@ port(
 	Mem_Wb_Rd,Mem_Wb_Rs: in std_logic_vector(2 downto 0);
   value1,value2 :in std_logic_vector(31 downto 0);
  
-  Target_Address,Rsrc,Rdst,PC :out std_logic_vector(n-1 downto 0);
+  Target_Address,Rsrc,Rdst,instruction,PC :out std_logic_vector(n-1 downto 0);
 	
 	--Control signals
 	RegWrite,RegDST,MemToReg,MemRd,MemWR: out std_logic;
@@ -89,6 +89,8 @@ value1,value2,Target_Addresss,Rsrcs,Rdsts);
 	CALL<= CALLs;
 	PC <= IF_ID(50 downto 19 );
 	Rs <= IF_ID(10 downto 8 );
+	instruction(15 downto 0) <= IF_ID(15 downto 0);
+	instruction(31 downto 16)<=(others=>'0');
 end architecture;
 
   
