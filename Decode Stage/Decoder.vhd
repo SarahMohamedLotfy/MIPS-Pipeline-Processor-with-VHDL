@@ -46,11 +46,12 @@ if rising_edge(clk) then
    
    else  
       -- Read registers
+      Rsrc <= registers(to_integer(unsigned(IF_ID_Rs)));
+      Rdst <= registers(to_integer(unsigned(IF_ID_Rt)));
       if (RegWriteinput= '0') and (Swapinput = '0') then
         
          Target_Address <= registers(to_integer(unsigned(Rt_from_fetch)));
-         Rsrc <= registers(to_integer(unsigned(IF_ID_Rs)));
-         Rdst <= registers(to_integer(unsigned(IF_ID_Rt)));
+         
        
          
       -- Write in registers

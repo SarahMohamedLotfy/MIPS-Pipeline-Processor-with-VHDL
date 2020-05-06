@@ -101,6 +101,8 @@ port map (
 	SWAP=>SWAP,
 	CALL=>CALL,
 	Rs =>Rs);
+
+Rt_from_fetch<=instruction(10 downto 8);
 ID_EX:entity work.Reg  generic map(n=>147) port map(input=>ID_EXRegIN,en=>ID_EXwrite,rst=>rst,clk=>clk,output=>ID_EXRegOUT);
 	
 ---------------------------------------ID_EX Buffer -----------------------------------------------------------------
