@@ -50,9 +50,15 @@ signal MEM_WBRegWrite,MEM_WBSWAP:std_logic;
 
 -----------------------------------------intermediate registers signals------------------------------------ 
 signal IF_IDRegIN,IF_IDRegOut:std_logic_vector(50 downto 0);
+<<<<<<< HEAD
 signal ID_EXRegIN,ID_EXRegOUT: std_logic_vector(146 downto 0);
 signal EX_MEMRegIN,EX_MEMRegOUT: std_logic_vector(114 downto 0);
 signal MEM_WBRegIN,MEM_WBRegOUT: std_logic_vector(105 downto 0);
+=======
+signal ID_EXRegIN,ID_EXRegOUT:in std_logic_vector(146 downto 0);
+signal EX_MEMRegIN,EX_MEMRegOUT:in std_logic_vector(114 downto 0);
+signal MEM_WBRegIN,MEM_WBRegOUT:in std_logic_vector(105 downto 0);
+>>>>>>> 5dc1aba61f40a853d53024a4c5eebaa15a3c9f98
 signal IF_IDFlush,ID_EXFlush,EX_MEMFlush,MEM_WBFlush:std_logic:='0';
 signal IF_IDwrite,ID_EXwrite,EX_MEMwrite,MEM_WBwrite:std_logic:='1';
 ------------------------------------------------------------------------------------------------
@@ -77,7 +83,11 @@ port map (
 	RegWriteinput=>RegWriteinput,
 	Swapinput=>Swapinput,
 	Mem_Wb_Rd=>MEM_WBRegOUT(38 downto 36),Mem_Wb_Rs=>MEM_WBRegOUT(35 downto 33),
+<<<<<<< HEAD
     value1=>value1,value2=>value2,
+=======
+    value1=>value1,value2=>value2
+>>>>>>> 5dc1aba61f40a853d53024a4c5eebaa15a3c9f98
     Target_Address=>Target_Address,
 	Rsrc=>Rsrc,
 	Rdst=>Rdst ,
