@@ -26,6 +26,7 @@ signal SP: std_logic_vector(1 downto 0);
 signal ALU: std_logic_vector(3 downto 0);
 signal PCWrite,IMM_EA,sign,CRR: std_logic;
 signal In_enable,Out_enable,thirtyTwo_Sixteen,SWAP, CALL: std_logic;
+signal Rs: std_logic_vector(2 downto 0);
 ------------------------------------------------------------------------------------------------
 
 -----------------------------------------Execute stage signals------------------------------------ 
@@ -96,7 +97,8 @@ port map (
 	thirtyTwo_Sixteen=>thirtyTwo_Sixteen,
 	RRI=>RRI,
 	SWAP=>SWAP,
-	CALL=>CALL);
+	CALL=>CALL,
+	Rs =>Rs);
 	
 ---------------------------------------ID_EX Buffer -----------------------------------------------------------------
 ID_EXRegIN(31 downto 0) <= Rsrc; --Rscr1 
