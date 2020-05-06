@@ -9,9 +9,10 @@ entity ExeStage is
     EXALUResult,MEMALUResult,INPORTValue:in std_logic_vector(31 downto 0);--IN port value is an input from system that read in execute cycle direct from system.
     MEM_WBRegisterRd,EX_MEMRegisterRd:IN std_logic_vector(2 downto 0);
     EX_MEMRegWrite,MEM_WBRegWrite,EX_MEMSWAP,MEM_WBSWAP:IN std_logic;
-    RegDst,CCR:out std_logic_vector(2 downto 0);--CCR output of reg , but ZF output direct from ALU to use in feedback check in branch decision.
-    ZF:OUT std_logic;
-    DataOut,AddrressEA_IMM:out std_logic_vector(31 downto 0)
+    RegDst,CCR,RsReg,WBsignals:out std_logic_vector(2 downto 0);--CCR output of reg , but ZF output direct from ALU to use in feedback check in branch decision.
+    MEMSignals:out std_logic_vector(3 downto 0);
+    ZF,SWAP,INTSignal,RRI:OUT std_logic;
+    DataOut,AddrressEA_IMM,SRC2out:out std_logic_vector(31 downto 0)
 ) ;
 end ExeStage ;
 
@@ -20,11 +21,11 @@ signal MUXAInput,MUXBInput :bus_array(3 downto 0)(31 downto 0);
 signal MUXSRC2_signInput,MUXALUResult_PC1Input,MUXTempA_INPORTInput:bus_array(1 downto 0)(31 downto 0);
 signal MUXRt_RdInput:bus_array(1 downto 0)(2 downto 0);
 signal IMM_EAbit,CallBit,REGdstSignal,INEnableSignal:std_logic_vector(0 downto 0);
-signal signType,RRI,SWAP,INTSignal,OVF:std_logic;
+signal signType,OVF:std_logic;
 signal UpperInstr:std_logic_vector(19 downto 0);
 signal PC_1,SRC1,SRC2,SignExtendOut,tempA,A,B,ALUResult,MUXSRC2_signOutput:std_logic_vector(31 downto 0); 
-signal ALUSelectors,EA_Part,MEMSignals:std_logic_vector(3 downto 0);
-signal CCRRegister,Rs,Rt,Rd,WBsignals:std_logic_vector(2 downto 0);--ZF,SignFlag,Carry
+signal ALUSelectors,EA_Part:std_logic_vector(3 downto 0);
+signal CCRRegister,Rs,Rt,Rd:std_logic_vector(2 downto 0);--ZF,SignFlag,Carry
 signal MUXASel,MUXBSel:std_logic_vector(1 downto 0):="00";
 
 begin
@@ -32,7 +33,9 @@ CCR_Reg:entity work.Reg generic map(n=>3) port map(input=>CCRRegister,en=>'1',rs
 ZF<=CCRRegister(0);
 SRC1<=ID_EX(31 downto 0);
 SRC2 <= ID_EX(63 downto 32);
+SRC2out <=ID_EX(63 downto 32);
 Rs<=ID_EX(74 downto 72);
+RsReg<=ID_EX(74 downto 72);
 Rt <= ID_EX(71 downto 69);
 Rd <= ID_EX(68 downto 66);
 EA_Part<=ID_EX(68 downto 65);
@@ -49,6 +52,7 @@ REGdstSignal(0)<=ID_EX(137);
 INEnableSignal(0)<=ID_EX(138);
 --memRead,memWrite,spType
 MEMSignals<=ID_EX(142 downto 139);
+
 RRI<=ID_EX(143);
 SWAP<=ID_EX(144);
 CallBit(0)<=ID_EX(145);
