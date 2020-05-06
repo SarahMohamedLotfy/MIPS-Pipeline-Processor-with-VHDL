@@ -59,7 +59,17 @@ if rising_edge(clk) then
      
    
    else  
+    Rsrc2o<=Rsrc2;
+    Addresso<=Address ;
+    ALUresulto<= ALUresult;
     
+    SWAPo<=SWAP;
+    Rso<= Rs;
+    memTorego<= memToreg;
+    regWriteo<= regWrite;
+    outenableo <=outenable ;
+    resultfrommemory<="00000000000000000000000000000000";
+     
     end if;
   end if;
   end process;
