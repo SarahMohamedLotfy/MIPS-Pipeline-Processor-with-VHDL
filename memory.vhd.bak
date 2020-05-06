@@ -16,8 +16,7 @@ end entity;
 architecture memory_arch of memory is
  
 	signal interrupt,RRI:  std_logic;
-	signal MEMsignals: std_logic_vector(3 downto 0);
-	signal CRR : std_logic_vector(2 downto 0);
+	signal MEMsignals,CRR : std_logic_vector(2 downto 0);
 	signal spType :std_logic_vector(2-1 downto 0);
 	signal Address : std_logic_vector(31 downto 0);
 	

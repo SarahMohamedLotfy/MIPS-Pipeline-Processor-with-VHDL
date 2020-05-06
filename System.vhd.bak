@@ -11,7 +11,7 @@ end system ;
 
 architecture arch of system is
 -----------------------------------------fetch stage signals------------------------------------ 
-signal instruction:std_logic_vector(15 downto 0);
+signal instruction:std_logic_vector(16 downto 0);
 signal pcnew:std_logic_vector(31 downto 0);
 signal probINTsignal,probRstSignal,RRI:std_logic;--signals to propagte in the next stages.
 ------------------------------------------------------------------------------------------------
@@ -19,9 +19,9 @@ signal probINTsignal,probRstSignal,RRI:std_logic;--signals to propagte in the ne
 -----------------------------------------Decode stage signals------------------------------------ 
 signal RegWriteinput,Swapinput,ZFToCheck:std_logic;
 signal Mem_Wb_Rd,Mem_Wb_Rs: std_logic_vector(2 downto 0);
-signal value1,value2: std_logic_vector(31 downto 0);
+signal value1,value2: std_logic_vector(2 downto 0);
 signal Target_Address,Rsrc,Rdst,instructionDecodeout: std_logic_vector(31 downto 0);
-signal RegWrite,REGdstSignal,MemToReg,MemRd,MemWR: std_logic;
+signal RegWrite,RegDST,MemToReg,MemRd,MemWR: std_logic;
 signal SP: std_logic_vector(1 downto 0);
 signal ALU: std_logic_vector(3 downto 0);
 signal PCWrite,IMM_EA,sign,CRR: std_logic;
@@ -72,7 +72,7 @@ IF_ID:entity work.Reg  generic map(n=>51) port map(input=>IF_IDRegIN,en=>IF_IDwr
 --------------------------------------------------------------Decode ->>Execute ------------------------------------------
 Decode:entity work.Alldecoder Generic map (n=>32) 
 port map (
-    clk=>clk,
+    interrupt=>INT,reset=>rst, clk=>clk,
 	IF_ID=>IF_IDRegOUT,
 	RegWriteinput=>RegWriteinput,
 	Swapinput=>Swapinput,
@@ -83,7 +83,7 @@ port map (
 	Rdst=>Rdst ,
 	instruction=>instructionDecodeout,
 	RegWrite=>RegWrite,
-	RegDST=>REGdstSignal,
+	RegDST=>RegDST,
 	MemToReg=>MemToReg,
 	MemRd=>MemRd,
 	MemWR=>MemWR,
@@ -118,7 +118,7 @@ ID_EXRegIN(130) <=Out_enable;
 ID_EXRegIN(134 downto 131) <=ALU;
 ID_EXRegIN(135) <=sign;
 ID_EXRegIN(136) <=IMM_EA;
-ID_EXRegIN(137) <=REGdstSignal;
+ID_EXRegIN(137) <=RegDST;
 ID_EXRegIN(138) <=In_enable;
 ID_EXRegIN(139) <=MemRd;
 ID_EXRegIN(140) <=MemWR;
@@ -143,7 +143,7 @@ EX_MEM:entity work.Reg  generic map(n=>115) port map(input=>EX_MEMRegIN,en=>EX_M
 
 --------------------------------------------------------------Memory ->> Write Back ------------------------------------------
 MemoryStage:entity work.memory port map(reset=>rst, clk=>clk,
-EX_MEM=>EX_MEMRegOUT,Rsrc2=>MEM_WBRegIN(31 downto 0),ALUresult=>MEM_WBRegIN(105 downto 74), MemoryReuslt=>MEM_WBRegIN(73 downto 42) ,SWAP=>MEM_WBRegIN(32),Rs=>MEM_WBRegIN(35 downto 33),Rd=>MEM_WBRegIN(38 downto 36),WBsignals=>MEM_WBRegIN(41 downto 39));
+EX_MEM=>EX_MEMRegOUT,Rsrc2=>MEM_WBRegIN(31 downto 0),ALUresult=>MEM_WBRegIN(105 downto 73), MemoryReuslt=>MEM_WBRegIN(73 downto 42) ,SWAP=>MEM_WBRegIN(32),Rs=>MEM_WBRegIN(35 downto 33),Rd=>MEM_WBRegIN(38 downto 36),WBsignals=>MEM_WBRegIN(41 downto 39));
 
 MEM_WB:entity work.Reg  generic map(n=>106) port map(input=>MEM_WBRegIN,en=>MEM_WBwrite,rst=>rst,clk=>clk,output=>MEM_WBRegOUT);
 
