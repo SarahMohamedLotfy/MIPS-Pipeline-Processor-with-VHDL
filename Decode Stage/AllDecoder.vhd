@@ -84,7 +84,7 @@ Rt_from_fetch, value1,value2,Target_Addresss,Rsrcs,Rdsts);
 	In_enable <=In_enables ;
 	Out_enable <= Out_enables;
 	thirtyTwo_Sixteen <= thirtyTwo_Sixteens;
-	RRI<=IF_ID(49);
+	RRI <= IF_ID(17);
 	SWAP<= SWAPs;
 	CALL<= CALLs;
 	PC <= IF_ID(50 downto 19 );
