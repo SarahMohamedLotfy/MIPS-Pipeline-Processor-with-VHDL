@@ -10,9 +10,9 @@ port(
 	clk: in std_logic ;
 	OpCode: in std_logic_vector(5-1 downto 0) ;
 	
-	 -- nop:0000    A: 0001    B :0010   ALU: 0011 
-	 -- Add :0100   Sub:0101   And:0110  Or:0111  SHL:1000  SHR: 1001 
-	 
+	 -- nop:0000    A: 0001    B :0010   INC:0011
+	 -- DEC:0100 ADD:0101  SUB:0110  NOT: 0111  AND: 1000  OR:    1001  SHL:1010  SHR:  1011
+
 	--Control signals
 	RegWrite: out std_logic;
 	RegDST: out std_logic;
@@ -84,7 +84,7 @@ if rising_edge(clk) then
 	     MemRd <= '0';
 	     MemWR <= '0';
 	     SP <= "11";
-	     ALU <= "0001";
+	     ALU <= "0111";
 	     PCWrite <= '1';
 	     IMM_EA <= '0';
 	     sign <= '0';
@@ -101,7 +101,7 @@ if rising_edge(clk) then
 	     MemRd <= '0';
 	     MemWR <= '0';
 	     SP <= "11";
-	     ALU <= "0001";
+	     ALU <= "0011";
 	     PCWrite <= '1';
 	     IMM_EA <= '0';
 	     sign <= '0';
@@ -117,7 +117,7 @@ if rising_edge(clk) then
 	     MemRd <= '0';
 	     MemWR <= '0';
 	     SP <= "11";
-	     ALU <= "0001";
+	     ALU <= "0100";
 	     PCWrite <= '1';
 	     IMM_EA <= '0';
 	     sign <= '0';
@@ -168,7 +168,7 @@ if rising_edge(clk) then
 	     MemRd <= '0';
 	     MemWR <= '1';
 	     SP <= "00";
-	     ALU <= "0010";
+	     ALU <= "0001";
 	     PCWrite <= '0';
 	     IMM_EA <= '0';
 	     sign <= '1';
@@ -203,7 +203,7 @@ if rising_edge(clk) then
 	     MemRd <= '0';
 	     MemWR <= '0';
 	     SP <= "10";
-	     ALU <= "0010";
+	     ALU <= "0001";
 	     PCWrite <= '0';
 	     IMM_EA <= '1';
 	     sign <= '1';
@@ -221,7 +221,7 @@ if rising_edge(clk) then
 	     MemRd <= '1';
 	     MemWR <= '0';
 	     SP <= "10";
-	     ALU <= "0011";
+	     ALU <= "0000";
 	     PCWrite <= '0';
 	     IMM_EA <= '1';
 	     sign <= '0';
@@ -361,7 +361,7 @@ if rising_edge(clk) then
 	     MemRd <= '0';
 	     MemWR <= '0';
 	     SP <= "11";
-	     ALU <= "0100";
+	     ALU <= "0101";
 	     PCWrite <= '0';
 	     IMM_EA <= '0';
 	     sign <= '0';
@@ -378,7 +378,7 @@ if rising_edge(clk) then
 	     MemRd <= '0';
 	     MemWR <= '0';
 	     SP <= "11";
-	     ALU <= "0100";
+	     ALU <= "0101";
 	     PCWrite <= '0';
 	     IMM_EA <= '1';
 	     sign <= '1';
@@ -394,7 +394,7 @@ if rising_edge(clk) then
 	     MemRd <= '0';
 	     MemWR <= '0';
 	     SP <= "11";
-	     ALU <= "0101";
+	     ALU <= "0110";
 	     PCWrite <= '0';
 	     IMM_EA <= '0';
 	     sign <= '0';
@@ -410,7 +410,7 @@ if rising_edge(clk) then
 	     MemRd <= '0';
 	     MemWR <= '0';
 	     SP <= "11";
-	     ALU <= "0110";
+	     ALU <= "1000";
 	     PCWrite <= '0';
 	     IMM_EA <= '0';
 	     sign <= '0';
@@ -426,7 +426,7 @@ if rising_edge(clk) then
 	     MemRd <= '0';
 	     MemWR <= '0';
 	     SP <= "11";
-	     ALU <= "00";
+	     ALU <= "1001";
 	     PCWrite <= '0';
 	     IMM_EA <= '0';
 	     sign <= '0';
@@ -443,7 +443,7 @@ if rising_edge(clk) then
 	     MemRd <= '0';
 	     MemWR <= '0';
 	     SP <= "11";
-	     ALU <= "1000";
+	     ALU <= "1010";
 	     PCWrite <= '0';
 	     IMM_EA <= '1';
 	     sign <= '1';
@@ -459,7 +459,7 @@ if rising_edge(clk) then
 	     MemRd <= '0';
 	     MemWR <= '0';
 	     SP <= "11";
-	     ALU <= "1000";
+	     ALU <= "1011";
 	     PCWrite <= '0';
 	     IMM_EA <= '1';
 	     sign <= '1';
