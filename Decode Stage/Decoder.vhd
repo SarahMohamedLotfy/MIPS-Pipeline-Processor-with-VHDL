@@ -5,20 +5,9 @@ use ieee.numeric_std.all;
 entity decoder is 
 generic (n:integer := 32);
 port(	
-  interrupt: in std_logic;
-	reset : in std_logic ; 
-	clk: in std_logic ;
+  interrupt,reset, clk: in std_logic;
 	flush_decoderInput: in std_logic ;
-	
-	RegWrite:in std_logic ;
-	Swap:    in std_logic ;
-	Rt_from_fetch	: in std_logic_vector(3-1 downto 0);
-	IF_ID_Rt	: in std_logic_vector(3-1 downto 0);
-	IF_ID_Rs	: in std_logic_vector(3-1 downto 0);
-	Mem_Wb_Rd	: in std_logic_vector(3-1 downto 0);
-	value1:in std_logic_vector(n-1 downto 0);
-	Mem_Wb_Rs	: in std_logic_vector(3-1 downto 0);
-	value2:in std_logic_vector(n-1 downto 0);
+	IF_ID:in std_logic_vector(80 downto 0);
 	
 	Target_Address :out std_logic_vector(n-1 downto 0);
 	Rsrc :out std_logic_vector(n-1 downto 0);
@@ -30,8 +19,24 @@ end entity;
 architecture decoder_arch of decoder is
   type registerFile is array(0 to 6) of std_logic_vector(n-1 downto 0);
   signal registers : registerFile;
-  
+  signal RegWrite,Swap : std_logic ;
+	signal Rt_from_fetch,IF_ID_Rt,IF_ID_Rs,Mem_Wb_Rd,Mem_Wb_Rs:  std_logic_vector(3-1 downto 0);
+	signal value1,value2: std_logic_vector(n-1 downto 0);
+
+
 begin
+  
+RegWrite<=IF_ID(0);
+Swap <= IF_ID(1);
+Rt_from_fetch <=IF_ID(4 downto 2);
+IF_ID_Rt <= IF_ID(7 downto 5);
+IF_ID_Rs <= IF_ID(10 downto 8);
+Mem_Wb_Rd <= IF_ID(13 downto 11);
+Mem_Wb_Rs <= IF_ID(16 downto 14);
+value1 <= IF_ID(48 downto 17);
+value2 <= IF_ID(80 downto 49);
+  
+  
 process (clk)
 begin
 if rising_edge(clk) then
@@ -49,7 +54,7 @@ if rising_edge(clk) then
      registers(5) <= "00000000000000000000000000000000";
      registers(6) <= "00000000000000000000000000000000";
     
-   elsif (flush_decoderInput='1')
+   elsif (flush_decoderInput='1')then
          flush_decoder<='1';
    
    
