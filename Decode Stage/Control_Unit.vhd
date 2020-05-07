@@ -23,9 +23,8 @@ end entity;
 architecture Control_Unit_arch of control_unit is
   
 begin
-process (clk)
+process (clk,OpCode,reset,interrupt)
 begin
-if rising_edge(clk) then
    if (reset ='1')then 
      
    
@@ -152,7 +151,7 @@ if rising_edge(clk) then
 	     MemRd <= '0';
 	     MemWR <= '0';
 	     SP <= "11";
-	     ALU <= "0000";
+	     ALU <= "0001";
 	     PCWrite <= '1';
 	     IMM_EA <= '0';
 	     sign <= '0';
@@ -483,7 +482,7 @@ if rising_edge(clk) then
 		 CALL <= '0';
 		 thirtyTwo_Sixteen<= '1';
 	    -- SHR 
-	  else
+	  elsif(OpCode="01101")then
          RegWrite <= '1';
 	     RegDST <= '1';
 	     MemToReg <= '0';
@@ -505,7 +504,7 @@ if rising_edge(clk) then
     
       end if;
    end if;
-end if;
+
 end process;
 end architecture;
 

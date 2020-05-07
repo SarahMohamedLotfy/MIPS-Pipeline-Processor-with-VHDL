@@ -59,8 +59,8 @@ CallBit(0)<=ID_EX(145);
 INTSignal<=ID_EX(146);
 
 
-MUXRt_RdInput(0)<= Rt;
-MUXRt_RdInput(1)<= Rd;
+MUXRt_RdInput(0)<= Rd;
+MUXRt_RdInput(1)<= Rs;
 -- Rt , Rd to select the dest reg.
 MUXDst:entity work.mux generic map(bus_width=>3,sel_width=>1) port map(input=>MUXRt_RdInput,sel=>REGdstSignal,output=>RegDst);
 MUXSRC2_signInput(0)<=SRC2;

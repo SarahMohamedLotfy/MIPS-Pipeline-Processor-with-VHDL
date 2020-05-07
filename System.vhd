@@ -20,20 +20,19 @@ signal probINTsignal,probRstSignal,RRIsignal:std_logic;--signals to propagte in 
 signal RegWriteinput,Swapinput,ZFToCheck:std_logic;
 signal Mem_Wb_Rd,Mem_Wb_Rs: std_logic_vector(2 downto 0);
 signal value1,value2: std_logic_vector(31 downto 0);
-signal Target_Address,Rsrc,Rdst,instructionDecodeout: std_logic_vector(31 downto 0);
-signal RegWrite,REGdstSignal,MemToReg,MemRd,MemWR: std_logic;
-signal SP: std_logic_vector(1 downto 0);
-signal ALU: std_logic_vector(3 downto 0);
-signal PCWrite,IMM_EA,sign,CRR: std_logic;
-signal In_enable,Out_enable,thirtyTwo_Sixteen,RRI,SWAP, CALL: std_logic;
-signal Rs,Rt_from_fetch: std_logic_vector(2 downto 0);
+signal Target_Address,Rsrc,Rdst,instructionDecodeout,pcDecodeout: std_logic_vector(31 downto 0);
+signal REGdstSignal,probINTDecodeout: std_logic;
+signal ALUSelectors,MEMSignalsDecodeOut: std_logic_vector(3 downto 0);
+signal PCWrite,IMM_EA,sign: std_logic;
+signal In_enable,Out_enable,thirtyTwo_Sixteen,RRI,SWAP, CALL,tempIF_IDwrite: std_logic;
+signal Rs_from_fetch,WBsignalsDecodeOut: std_logic_vector(2 downto 0);
 ------------------------------------------------------------------------------------------------
 
 -----------------------------------------Execute stage signals------------------------------------ 
 signal EXALUResult:std_logic_vector(31 downto 0);
 signal EX_MEMRegisterRd:std_logic_vector(2 downto 0);
 signal EX_MEMRegWrite,EX_MEMSWAP:std_logic;
-signal RegDst :std_logic_vector(2 downto 0);
+signal RegDst,RsEXEOUT :std_logic_vector(2 downto 0);
 signal CCR:std_logic_vector(2 downto 0);
 signal ZF:std_logic;
 signal DataOut:std_logic_vector(31 downto 0);
@@ -70,64 +69,44 @@ IF_ID:entity work.Reg  generic map(n=>51) port map(input=>IF_IDRegIN,en=>IF_IDwr
 -----------------------------------------------------------------------------------------------------------------------------------------
 
 --------------------------------------------------------------Decode ->>Execute ------------------------------------------
-Decode:entity work.Alldecoder Generic map (n=>32) 
-port map (
-    clk=>clk,
-	IF_ID=>IF_IDRegOUT,
-	RegWriteinput=>RegWriteinput,
-	Swapinput=>Swapinput,
-	Mem_Wb_Rd=>Mem_Wb_Rd,Mem_Wb_Rs=>Mem_Wb_Rs,
-	Rt_from_fetch =>instruction(10 downto 8),
-    value1=>value1,value2=>value2,
-    Target_Address=>Target_Address,
-	Rsrc=>Rsrc,
-	Rdst=>Rdst ,
-	instruction=>instructionDecodeout,
-	RegWrite=>RegWrite,
-	RegDST=>REGdstSignal,
-	MemToReg=>MemToReg,
-	MemRd=>MemRd,
-	MemWR=>MemWR,
-	SP=>SP,
-	ALU=>ALU,
-	PCWrite=>PCWrite,
-	IMM_EA=>IMM_EA,
-	sign=>sign,
-	CRR=>CRR,
-	In_enable=>In_enable,
-	Out_enable=>Out_enable,
-	thirtyTwo_Sixteen=>thirtyTwo_Sixteen,
-	RRI=>RRI,
-	SWAP=>SWAP,
-	CALL=>CALL,
-	Rs =>Rs);
+Decode:entity work.DecodeStage port map(clk=>clk,rst=>rst,INT=>INT,
+IF_ID=>IF_IDRegOUT,
+RegWriteFromWB=>RegWriteinput,SWAPFromWB=>Swapinput,
+MEM_WBRd=>Mem_Wb_Rd,MEM_WBRs=>Mem_Wb_Rs,RsFromFetch=>Rs_from_fetch,
+Value1=>value1,Value2=>value2,
 
-Rt_from_fetch<=instruction(10 downto 8);
-MEM_WBRegOUT(38 downto 36) <= Mem_Wb_Rd;
-MEM_WBRegOUT(35 downto 33) <= Mem_Wb_Rs;
+TargetAddress=>Target_Address,SRC1=>Rsrc,SRC2=>Rdst,instruction=>instructionDecodeout,PC=>pcDecodeout,
+RRI=>RRI,SWAP=>SWAP,CALL=>CALL,INTOut=>probINTDecodeout,SignExtendSignal=>sign,
+IMM_EASignal=>IMM_EA,RegDST=>REGdstSignal,InEnable=>In_enable,sig32_16=>thirtyTwo_Sixteen,IF_IDWrite=>tempIF_IDwrite,
+WBSignals=>WBsignalsDecodeOut,
+ALUSelectors=>ALUSelectors,MEMSignals=>MEMSignalsDecodeOut);
+
+
+
+Rs_from_fetch<=instruction(10 downto 8);
+Mem_Wb_Rd<=MEM_WBRegOUT(38 downto 36);
+Mem_Wb_Rs<=MEM_WBRegOUT(35 downto 33);
 ID_EX:entity work.Reg  generic map(n=>147) port map(input=>ID_EXRegIN,en=>ID_EXwrite,rst=>rst,clk=>clk,output=>ID_EXRegOUT);
 	
 ---------------------------------------ID_EX Buffer -----------------------------------------------------------------
 ID_EXRegIN(31 downto 0) <= Rsrc; --Rscr1 
 ID_EXRegIN(63 downto 32) <= Rdst; -- Rscr2 
 ID_EXRegIN(95 downto 64) <=instructionDecodeout;
-ID_EXRegIN(127 downto 96) <= pcnew; --PC after incremented 
+ID_EXRegIN(127 downto 96) <= pcDecodeout; --PC after incremented 
 
 ID_EXRegIN(143) <= RRI; --RRI signal 
 ID_EXRegIN(144) <= SWAP;
 ID_EXRegIN(145) <= CALL;
-ID_EXRegIN(146) <= probINTsignal;
-ID_EXRegIN(128) <=MemToReg;
-ID_EXRegIN(129) <=RegWrite;
-ID_EXRegIN(130) <=Out_enable;
-ID_EXRegIN(134 downto 131) <=ALU;
+ID_EXRegIN(146) <= probINTDecodeout;
+
+ID_EXRegIN(142 downto 139) <=MEMSignalsDecodeOut;
+ID_EXRegIN(134 downto 131) <=ALUSelectors;
 ID_EXRegIN(135) <=sign;
 ID_EXRegIN(136) <=IMM_EA;
 ID_EXRegIN(137) <=REGdstSignal;
 ID_EXRegIN(138) <=In_enable;
-ID_EXRegIN(139) <=MemRd;
-ID_EXRegIN(140) <=MemWR;
-ID_EXRegIN(142 downto 141) <=SP;
+
+ID_EXRegIN(130 downto 128) <=WBsignalsDecodeOut;
 
 
 -----------------------------------------------------------------------------------------------------------------------------------------
@@ -148,7 +127,7 @@ MEM_WBSWAP=>MEM_WBSWAP,
 
 RegDst=>EX_MEMRegIN(102 downto 100),
 CCR=>CCR,
-RsReg=>RegDst,
+RsReg=>RsEXEOUT,
 WBsignals=>EX_MEMRegIN(114 downto 112),
 MEMSignals=>EX_MEMRegIN(111 downto 108),
 ZF=>ZFToCheck,
@@ -159,10 +138,11 @@ AddrressEA_IMM=>AddrressEA_IMM
 ,SRC2out=>EX_MEMRegIN(31 downto 0));
 
 
-EX_MEMRegIN(35 downto 33)<=RegDst;
+EX_MEMRegIN(35 downto 33)<=RsEXEOUT;
 EX_MEMRegIN(107 downto 105)<=CCR;
 EX_MEMRegIN(67 downto 36)<=DataOut;
 EX_MEMRegIN(99 downto 68)<=AddrressEA_IMM;
+
 EXALUResult <= EX_MEMRegOUT( 67 downto 36);
 EX_MEMRegisterRd<=EX_MEMRegOUT( 102 downto 100);
 EX_MEMRegWrite<=EX_MEMRegOUT(113);
