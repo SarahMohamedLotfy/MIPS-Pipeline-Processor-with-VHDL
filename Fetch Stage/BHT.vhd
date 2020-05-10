@@ -31,7 +31,7 @@ begin
 		
 		END PROCESS;
 		
-		state <= table(to_integer(unsigned(index)));
+		state <= table(to_integer(unsigned(index))) when RW='0' else (OTHERS => 'Z' );
  
 
 
