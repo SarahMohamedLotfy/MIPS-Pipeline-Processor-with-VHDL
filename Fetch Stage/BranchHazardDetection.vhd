@@ -7,7 +7,7 @@ generic (
          indexBits:integer:=5;
          RBits    :integer:=3;
          RtBits   :integer:=3;
-         selector :integer:=2);
+         selector :integer:=3);
     port(
         reset            : in  std_logic:='0';
         clk              : in  std_logic;
@@ -44,7 +44,7 @@ if (Reg_write_decode='1'and RegDst_decode='0' and Rdst_instr_decode=Rs_instr_fet
     Target_Selector<="XX";
 
 
-elsif(Reg_write_decode='1' and RegDst_decode='0' and Rs_instr_decode=Rs_instr_fetch) then 
+elsif(Reg_write_decode='1' and RegDst_decode='1' and Rs_instr_decode=Rs_instr_fetch) then 
     PC_write<='0'; -- stall
     IF_ID_flush<='1';--flushing 
     Target_Selector<="XX";
@@ -53,25 +53,34 @@ elsif(Reg_write_decode='1' and RegDst_decode='0' and Rs_instr_decode=Rs_instr_fe
 elsif(ID_EX_RegWrite='1' and Reg_Rd_EX=Rs_instr_fetch) then 
     IF_ID_flush<='0';
     PC_write<='1'; 
-    Target_Selector<="00";
+    Target_Selector<="000";
 
 
-elsif(Swap_decode='1' and Rdst_decode=Rs_instr_fetch) then 
+elsif(Swap_decode='1' and Rs_instr_decode=Rs_instr_fetch) then 
     IF_ID_flush<='0';
     PC_write<='1'; 
-    Target_Selector<="01"; --src1 from decode 
+    Target_Selector<="001"; --src2 from decode 
 
  
+elsif(Swap_decode='1' and Rs_instr_fetch=Rdst_instr_decode) then 
+    IF_ID_flush<='0';
+    PC_write<='1'; 
+    Target_Selector<="010"; --src1 from execute 
+
 elsif(ID_EX_swap='1' and ID_EX_instr_Rs=Rs_instr_fetch) then 
     IF_ID_flush<='0';
     PC_write<='1'; 
-    Target_Selector<="10"; --src2 from execute 
+    Target_Selector<="011"; --src2 from execute  
 
 elsif(ID_EX_swap='1' and ID_EX_instr_Rd=Rs_instr_fetch) then 
     IF_ID_flush<='0';
     PC_write<='1'; 
-    Target_Selector<="11"; --src1 from execute  
+    Target_Selector<="100"; --src1 from execute  
 
+else 
+    IF_ID_flush<='0';
+    PC_write<='1'; 
+    Target_Selector<="101"; --normal data from decode   
 end if;
 
 end process;
