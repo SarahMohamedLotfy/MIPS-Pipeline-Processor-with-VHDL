@@ -9,11 +9,11 @@ ENTITY FetchStage IS
 	PORT(
             clk: in STD_LOGIC;
 			reset: in std_logic:='0';
-			interrupt: in std_logic:='0';
+			interrupt,pcWrite: in std_logic:='0';
  
 			instruction: out STD_LOGIC_VECTOR(wordSize-1 DOWNTO 0);
 			PCnew : out std_logic_vector(PCSize-1 downto 0);
-			intSignal,rstSignal,RRI : out std_logic; --interrupt signal output 
+			intSignal,rstSignal,RRI : out std_logic --interrupt signal output 
 			  --restet signal output 
 		);
 
@@ -22,27 +22,48 @@ END FetchStage;
 
 ARCHITECTURE FetchStageArch of FetchStage is
 
-SIGNAL tmp:std_logic_vector(15 downto 0); --not used just dummpy variable
+SIGNAL tmp,tempInstruction:std_logic_vector(15 downto 0); --not used just dummpy variable
 signal dummy: std_logic;
 signal tempPCnew: STD_LOGIC_VECTOR(PCSize-1 DOWNTO 0);
-signal PCReg: STD_LOGIC_VECTOR(PCSize-1 DOWNTO 0):="00000000000000000000000000001010";
+signal PCReg: STD_LOGIC_VECTOR(PCSize-1 DOWNTO 0);
 BEGIN
 
-   instruction_memory: entity work.ram generic map(1) port map (clk,'0','1',PCReg,tmp,instruction);
+   instruction_memory: entity work.ram generic map(1) port map (clk,'0','1',PCReg,tmp,tempInstruction);
   --PCnew is a value of pc after incremented 
-   PCAdder:entity work.adder generic map(PCSize)port map(PCreg,"00000000000000000000000000000001",'0',tempPCnew,dummy);
-
+   	PCAdder:entity work.adder generic map(PCSize)port map(PCReg,"00000000000000000000000000000001",'0',tempPCnew,dummy);
+     --tempPCnew<=PCReg+1;
+   --PCReg: entity work.Reg generic map(32) port map(input=>tempPCnew,en=>pcWrite,rst=>'0',clk=>clk,output=>PCReg);
 	intSignal <=interrupt;
 	--reset signal output 
 	rstSignal <=reset;
 	RRI<='0';
-	process(CLK)
-	begin
-	if(falling_edge(CLK))then 
-		PCReg <=tempPCnew;
-		PCnew<=tempPCnew;
-	end if;
-	end process;
+	instruction<=(others=>'0') when reset = '1' else tempInstruction when reset ='0';
+	PCReg <="00000000000000000000000000001001" when (reset ='1' and rising_edge(clk)) else PCReg<= tempPCnew;
+	PCnew<=tempPCnew;
+	
+	-- process(clk,reset,PCReg,tempPCnew,PCnew)
+	-- begin
+	-- if(rising_edge(clk))then 
+	-- 	if(reset = '1') then
+	-- 		PCReg <="00000000000000000000000000001001";
+	-- 		PCnew <= tempPCnew;
+	-- 	else
+	-- 	PCReg <=tempPCnew;
+	-- 	PCnew<=tempPCnew;
+	-- 	end if;
+	-- end if;
+	-- end process;
+
+	-- instruction<=(others=>'0') when reset = '1' else tempInstruction when reset ='0';
+	-- PCnew<=tempPCnew;
+	-- process(clk,reset)
+	-- begin
+	-- if falling_edge(clk) then
+	-- 	if(reset ='1')then
+	-- 		PCReg <="00000000000000000000000000001001"; 			
+	-- 	end if;			
+	-- end if;
+	-- end process;
 
 
 END ARCHITECTURE;

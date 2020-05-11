@@ -13,6 +13,7 @@ entity DecodeStage is
       RRI,SWAP,CALL,INTOut,SignExtendSignal,IMM_EASignal,RegDST,InEnable,sig32_16,IF_IDWrite:OUT std_logic;
       WBSignals:OUT std_logic_vector(2 downto 0);
       ALUSelectors,MEMSignals:OUT std_logic_vector(3 downto 0)
+      T_NT:OUT std_logic_vector(1 downto 0);
   ) ;
 end DecodeStage ;
 
@@ -42,4 +43,7 @@ RRI<=IF_ID(49);
 instruction(31 downto 16)<=(others=>'0');
 instruction(15 downto 0)<=IF_ID(15 downto 0);
 PC<=IF_ID(47 downto 16);
+--TODO 
+--predicition check to generate T_NT
+T_NT<="11";
 end architecture ; 

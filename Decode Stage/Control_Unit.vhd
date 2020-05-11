@@ -23,7 +23,7 @@ end entity;
 architecture Control_Unit_arch of control_unit is
   
 begin
-process (clk)
+process (clk,OpCode,reset,interrupt)
 begin
 if rising_edge(clk) then
    if (reset ='1')then 
@@ -128,7 +128,7 @@ if rising_edge(clk) then
 	     -- OUT
      elsif (OpCode = "00100") then
        RegWrite <= '0';
-	     RegDST <= '1';
+	     RegDST <= '0';
 	     MemToReg <= '0';
 	     MemRd <= '0';
 	     MemWR <= '0';
@@ -152,7 +152,7 @@ if rising_edge(clk) then
 	     MemRd <= '0';
 	     MemWR <= '0';
 	     SP <= "11";
-	     ALU <= "0000";
+	     ALU <= "0001";
 	     PCWrite <= '1';
 	     IMM_EA <= '0';
 	     sign <= '0';
@@ -375,7 +375,7 @@ if rising_edge(clk) then
 	     -- ADD
      elsif (OpCode = "00111") then
          RegWrite <= '1';
-	     RegDST <= '1';
+	     RegDST <= '0';
 	     MemToReg <= '0';
 	     MemRd <= '0';
 	     MemWR <= '0';
@@ -394,7 +394,7 @@ if rising_edge(clk) then
      -- IADD
      elsif (OpCode = "01000") then
          RegWrite <= '1';
-	     RegDST <= '1';
+	     RegDST <= '0';
 	     MemToReg <= '0';
 	     MemRd <= '0';
 	     MemWR <= '0';
@@ -412,7 +412,7 @@ if rising_edge(clk) then
 	     -- SUB 
      elsif (OpCode = "01001") then
          RegWrite <= '1';
-	     RegDST <= '1';
+	     RegDST <= '0';
 	     MemToReg <= '0';
 	     MemRd <= '0';
 	     MemWR <= '0';
@@ -430,7 +430,7 @@ if rising_edge(clk) then
 	     --AND
      elsif (OpCode = "01010") then
          RegWrite <= '1';
-	     RegDST <= '1';
+	     RegDST <= '0';
 	     MemToReg <= '0';
 	     MemRd <= '0';
 	     MemWR <= '0';
@@ -448,7 +448,7 @@ if rising_edge(clk) then
 	     -- OR
      elsif (OpCode = "01011") then
          RegWrite <= '1';
-	     RegDST <= '1';
+	     RegDST <= '0';
 	     MemToReg <= '0';
 	     MemRd <= '0';
 	     MemWR <= '0';
@@ -483,7 +483,7 @@ if rising_edge(clk) then
 		 CALL <= '0';
 		 thirtyTwo_Sixteen<= '1';
 	    -- SHR 
-	  else
+	  elsif(OpCode="01101")then
          RegWrite <= '1';
 	     RegDST <= '1';
 	     MemToReg <= '0';
@@ -505,7 +505,6 @@ if rising_edge(clk) then
     
       end if;
    end if;
-end if;
 end process;
 end architecture;
 

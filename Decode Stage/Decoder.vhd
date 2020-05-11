@@ -26,7 +26,7 @@ begin
 IF_ID_Rt <= instr(7 downto 5);
 IF_ID_Rs <= instr(10 downto 8);
 
-process (clk)
+process (clk,reset,RegWriteinput,Swapinput)
 begin
    if (reset ='1')then 
      

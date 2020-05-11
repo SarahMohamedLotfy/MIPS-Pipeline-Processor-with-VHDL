@@ -88,7 +88,7 @@ MUXBInput(1)<=MEMALUResult;
 MUXB:entity work.mux generic map(bus_width=>32,sel_width=>2) port map(input=>MUXBInput,sel=>MUXBSel,output=>B);
 
 MUXALUResult_PC1Input(0)<=ALUResult;
-MUXALUResult_PC1Input(1)<=PC_1;
+MUXALUResult_PC1Input(1)<=std_logic_vector(unsigned(PC_1) + 1);
 
 -- alu result or pc+1 mux
 MUXResult:entity work.mux generic map(bus_width=>32,sel_width=>1) port map(input=>MUXALUResult_PC1Input,sel=>CallBit,output=>DataOut);

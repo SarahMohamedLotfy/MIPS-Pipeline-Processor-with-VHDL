@@ -25,3 +25,19 @@ BEGIN
 		END IF;
 	END PROCESS;
 END ARCHITECTURE;
+architecture RegFalling of Reg is
+	BEGIN
+
+	PROCESS (rst,clk) 
+	BEGIN
+		IF (rst='1') THEN
+			output <= (others =>'0');
+		ELSIF (falling_edge(clk)) THEN 
+		
+			IF (en='1') THEN
+				output <= input;
+			END IF;
+		END IF;
+	END PROCESS;
+
+	end architecture;
