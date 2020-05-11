@@ -6,12 +6,12 @@ entity memory is
 port(	
   reset, clk: in std_logic;
 
-	EX_MEM:in std_logic_vector(114 downto 0);
+  EX_MEM:in std_logic_vector(114 downto 0);
 
-  Rsrc2,ALUresult, MemoryReuslt :out std_logic_vector(31 downto 0);
-  SWAP :out std_logic;
+  Rsrc2,ALUresult, MemoryReuslt,MemoryPC :out std_logic_vector(31 downto 0);
+  SWAP,MemoryReadSignalToFetch :out std_logic;
   Rs,Rd,WBsignals :out std_logic_vector(2 downto 0)
-
+ 
 );
 end entity;
 
@@ -42,7 +42,11 @@ MEMsignals<=EX_MEM(111 downto 108);
 WBsignals<=EX_MEM(114 downto 112);
 
 MemoryReuslt<=(others=>'0');
-
+--TODO 
+--MemoryReadSignalToFetch from memory stage decision circuit in RTI or RET or reset or INT become 1 to make PC reg read 
+--its value from PC memory which is read from data memory.
+MemoryReadSignalToFetch<='0';
+MemoryPC<=(others=>'0');  
 end architecture;
 
 

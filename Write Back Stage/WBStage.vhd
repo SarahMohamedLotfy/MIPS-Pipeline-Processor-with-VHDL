@@ -6,14 +6,15 @@ entity WBStage is
     clk,rst:in std_logic;
     MEM_WB:in std_logic_vector(105 downto 0);
     RegWriteToRegisterFile,Swap:out std_logic;
-    PortOut,Value1,Value2:out std_logic_vector(31 downto 0)
+    PortOut,Value1,Value2:out std_logic_vector(31 downto 0);
+    Rs,Rd:out std_logic_vector(2 downto 0)
   ) ;
 end WBStage ;
 
 architecture arch of WBStage is
 signal SRC2,MemResult,ALUResult:std_logic_vector(31 downto 0);
 signal tempSwap:std_logic;
-signal Rs,Rd,WBsignals:std_logic_vector(2 downto 0) ;
+signal WBsignals:std_logic_vector(2 downto 0) ;
 begin
 SRC2<=MEM_WB(31 downto 0);
 tempSwap<=MEM_WB(32);

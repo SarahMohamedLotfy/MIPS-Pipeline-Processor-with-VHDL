@@ -91,15 +91,16 @@ for instr in instrComponent:
 	elif len(instr) == 4: #whether 2 operand instruction3 
 		STR = "{0:05b}".format(TwoOperandInstructions3[instr[0]])
 		if instr[0] == "IADD":
-			EA_IMM = int(instr[3])
+			EA_IMM = int(instr[3],16)
 			EA_IMM_STR = "{0:020b}".format(EA_IMM&0xfffff)
 			nextaddress = EA_IMM_STR[4:] #first 16 bits 
 			#src1
 			SRC1=int(instr[1][int(instr[1].find("R"))+1])			
 			STR+="{0:03b}".format(SRC1&0xffff)
+			STR+="{0:03b}".format(0&0xffff)
 			SRC2=int(instr[2][int(instr[2].find("R"))+1])			
 			STR+="{0:03b}".format(SRC2&0xffff)
-			STR+="{0:04b}".format(0&0xffff)
+			STR+='0'
 			STR+="{0:01b}".format(1&0xffff)
 			instructionsOutput.append(STR)
 			instructionsOutput.append(nextaddress)
@@ -140,7 +141,7 @@ for instr in instrComponent:
 			#src1
 			STR+="{0:03b}".format(SRC1&0xffff)
 			STR+="{0:03b}".format(0&0xffff)
-			EA_IMM = int(instr[2])
+			EA_IMM = int(instr[2],16)
 			EA_IMM_STR = "{0:020b}".format(EA_IMM&0xfffff)
 			nextaddress = EA_IMM_STR[4:]
 			if 	instr[0] in ["LDD","STD"]:
