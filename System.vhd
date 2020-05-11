@@ -17,7 +17,7 @@ signal probINTsignal,probRstSignal,RRIsignal,IF_IDFlushFromFetch:std_logic;--sig
 ------------------------------------------------------------------------------------------------
 
 -----------------------------------------Decode stage signals------------------------------------ 
-signal RegWriteinput,Swapinput,ZFToCheck:std_logic;
+signal RegWriteinput,Swapinput,ZFToCheck, Mux_Selector_input:std_logic;
 signal Mem_Wb_Rd,Mem_Wb_Rs: std_logic_vector(2 downto 0);
 signal value1,value2: std_logic_vector(31 downto 0);
 signal Target_Address,Rsrc,Rdst,instructionDecodeout,pcDecodeout: std_logic_vector(31 downto 0);
@@ -74,8 +74,7 @@ IF_ID:entity work.Reg(RegArch)  generic map(n=>51) port map(input=>IF_IDRegIN,en
 -----------------------------------------------------------------------------------------------------------------------------------------
 
 --------------------------------------------------------------Decode ->>Execute ------------------------------------------
-Decode:entity work.DecodeStage port map(clk=>clk,rst=>rst,INT=>INT,
-IF_ID=>IF_IDRegOUT,
+Decode:entity work.DecodeStage port map(clk=>clk,rst=>rst,INT=>INT,Mux_Selector=>Mux_Selector_input,IF_ID=>IF_IDRegOUT,
 RegWriteFromWB=>RegWriteinput,SWAPFromWB=>Swapinput,
 MEM_WBRd=>Mem_Wb_Rd,MEM_WBRs=>Mem_Wb_Rs,RsFromFetch=>Rs_from_fetch,
 Value1=>value1,Value2=>value2,
@@ -182,7 +181,10 @@ WBStage:entity work.WBStage port map (clk=>clk,rst=>rst,MEM_WB=>MEM_WBRegOUT,Reg
 
 
 
+----------------------------------------------------------Hazard Detection Unit --------------------------------------------------------------------------
+Hazard_detection_unit:entity work.hazard_detection_unit port map(ID_EX_RegisterRt=> instructionDecodeout(7 downto 5), IF_ID_RegisterRs=> IF_IDRegIN(10 downto 8),IF_ID_RegisterRt=> IF_IDRegIN(7 downto 5),ID_EX_MemRead => MEMSignalsDecodeOut(3),reset => rst, PCwrite=>PCwrite ,IF_ID_write =>tempIF_IDwrite,ControlUnit_Mux_Selector => Mux_Selector_input);
 
+-----------------------------------------------------------------------------------------------------------
 
 
 -- process(clk,rst)

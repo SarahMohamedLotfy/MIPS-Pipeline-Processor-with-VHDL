@@ -3,7 +3,7 @@ USE IEEE.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 ENTITY decision IS
-GENERIC (n:integer:=16);
+GENERIC (n:integer:=32);
 	PORT (
 		PCreg,DecodePC,TargetAddress,MemoryPC:	IN	std_logic_vector(n-1 downto 0);
 		rst,clk,ReadFromMemorySignal,JZ,UnconditionBranch:	IN	std_logic;

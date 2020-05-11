@@ -3,7 +3,7 @@ USE IEEE.std_logic_1164.all;
 use ieee.numeric_std.all;
 entity DecodeStage is
   port (
-      clk,rst,INT:IN std_logic;
+      clk,rst,INT,Mux_Selector:IN std_logic;
       IF_ID:IN std_logic_vector(50 downto 0);
       RegWriteFromWB,SWAPFromWB:IN std_logic;
       MEM_WBRd,MEM_WBRs,RsFromFetch:IN std_logic_vector(2 downto 0);
@@ -27,7 +27,7 @@ Mem_Wb_Rd=>MEM_WBRd,Mem_Wb_Rs=>MEM_WBRs,Rs_from_fetch=>RsFromFetch,
 value1=>Value1,value2=>Value2,
 Target_Address=>TargetAddress,Rsrc=>SRC1,Rdst=>SRC2);
 
-controlUnit:entity work.control_unit  generic map(32) port map(interrupt=>INT,reset=>rst,clk=>clk,
+controlUnit:entity work.control_unit  generic map(32) port map(interrupt=>INT,reset=>Mux_Selector,clk=>clk,
 OpCode=>IF_ID(15 downto 11),
 
  
