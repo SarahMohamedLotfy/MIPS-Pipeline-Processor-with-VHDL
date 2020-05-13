@@ -51,10 +51,10 @@ begin
 
     f0:TVD port map(sig_indx, clk ,sig_wr ,sig_rd ,sig_tagin ,sig_dbin ,sig_vdin ,sig_tagout ,sig_dbout ,sig_vdout);
 
-    process(current_state)           
+    process(clk)           
     begin
- --if(rising_edge(clk))then
-    if(current_state = start)then
+if rising_edge(clk) then
+    if(current_state = start)then----------------------->>>>>>>>>>>>>
 	     hit <='0';
 	     miss <= '0';
 	     rd_c <='0' ;
@@ -67,8 +67,8 @@ begin
     	  sig_dbin <= '0';
     	  sig_vdin <= '0';
     	  sig_tagin <= "000";
-	if(rd = '1' and wr = '0')then
-	  if(tag = sig_tagout and sig_vdout = '1')then
+	if(rd = '1' and wr = '0')then----------------->>>>>>>>
+	  if(tag = sig_tagout and sig_vdout = '1')then----------------->>>>>>>>>
 	     hit <='1';
 	     miss <= '0';
 	     rd_c <='1' ;
@@ -86,7 +86,7 @@ begin
           end if;
 
 
-	if(rd = '0' and wr = '1')then
+	elsif(rd = '0' and wr = '1')then
 	  if(tag = sig_tagout)then
 	     hit <='1';
 	     miss <= '0';
@@ -107,7 +107,7 @@ begin
 
 
      elsif(current_state = read_miss)then
-	  if(sig_dbout = '0' or sig_vdout ='0')then
+	  if(sig_dbout = '0' or sig_vdout ='0' or sig_dbout = 'U' or sig_vdout ='U')then
 	     hit <= '0';
 	     miss <= '1';
              rd_c <='0' ;
@@ -202,7 +202,6 @@ begin
 
     end if;
  end if;
- --end if;
     end process;
 
 end controller_arch;

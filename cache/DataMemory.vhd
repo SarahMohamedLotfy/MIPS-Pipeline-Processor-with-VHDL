@@ -17,7 +17,7 @@ end dataMemory;
 
 
 architecture data_array of dataMemory is
-type ram is array (2095 downto 0) of STD_LOGIC_VECTOR (31 downto 0);
+type ram is array (2095 downto 0) of STD_LOGIC_VECTOR (15 downto 0);
 signal data_array : ram;
 --output <= std_logic_vector (3 downto 0);
 signal output_int : unsigned (3 downto 0);
@@ -36,17 +36,28 @@ begin
             k := k + 16;
 	    j := j + 16;
             adds := i + to_integer(unsigned(address));
+	    i := i+1;
+            data_array(adds) <= datain(j downto k);
+            k := k + 16;
+	    j := j + 16;
+            adds := i + to_integer(unsigned(address));
+	    i := i+1;
             data_array(adds) <= datain(j downto k);
             output_int <= output_int -1;
-	    i := i+1;
-	    if( output_int = 0 )then
+	    
+	    if( output_int = 0 )then 
                  ready <='1';
             end if;
 	elsif(rd = '1' and wr = '0') then
              k := k + 16;
 	     j := j + 16;
-	     i := i+1;
 	     adds := i + to_integer(unsigned(address));
+             i := i+1;
+	     dataout(j downto k) <= data_array(adds);
+	     k := k + 16;
+	     j := j + 16;
+             adds := i + to_integer(unsigned(address));
+             i := i+1;
 	     dataout(j downto k) <= data_array(adds);
 	     output_int <= output_int -1; 
 	     if( output_int = 0 )then
