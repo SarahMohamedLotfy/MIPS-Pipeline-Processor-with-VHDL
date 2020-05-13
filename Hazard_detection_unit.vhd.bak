@@ -30,9 +30,9 @@ begin
           IF_ID_write <= '0';
           ControlUnit_Mux_Selector <= '1';
        
+       end if;
        else
        ControlUnit_Mux_Selector <= '0';
-       end if;
      else
        ControlUnit_Mux_Selector <= '0';
    end if;
