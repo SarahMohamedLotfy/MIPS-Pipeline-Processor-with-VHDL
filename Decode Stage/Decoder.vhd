@@ -26,9 +26,9 @@ begin
 IF_ID_Rt <= instr(7 downto 5);
 IF_ID_Rs <= instr(10 downto 8);
 
-process (clk,reset,RegWriteinput,Swapinput)
+process (clk,reset,RegWriteinput,Swapinput,value1,value2)
 begin
-   if (reset ='1')then 
+  if (reset ='1')then 
      
      -- Initialization
      Target_Address <= "00000000000000000000000000000000";
@@ -53,15 +53,33 @@ begin
       -- Write in registers
       if (RegWriteinput = '1') and (Swapinput = '1') then
         registers(to_integer(unsigned(Mem_Wb_Rd))) <= value1;  
-        registers(to_integer(unsigned(Mem_Wb_Rs))) <= value2; 
-        
+        registers(to_integer(unsigned(Mem_Wb_Rs))) <= value2;
+        if(Mem_Wb_Rd = IF_ID_Rs)then
+          Rsrc<= value1;
+        elsif(Mem_Wb_Rd = IF_ID_Rt)then
+          Rdst<=value1;
+        elsif(Mem_Wb_Rd =Rs_from_fetch)then
+          Target_Address<=value1;  
+        elsif(Mem_Wb_Rs = IF_ID_Rs)then
+          Rsrc<= value2;
+        elsif(Mem_Wb_Rs = IF_ID_Rt)then
+          Rdst<=value2;
+        elsif(Mem_Wb_Rs =Rs_from_fetch)then
+          Target_Address<=value2;   
+        end if;
       elsif (RegWriteinput='1') then
         registers(to_integer(unsigned(Mem_Wb_Rd))) <= value1;
-	
+        if(Mem_Wb_Rd = IF_ID_Rs)then
+          Rsrc<= value1;
+        elsif(Mem_Wb_Rd = IF_ID_Rt)then
+          Rdst<=value1;
+        elsif(Mem_Wb_Rd =Rs_from_fetch)then
+          Target_Address<=value1;   
+        end if;
       end if;
          
     end if;
-   end process;
+    end process;
 end architecture;
 
 

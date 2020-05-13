@@ -4,16 +4,16 @@ use ieee.numeric_std.all;
 entity DecodeStage is
   port (
       clk,rst,INT,Mux_Selector:IN std_logic;
-      IF_ID:IN std_logic_vector(50 downto 0);
+      IF_ID:IN std_logic_vector(82 downto 0);
       RegWriteFromWB,SWAPFromWB:IN std_logic;
       MEM_WBRd,MEM_WBRs,RsFromFetch:IN std_logic_vector(2 downto 0);
       Value1,Value2:IN std_logic_vector(31 downto 0);
 
-      TargetAddress,SRC1,SRC2,instruction,PC:OUT std_logic_vector(31 downto 0);--Target address to fetch stage at the same cycle
+      TargetAddress,SRC1,SRC2,instruction,PC,INPORTValueDecodeOut:OUT std_logic_vector(31 downto 0);--Target address to fetch stage at the same cycle
       RRI,SWAP,CALL,INTOut,SignExtendSignal,IMM_EASignal,RegDST,InEnable,sig32_16,IF_IDWrite:OUT std_logic;
       WBSignals:OUT std_logic_vector(2 downto 0);
-      ALUSelectors,MEMSignals:OUT std_logic_vector(3 downto 0)
-      T_NT:OUT std_logic_vector(1 downto 0);
+      ALUSelectors,MEMSignals:OUT std_logic_vector(3 downto 0);
+      T_NT:OUT std_logic_vector(1 downto 0)
   ) ;
 end DecodeStage ;
 
@@ -46,4 +46,5 @@ PC<=IF_ID(47 downto 16);
 --TODO 
 --predicition check to generate T_NT
 T_NT<="11";
+INPORTValueDecodeOut<=IF_ID(82 downto 51);
 end architecture ; 

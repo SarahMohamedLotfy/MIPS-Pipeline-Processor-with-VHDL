@@ -25,6 +25,7 @@ architecture Control_Unit_arch of control_unit is
 begin
 process (clk,OpCode,reset,interrupt)
 begin
+if rising_edge(clk) then
    if (reset ='1')then 
      
    
@@ -132,7 +133,7 @@ begin
 	     MemRd <= '0';
 	     MemWR <= '0';
 	     SP <= "11";
-	     ALU <= "0001";
+	     ALU <= "0000";
 	     PCWrite <= '1';
 	     IMM_EA <= '0';
 	     sign <= '0';
@@ -145,7 +146,7 @@ begin
 	     
 	     -- IN
      elsif (OpCode = "00101") then
-       RegWrite <= '1';
+       RegWrite <= '0';
 	     RegDST <= '1';
 	     MemToReg <= '0';
 	     MemRd <= '0';

@@ -5,6 +5,7 @@ entity system is
   port (
     clk,rst,INT:IN std_logic;
     INPORT:IN std_logic_vector(31 downto 0);
+    CRRFlags:OUT std_logic_vector(2 downto 0);
     OUTPort:OUT std_logic_vector(31 downto 0)
   ) ;
 end system ;
@@ -12,14 +13,14 @@ end system ;
 architecture arch of system is
 -----------------------------------------fetch stage signals------------------------------------ 
 signal instruction:std_logic_vector(15 downto 0);
-signal CurrentPC:std_logic_vector(31 downto 0);
+signal CurrentPC,INPORTValueFetchOut:std_logic_vector(31 downto 0);
 signal probINTsignal,probRstSignal,RRIsignal,IF_IDFlushFromFetch:std_logic;--signals to propagte in the next stages.
 ------------------------------------------------------------------------------------------------
 
 -----------------------------------------Decode stage signals------------------------------------ 
 signal RegWriteinput,Swapinput,ZFToCheck, Mux_Selector_input:std_logic;
 signal Mem_Wb_Rd,Mem_Wb_Rs: std_logic_vector(2 downto 0);
-signal value1,value2: std_logic_vector(31 downto 0);
+signal value1,value2,INPORTValueDecodeOut: std_logic_vector(31 downto 0);
 signal Target_Address,Rsrc,Rdst,instructionDecodeout,pcDecodeout: std_logic_vector(31 downto 0);
 signal REGdstSignal,probINTDecodeout: std_logic;
 signal ALUSelectors,MEMSignalsDecodeOut: std_logic_vector(3 downto 0);
@@ -30,7 +31,7 @@ signal T_NTtoFetch:std_logic_vector(1 downto 0);
 ------------------------------------------------------------------------------------------------
 
 -----------------------------------------Execute stage signals------------------------------------ 
-signal EXALUResult:std_logic_vector(31 downto 0);
+signal EXALUResult,INPORTValueEXEOut:std_logic_vector(31 downto 0);
 signal EX_MEMRegisterRd:std_logic_vector(2 downto 0);
 signal EX_MEMRegWrite,EX_MEMSWAP:std_logic;
 signal RegDstToExe_MEM,RsEXEOUT,RegDSTtofetchForwardingunit :std_logic_vector(2 downto 0);
@@ -50,8 +51,8 @@ signal MEM_WBRegWrite,MEM_WBSWAP,MemoryReadSignalToFetch:std_logic;
 
 
 -----------------------------------------intermediate registers signals------------------------------------ 
-signal IF_IDRegIN,IF_IDRegOut:std_logic_vector(50 downto 0);
-signal ID_EXRegIN,ID_EXRegOUT: std_logic_vector(146 downto 0);
+signal IF_IDRegIN,IF_IDRegOut:std_logic_vector(82 downto 0);
+signal ID_EXRegIN,ID_EXRegOUT: std_logic_vector(178 downto 0);
 signal EX_MEMRegIN,EX_MEMRegOUT: std_logic_vector(114 downto 0);
 signal MEM_WBRegIN,MEM_WBRegOUT: std_logic_vector(105 downto 0);
 signal IF_IDFlush,ID_EXFlush,EX_MEMFlush,MEM_WBFlush:std_logic:='0';
@@ -62,15 +63,16 @@ begin
 --------------------------------------------------------------Fetch ->> Decode------------------------------------------
 Fetch:entity work.FetchStage  Generic map (wordSize=>16,PCSize=>32) 
 port map(clk=>clk,reset=>rst,interrupt=>INT,pcWrite=>'1',MemoryReadSignal=>MemoryReadSignalToFetch,
-DecodePC=>pcDecodeout,DecodeTargetAddress=>Target_Address,MemoryPC=>MemoryPC,T_NT=>T_NTtoFetch,
+DecodePC=>pcDecodeout,DecodeTargetAddress=>Target_Address,MemoryPC=>MemoryPC,T_NT=>T_NTtoFetch,INPORTValue=>INPORT,
 
-instruction=>instruction,InstrPC=>CurrentPC,RRI=>RRIsignal,intSignal=>probINTsignal,rstSignal=>probRstSignal,IF_IDFlush=>IF_IDFlushFromFetch);
+instruction=>instruction,InstrPC=>CurrentPC,RRI=>RRIsignal,intSignal=>probINTsignal,rstSignal=>probRstSignal,IF_IDFlush=>IF_IDFlushFromFetch,INPORTValueFetchOut=>INPORTValueFetchOut);
 IF_IDRegIN(15 downto 0) <=instruction;
 IF_IDRegIN(47 downto 16) <=CurrentPC;
 IF_IDRegIN(48) <=probINTsignal;
 IF_IDRegIN(49) <=RRIsignal;
 IF_IDRegIN(50) <=probRstSignal;
-IF_ID:entity work.Reg(RegArch)  generic map(n=>51) port map(input=>IF_IDRegIN,en=>IF_IDwrite,rst=>rst,clk=>clk,output=>IF_IDRegOUT);
+IF_IDRegIN(82 downto 51)<=INPORTValueFetchOut;
+IF_ID:entity work.Reg(RegArch)  generic map(n=>83) port map(input=>IF_IDRegIN,en=>IF_IDwrite,rst=>rst,clk=>clk,output=>IF_IDRegOUT);
 -----------------------------------------------------------------------------------------------------------------------------------------
 
 --------------------------------------------------------------Decode ->>Execute ------------------------------------------
@@ -79,7 +81,7 @@ RegWriteFromWB=>RegWriteinput,SWAPFromWB=>Swapinput,
 MEM_WBRd=>Mem_Wb_Rd,MEM_WBRs=>Mem_Wb_Rs,RsFromFetch=>Rs_from_fetch,
 Value1=>value1,Value2=>value2,
 
-TargetAddress=>Target_Address,SRC1=>Rsrc,SRC2=>Rdst,instruction=>instructionDecodeout,PC=>pcDecodeout,
+TargetAddress=>Target_Address,SRC1=>Rsrc,SRC2=>Rdst,instruction=>instructionDecodeout,PC=>pcDecodeout,INPORTValueDecodeOut=>INPORTValueDecodeOut,
 RRI=>RRI,SWAP=>SWAP,CALL=>CALL,INTOut=>probINTDecodeout,SignExtendSignal=>sign,
 IMM_EASignal=>IMM_EA,RegDST=>REGdstSignal,InEnable=>In_enable,sig32_16=>thirtyTwo_Sixteen,IF_IDWrite=>tempIF_IDwrite,
 WBSignals=>WBsignalsDecodeOut,T_NT=>T_NTtoFetch,
@@ -89,7 +91,7 @@ ALUSelectors=>ALUSelectors,MEMSignals=>MEMSignalsDecodeOut);
 
 Rs_from_fetch<=instruction(10 downto 8);
 
-ID_EX:entity work.Reg(RegArch)  generic map(n=>147) port map(input=>ID_EXRegIN,en=>ID_EXwrite,rst=>rst,clk=>clk,output=>ID_EXRegOUT);
+ID_EX:entity work.Reg(RegArch)  generic map(n=>179) port map(input=>ID_EXRegIN,en=>ID_EXwrite,rst=>rst,clk=>clk,output=>ID_EXRegOUT);
 	
 ---------------------------------------ID_EX Buffer -----------------------------------------------------------------
 ID_EXRegIN(31 downto 0) <= Rsrc; --Rscr1 
@@ -110,6 +112,7 @@ ID_EXRegIN(137) <=REGdstSignal;
 ID_EXRegIN(138) <=In_enable;
 
 ID_EXRegIN(130 downto 128) <=WBsignalsDecodeOut;
+ID_EXRegIN(178 downto 147) <=INPORTValueDecodeOut;
 
 
 -----------------------------------------------------------------------------------------------------------------------------------------
@@ -119,7 +122,6 @@ Execute:entity work.ExeStage port map(clk=>clk,rst=>rst,INT=>INT,
 ID_EX=>ID_EXRegOUT,
 EXALUResult=>EXALUResult,
 MEMALUResult=>MEMALUResult,
-INPORTValue=>INPORT,
 MEM_WBRegisterRd=>MEM_WBRegisterRd
 ,EX_MEMRegisterRd=>EX_MEMRegisterRd,
 EX_MEMRegWrite=>EX_MEMRegWrite,
@@ -144,6 +146,7 @@ EX_MEMRegIN(102 downto 100)<=RegDstToExe_MEM;
 RegDSTtofetchForwardingunit<=RegDstToExe_MEM;
 EX_MEMRegIN(35 downto 33)<=RsEXEOUT;
 EX_MEMRegIN(107 downto 105)<=CCR;
+CRRFlags<=CRR;
 EX_MEMRegIN(67 downto 36)<=DataOut;
 EX_MEMRegIN(99 downto 68)<=AddrressEA_IMM;
 
@@ -151,7 +154,7 @@ EXALUResult <= EX_MEMRegOUT( 67 downto 36);
 EX_MEMRegisterRd<=EX_MEMRegOUT( 102 downto 100);
 EX_MEMRegWrite<=EX_MEMRegOUT(113);
 EX_MEMSWAP<=EX_MEMRegOUT(32);
-MEMALUResult <=MEM_WBRegOUT(73 downto 42);
+MEMALUResult <=MEM_WBRegOUT(105 downto 74);
 MEM_WBRegisterRd<=MEM_WBRegOUT(38 downto 36);
 MEM_WBRegWrite<=MEM_WBRegOUT(40);
 MEM_WBSWAP<=MEM_WBRegOUT(32);
@@ -182,7 +185,7 @@ WBStage:entity work.WBStage port map (clk=>clk,rst=>rst,MEM_WB=>MEM_WBRegOUT,Reg
 
 
 ----------------------------------------------------------Hazard Detection Unit --------------------------------------------------------------------------
-Hazard_detection_unit:entity work.hazard_detection_unit port map(ID_EX_RegisterRt=> instructionDecodeout(7 downto 5), IF_ID_RegisterRs=> IF_IDRegIN(10 downto 8),IF_ID_RegisterRt=> IF_IDRegIN(7 downto 5),ID_EX_MemRead => MEMSignalsDecodeOut(3),reset => rst, PCwrite=>PCwrite ,IF_ID_write =>tempIF_IDwrite,ControlUnit_Mux_Selector => Mux_Selector_input);
+--Hazard_detection_unit:entity work.hazard_detection_unit port map(ID_EX_RegisterRt=> instructionDecodeout(7 downto 5), IF_ID_RegisterRs=> IF_IDRegIN(10 downto 8),IF_ID_RegisterRt=> IF_IDRegIN(7 downto 5),ID_EX_MemRead => MEMSignalsDecodeOut(3),reset => rst, PCwrite=>PCwrite ,IF_ID_write =>tempIF_IDwrite,ControlUnit_Mux_Selector => Mux_Selector_input);
 
 -----------------------------------------------------------------------------------------------------------
 

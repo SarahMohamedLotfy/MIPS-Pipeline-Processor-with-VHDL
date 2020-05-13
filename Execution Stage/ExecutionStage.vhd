@@ -5,8 +5,8 @@ use work.bus_multiplexer_pkg.all;
 entity ExeStage is
   port (
     clk,rst,INT:in std_logic;
-    ID_EX:in std_logic_vector(146 downto 0);
-    EXALUResult,MEMALUResult,INPORTValue:in std_logic_vector(31 downto 0);--IN port value is an input from system that read in execute cycle direct from system.
+    ID_EX:in std_logic_vector(178 downto 0);
+    EXALUResult,MEMALUResult:in std_logic_vector(31 downto 0);--IN port value is an input from system that read in execute cycle direct from system.
     MEM_WBRegisterRd,EX_MEMRegisterRd:IN std_logic_vector(2 downto 0);
     EX_MEMRegWrite,MEM_WBRegWrite,EX_MEMSWAP,MEM_WBSWAP:IN std_logic;
     RegDst,CCR,RsReg,WBsignals:out std_logic_vector(2 downto 0);--CCR output of reg , but ZF output direct from ALU to use in feedback check in branch decision.
@@ -23,7 +23,7 @@ signal MUXRt_RdInput:bus_array(1 downto 0)(2 downto 0);
 signal IMM_EAbit,CallBit,REGdstSignal,INEnableSignal:std_logic_vector(0 downto 0);
 signal signType,OVF:std_logic;
 signal UpperInstr:std_logic_vector(19 downto 0);
-signal PC_1,SRC1,SRC2,SignExtendOut,tempA,A,B,ALUResult,MUXSRC2_signOutput:std_logic_vector(31 downto 0); 
+signal PC_1,SRC1,SRC2,SignExtendOut,tempA,A,B,ALUResult,MUXSRC2_signOutput,INPORTValue:std_logic_vector(31 downto 0); 
 signal ALUSelectors,EA_Part:std_logic_vector(3 downto 0);
 signal CCRRegister,Rs,Rt,Rd:std_logic_vector(2 downto 0);--ZF,SignFlag,Carry
 signal MUXASel,MUXBSel:std_logic_vector(1 downto 0):="00";
@@ -57,7 +57,7 @@ RRI<=ID_EX(143);
 SWAP<=ID_EX(144);
 CallBit(0)<=ID_EX(145);
 INTSignal<=ID_EX(146);
-
+INPORTValue<=ID_EX(178 downto 147);
 
 MUXRt_RdInput(0)<= Rd;
 MUXRt_RdInput(1)<= Rs;

@@ -29,7 +29,7 @@ if rst ='1' then
 	PCnext<=PCreg;
 	IF_IDFlush<='1';	
 	
-else 	
+else rst ='0'then	
 	if(JZ ='1' and (T_NT ="11" or T_NT ="10") and (State = "10" or State = "11")) then
 		PCnext<=TargetAddress;
 	elsif (JZ ='1' and (T_NT ="11" or T_NT ="10") and (State = "00" or State = "01"))  then

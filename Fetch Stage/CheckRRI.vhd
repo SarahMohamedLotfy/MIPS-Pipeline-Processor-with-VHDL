@@ -15,8 +15,8 @@ architecture Check_RRI_arch of Check_RRI is
 begin
 
       --RET RTI
-RRI<='1'when (OpCode = "01101") (OpCode = "10111")else '0';
+RRI<='1'when (OpCode = "01101") or (OpCode = "10111")else '0';
        
-PCwrite <='0' when (OpCode = "01101") (OpCode = "10111")else '1';
+PCwrite <='0' when (OpCode = "01101") or(OpCode = "10111")else '1';
    
 end architecture;
