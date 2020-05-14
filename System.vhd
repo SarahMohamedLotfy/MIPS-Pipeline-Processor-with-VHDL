@@ -58,6 +58,16 @@ signal MEM_WBRegIN,MEM_WBRegOUT: std_logic_vector(105 downto 0);
 signal IF_IDFlush,ID_EXFlush,EX_MEMFlush,MEM_WBFlush:std_logic:='0';
 signal IF_IDwrite,ID_EXwrite,EX_MEMwrite,MEM_WBwrite:std_logic:='1';
 ------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+-------------------------------------Counter Signals -------------------------------------------
+------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+signal outputCounter : std_logic_vector(0 downto 0);
+signal resetCounter  : std_logic;
+signal enableCounter : std_logic;
+signal Flush_32_16   : std_logic:='0'; --flush signal when instruction is 32
+signal ImmdiateValue : std_logic_vector(15 downto 0);
+signal ReadImmd      : std_logic:='0';--enble to read immdiate
 
 begin
 --------------------------------------------------------------Fetch ->> Decode------------------------------------------
@@ -80,7 +90,7 @@ Decode:entity work.DecodeStage port map(clk=>clk,rst=>rst,INT=>INT,Mux_Selector=
 RegWriteFromWB=>RegWriteinput,SWAPFromWB=>Swapinput,
 MEM_WBRd=>Mem_Wb_Rd,MEM_WBRs=>Mem_Wb_Rs,RsFromFetch=>Rs_from_fetch,
 Value1=>value1,Value2=>value2,
-
+ImmdiateValue=>ImmdiateValue,ReadImmd=>ReadImmd,
 TargetAddress=>Target_Address,SRC1=>Rsrc,SRC2=>Rdst,instruction=>instructionDecodeout,PC=>pcDecodeout,INPORTValueDecodeOut=>INPORTValueDecodeOut,
 RRI=>RRI,SWAP=>SWAP,CALL=>CALL,INTOut=>probINTDecodeout,SignExtendSignal=>sign,
 IMM_EASignal=>IMM_EA,RegDST=>REGdstSignal,InEnable=>In_enable,sig32_16=>thirtyTwo_Sixteen,IF_IDWrite=>tempIF_IDwrite,
@@ -90,13 +100,23 @@ ALUSelectors=>ALUSelectors,MEMSignals=>MEMSignalsDecodeOut);
 
 
 Rs_from_fetch<=instruction(10 downto 8);
-
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-----------------------------Counter set signals-------------------------------
+-------------------------------------------------------------------------------
+------------------------------------------------------------------------------- 
+--resetCounter<='1'when(thirtyTwo_Sixteen='1' nor  outputCounter="1")else'0'; ---reset counter when it reach the decode 
+enableCounter<=instruction(0);
+resetCounter<='0' when (enableCounter='1') else '1';
+Flush_32_16<='1' when outputCounter="1" else '0'; --when instrucion(0) = "1" >>32bit>>flush 
+ReadImmd<='1'when outputCounter="1" else '0';
+ImmdiateValue<=instruction;
 ID_EX:entity work.Reg(RegArch)  generic map(n=>179) port map(input=>ID_EXRegIN,en=>ID_EXwrite,rst=>rst,clk=>clk,output=>ID_EXRegOUT);
 	
 ---------------------------------------ID_EX Buffer -----------------------------------------------------------------
-ID_EXRegIN(31 downto 0) <= Rsrc; --Rscr1 
+ID_EXRegIN(31 downto 0 ) <= Rsrc; --Rscr1 
 ID_EXRegIN(63 downto 32) <= Rdst; -- Rscr2 
-ID_EXRegIN(95 downto 64) <=instructionDecodeout;
+ID_EXRegIN(95 downto 64) <=(others=>'0') when instruction(0)='1' else instructionDecodeout;
 ID_EXRegIN(127 downto 96) <= pcDecodeout; --PC after incremented 
 
 ID_EXRegIN(143) <= RRI; --RRI signal 
@@ -115,8 +135,8 @@ ID_EXRegIN(130 downto 128) <=WBsignalsDecodeOut;
 ID_EXRegIN(178 downto 147) <=INPORTValueDecodeOut;
 
 
------------------------------------------------------------------------------------------------------------------------------------------
-
+------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------
 --------------------------------------------------------------Execute ->> Memory ------------------------------------------
 Execute:entity work.ExeStage port map(clk=>clk,rst=>rst,INT=>INT,
 ID_EX=>ID_EXRegOUT,
@@ -146,7 +166,7 @@ EX_MEMRegIN(102 downto 100)<=RegDstToExe_MEM;
 RegDSTtofetchForwardingunit<=RegDstToExe_MEM;
 EX_MEMRegIN(35 downto 33)<=RsEXEOUT;
 EX_MEMRegIN(107 downto 105)<=CCR;
-CRRFlags<=CRR;
+CRRFlags<=CCR;
 EX_MEMRegIN(67 downto 36)<=DataOut;
 EX_MEMRegIN(99 downto 68)<=AddrressEA_IMM;
 
@@ -182,7 +202,7 @@ WBStage:entity work.WBStage port map (clk=>clk,rst=>rst,MEM_WB=>MEM_WBRegOUT,Reg
 
 -----------------------------------------------------------------------------------------------------------------------------------------
 
-
+counter:entity work.counter generic map(1) port map(enable=>enableCounter, reset=>resetCounter, clk=>clk, output=>outputCounter);
 
 ----------------------------------------------------------Hazard Detection Unit --------------------------------------------------------------------------
 --Hazard_detection_unit:entity work.hazard_detection_unit port map(ID_EX_RegisterRt=> instructionDecodeout(7 downto 5), IF_ID_RegisterRs=> IF_IDRegIN(10 downto 8),IF_ID_RegisterRt=> IF_IDRegIN(7 downto 5),ID_EX_MemRead => MEMSignalsDecodeOut(3),reset => rst, PCwrite=>PCwrite ,IF_ID_write =>tempIF_IDwrite,ControlUnit_Mux_Selector => Mux_Selector_input);

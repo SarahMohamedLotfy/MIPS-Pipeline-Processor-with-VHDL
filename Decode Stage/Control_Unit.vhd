@@ -407,7 +407,7 @@ begin
 	     Out_enable <= '0';
 	     SWAP<= '0';
 		 CALL <= '0';
-		 thirtyTwo_Sixteen<= '0';
+		 thirtyTwo_Sixteen<= '1';
 	     -- SUB 
      elsif (OpCode = "01001") then
          RegWrite <= '1';
