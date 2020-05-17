@@ -16,23 +16,60 @@ port(
 end entity;
 
 architecture memory_arch of memory is
- 
+---------------------------------SP Signaaaaaaaals-----------------------------------
+----------------------/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\-------------------------
+signal SP_input:std_logic_vector(31 downto 0);
+signal SP_output:std_logic_vector(31 downto 0);
+signal circ_output:std_logic_vector(31 downto 0);
+----------------------/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\--------------------------
+---------------------------------SP Signaaaaaaaals------------------------------------
 
 	signal interrupt,RRI:  std_logic;
 	signal MEMsignals: std_logic_vector(3 downto 0);
 	signal CRR : std_logic_vector(2 downto 0);
-
-	signal spType :std_logic_vector(2-1 downto 0);
+        signal tmp:std_logic_vector(15 downto 0);
+        signal outputMEm :std_logic_vector(31 downto 0);
+	--signal spType :std_logic_vector(2-1 downto 0);
 	signal Address : std_logic_vector(31 downto 0);
-	
+	signal notSig : std_logic;
   
 begin
-  
+notSig <= not EX_MEM(109);
+SP_input <= "00000000000000000000000000001010";
+SP:entity work.Reg(RegArch) generic map(n=>32) port map(
+input => SP_input,
+en => notSig,
+rst => '0',
+clk => clk,
+output => SP_output
+);
+
+circ:entity work.IncDec(behav) port map(
+SPtype => EX_MEM(108),
+SP => SP_output,
+SPout => circ_output
+);
+
+mux:entity work.mux(behavioral) port map(
+sel => EX_MEM(109 downto 108),
+add => EX_MEM( 99 downto 68),
+SP1 => SP_input,
+SP2 => circ_output,
+output => Address
+);
+
+DM: entity work.ram generic map(2) port map (clk,
+'0',
+'1',
+Address,
+tmp,
+outputMEm);
+
 Rsrc2 <= EX_MEM( 31 downto 0);
-SWAP<= EX_MEM(32);
+SWAP <= EX_MEM(32);
 Rs <= EX_MEM( 35 downto 33);
-ALUresult<= EX_MEM( 67 downto 36);
-Address<= EX_MEM( 99 downto 68);
+ALUresult <= EX_MEM( 67 downto 36);
+--Address <= EX_MEM( 99 downto 68);
 Rd<= EX_MEM( 102 downto 100);
 interrupt<= EX_MEM(103);
 RRI<= EX_MEM(104);
@@ -41,7 +78,7 @@ MEMsignals<=EX_MEM(111 downto 108);
 
 WBsignals<=EX_MEM(114 downto 112);
 
-MemoryReuslt<=(others=>'0');
+MemoryReuslt<= outputMEm;
 --TODO 
 --MemoryReadSignalToFetch from memory stage decision circuit in RTI or RET or reset or INT become 1 to make PC reg read 
 --its value from PC memory which is read from data memory.
