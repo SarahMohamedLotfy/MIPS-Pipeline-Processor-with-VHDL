@@ -45,7 +45,6 @@ BEGIN
 	PCReg <="00000000000000000000000000001010" when (reset ='1') else PCRegValue when reset='0';
 	InstrPC<=PCReg;
 	ActualPCWrite<=RRIPCWrite or pcWrite;
-	
 	DecisionCircuit:entity work.decision port map(PCreg=>PCReg,DecodePC=>DecodePC,TargetAddress=>DecodeTargetAddress,MemoryPC=>MemoryPC,
 	rst=>reset,clk=>clk,ReadFromMemorySignal=>MemoryReadSignal,JZ=>JZ,UnconditionBranch=>UnconditionBranch,
 	T_NT=>T_NT,State=>"00",
