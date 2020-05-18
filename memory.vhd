@@ -10,7 +10,7 @@ port(
 
   Rsrc2,ALUresult, MemoryReuslt,MemoryPC :out std_logic_vector(31 downto 0);
   SWAP,MemoryReadSignalToFetch :out std_logic;
-  Rs,Rd,WBsignals :out std_logic_vector(2 downto 0)
+  Rt,Rd,WBsignals :out std_logic_vector(2 downto 0)
  
 );
 end entity;
@@ -67,7 +67,7 @@ outputMEm);
 
 Rsrc2 <= EX_MEM( 31 downto 0);
 SWAP <= EX_MEM(32);
-Rs <= EX_MEM( 35 downto 33);
+Rt <= EX_MEM( 35 downto 33);
 ALUresult <= EX_MEM( 67 downto 36);
 --Address <= EX_MEM( 99 downto 68);
 Rd<= EX_MEM( 102 downto 100);

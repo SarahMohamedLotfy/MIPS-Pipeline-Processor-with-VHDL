@@ -17,14 +17,14 @@ BEGIN
 		BEGIN
 		--shift right
 		 IF (S="1011")THEN 
-			Cout <= A(to_integer(unsigned(B)-1));
+			Cout <= A(to_integer(unsigned(B)));
 			F(size-to_integer(unsigned(B))-1 downto 0) <= A(size-1 downto to_integer(unsigned(B)));
 			F(size-1 downto size-to_integer(unsigned(B))) <= (others=>'0');
 			--shift left
 		elsif (S="1010")then
 			F(to_integer(unsigned(B)) downto 0) <= (others=>'0');
 			F(size-1 downto to_integer(unsigned(B))) <= A(size-to_integer(unsigned(B))-1 downto 0);
-			Cout <= A(size-to_integer(unsigned(B)));
+			Cout <= A(size-to_integer(unsigned(B))-1);
 		else
 			F<=(others=>'0');
 			Cout<='0';

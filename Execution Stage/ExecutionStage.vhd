@@ -9,7 +9,7 @@ entity ExeStage is
     EXALUResult,MEMALUResult:in std_logic_vector(31 downto 0);--IN port value is an input from system that read in execute cycle direct from system.
     MEM_WBRegisterRd,EX_MEMRegisterRd:IN std_logic_vector(2 downto 0);
     EX_MEMRegWrite,MEM_WBRegWrite,EX_MEMSWAP,MEM_WBSWAP:IN std_logic;
-    RegDst,CCR,RsReg,WBsignals:out std_logic_vector(2 downto 0);--CCR output of reg , but ZF output direct from ALU to use in feedback check in branch decision.
+    RegDst,CCR,RtReg,WBsignals:out std_logic_vector(2 downto 0);--CCR output of reg , but ZF output direct from ALU to use in feedback check in branch decision.
     MEMSignals:out std_logic_vector(3 downto 0);
     ZF,SWAP,INTSignal,RRI:OUT std_logic;
     DataOut,AddrressEA_IMM,SRC2out:out std_logic_vector(31 downto 0)
@@ -35,7 +35,7 @@ SRC1<=ID_EX(31 downto 0);
 SRC2 <= ID_EX(63 downto 32);
 SRC2out <=ID_EX(63 downto 32);
 Rs<=ID_EX(74 downto 72);
-RsReg<=ID_EX(74 downto 72);
+RtReg<=ID_EX(71 downto 69);
 Rt <= ID_EX(71 downto 69);
 Rd <= ID_EX(68 downto 66);
 EA_Part<=ID_EX(68 downto 65);
