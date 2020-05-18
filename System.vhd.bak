@@ -51,8 +51,8 @@ signal MEM_WBRegWrite,MEM_WBSWAP,MemoryReadSignalToFetch:std_logic;
 
 
 -----------------------------------------intermediate registers signals------------------------------------ 
-signal IF_IDRegIN,IF_IDRegOut:std_logic_vector(50 downto 0);
-signal ID_EXRegIN,ID_EXRegOUT: std_logic_vector(146 downto 0);
+signal IF_IDRegIN,IF_IDRegOut:std_logic_vector(82 downto 0);
+signal ID_EXRegIN,ID_EXRegOUT: std_logic_vector(178 downto 0);
 signal EX_MEMRegIN,EX_MEMRegOUT: std_logic_vector(114 downto 0);
 signal MEM_WBRegIN,MEM_WBRegOUT: std_logic_vector(105 downto 0);
 signal IF_IDFlush,ID_EXFlush,EX_MEMFlush,MEM_WBFlush:std_logic:='0';
@@ -146,6 +146,7 @@ EX_MEMRegIN(102 downto 100)<=RegDstToExe_MEM;
 RegDSTtofetchForwardingunit<=RegDstToExe_MEM;
 EX_MEMRegIN(35 downto 33)<=RsEXEOUT;
 EX_MEMRegIN(107 downto 105)<=CCR;
+CRRFlags<=CRR;
 EX_MEMRegIN(67 downto 36)<=DataOut;
 EX_MEMRegIN(99 downto 68)<=AddrressEA_IMM;
 

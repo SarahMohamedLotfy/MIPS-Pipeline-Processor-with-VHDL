@@ -1,54 +1,54 @@
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.numeric_std.all;
 
-entity memory is 
-port(	
-  reset, clk: in std_logic;
+ENTITY MemoryMain IS
+	--n is the number of lines retrieved. ex => if n = 1 -> dataOut holds 16 bits
+	--if n = 2 -> dataOut holds 32 bits and so on
+	GENERIC(addressBits : integer :=11);
+	PORT(
+		CLK : IN std_logic;
+		W,R : IN std_logic;
 
-  EX_MEM:in std_logic_vector(114 downto 0);
+		address : IN  std_logic_vector(addressBits-1 DOWNTO 0);
 
-  Rsrc2,ALUresult, MemoryReuslt,MemoryPC :out std_logic_vector(31 downto 0);
-  SWAP,MemoryReadSignalToFetch :out std_logic;
-  Rs,Rd,WBsignals :out std_logic_vector(2 downto 0)
- 
-);
-end entity;
+		dataIn  : IN  std_logic_vector(31 DOWNTO 0);
+		dataOut : OUT std_logic_vector(31 DOWNTO 0));
+END ENTITY MemoryMain;
 
-architecture memory_arch of memory is
- 
+ARCHITECTURE syncrama OF MemoryMain IS
 
-	signal interrupt,RRI:  std_logic;
-	signal MEMsignals: std_logic_vector(3 downto 0);
-	signal CRR : std_logic_vector(2 downto 0);
-
-	signal spType :std_logic_vector(2-1 downto 0);
-	signal Address : std_logic_vector(31 downto 0);
+	TYPE ram_type IS ARRAY(0 TO 2**addressBits -1) OF std_logic_vector(15 DOWNTO 0);
+	SIGNAL Memory : ram_type ;
 	
-  
-begin
-  
-Rsrc2 <= EX_MEM( 31 downto 0);
-SWAP<= EX_MEM(32);
-Rs <= EX_MEM( 35 downto 33);
-ALUresult<= EX_MEM( 67 downto 36);
-Address<= EX_MEM( 99 downto 68);
-Rd<= EX_MEM( 102 downto 100);
-interrupt<= EX_MEM(103);
-RRI<= EX_MEM(104);
-CRR<= EX_MEM(107 downto 105);
-MEMsignals<=EX_MEM(111 downto 108);
-
-WBsignals<=EX_MEM(114 downto 112);
-
-MemoryReuslt<=(others=>'0');
---TODO 
---MemoryReadSignalToFetch from memory stage decision circuit in RTI or RET or reset or INT become 1 to make PC reg read 
---its value from PC memory which is read from data memory.
-MemoryReadSignalToFetch<='0';
-MemoryPC<=(others=>'0');  
-end architecture;
-
-
-
-
+	BEGIN
+		PROCESS(CLK, W, R , address) IS
+		VARIABLE adds:INTEGER;
+			BEGIN	
+					IF W = '1' THEN
+						if(falling_edge(CLK))then
+							loopW: for i in 0 to 1 loop
+								adds := i + to_integer(unsigned(address));
+								if i = 0 then
+									Memory(adds) <= dataIn(15 downto 0);
+								elsif i=1 then
+									Memory(adds) <= dataIn(31 downto 16);
+								end if;			
+							end loop;
+						end if;	
+					elsIF R = '1' THEN
+						loopR: for i in 0 to 1 loop
+							adds := i + to_integer(unsigned(address));
+							if i = 0 then
+								dataOut(15 downto 0) <= Memory(adds);
+							elsif i=1 then
+								dataOut(31 downto 16) <= Memory(adds);
+							end if;			
+						end loop;
+					ELSE 
+						dataOut <= (OTHERS=>'Z');
+					END IF;
+				
+		END PROCESS;
+		
+END syncrama;

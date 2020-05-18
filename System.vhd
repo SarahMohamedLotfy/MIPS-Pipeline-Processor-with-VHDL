@@ -146,7 +146,7 @@ EX_MEMRegIN(102 downto 100)<=RegDstToExe_MEM;
 RegDSTtofetchForwardingunit<=RegDstToExe_MEM;
 EX_MEMRegIN(35 downto 33)<=RsEXEOUT;
 EX_MEMRegIN(107 downto 105)<=CCR;
-CRRFlags<=CRR;
+CRRFlags<=CCR;
 EX_MEMRegIN(67 downto 36)<=DataOut;
 EX_MEMRegIN(99 downto 68)<=AddrressEA_IMM;
 

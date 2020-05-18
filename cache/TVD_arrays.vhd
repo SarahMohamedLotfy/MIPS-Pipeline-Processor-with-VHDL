@@ -21,24 +21,24 @@ end TVD;
 
 architecture TVD_arch of TVD is
 type tag_array is array (31 downto 0) of STD_LOGIC_VECTOR (2 downto 0);
-signal tag_bits : tag_array;
+signal tag_bits : tag_array:=(others=>(others=>'0'));
 
 type Validbit_array is array (31 downto 0)of STD_LOGIC;
-signal valid_bit : Validbit_array;
+signal valid_bit : Validbit_array:=(others=>'0');
 
 type dirtybit_array is array (31 downto 0) of STD_LOGIC;
-signal dirty_bit : dirtybit_array;
+signal dirty_bit : dirtybit_array:=(others=>'0');
 
 begin
 
-    process(clk)
+    process(clk,rd,wr,index,tagsin,Dbitin,Vbitin)
     begin
     
-        if(rd = '1')then
+        if(rd = '1' and wr ='0')then
 		tags <= tag_bits(to_integer(unsigned(index)));
 		Dbit <= dirty_bit(to_integer(unsigned(index)));
 		Vbit <= valid_bit(to_integer(unsigned(index)));
-	elsif(wr = '1')then
+	elsif(rd = '0' and wr = '1')then
 		tag_bits(to_integer(unsigned(index))) <= tagsin;
 		dirty_bit(to_integer(unsigned(index)))<= Dbitin;
 		valid_bit(to_integer(unsigned(index)))<= Vbitin;
