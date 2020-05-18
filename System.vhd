@@ -74,7 +74,6 @@ signal enableCounter : std_logic;
 signal Flush_32_16   : std_logic:='0'; --flush signal when instruction is 32
 signal ImmdiateValue : std_logic_vector(15 downto 0);
 signal ReadImmd      : std_logic:='0';--enble to read immdiate
-
 begin
 --------------------------------------------------------------Fetch ->> Decode------------------------------------------
 Fetch:entity work.FetchStage  Generic map (wordSize=>16,PCSize=>32) 
@@ -82,7 +81,7 @@ port map(clk=>clk,reset=>rst,interrupt=>INT,pcWrite=>'1',MemoryReadSignal=>Memor
 DecodePC=>pcDecodeout,DecodeTargetAddress=>Target_Address,MemoryPC=>MemoryPC,T_NT=>T_NTtoFetch,INPORTValue=>INPORT,
 
 instruction=>instruction,InstrPC=>CurrentPC,RRI=>RRIsignal,intSignal=>probINTsignal,rstSignal=>probRstSignal,IF_IDFlush=>IF_IDFlushFromFetch,  INPORTValueFetchOut=>INPORTValueFetchOut);
-IF_IDRegIN(15 downto 0) <=instruction;
+IF_IDRegIN(15 downto 0) <=(others=>'0')when outputCounter="1" else instruction;
 IF_IDRegIN(47 downto 16) <=CurrentPC;
 IF_IDRegIN(48) <=probINTsignal;
 IF_IDRegIN(49) <=RRIsignal;
@@ -117,6 +116,9 @@ resetCounter<='0' when (enableCounter='1') else '1';
 Flush_32_16<='1' when outputCounter="1" else '0'; --when instrucion(0) = "1" >>32bit>>flush 
 ReadImmd<='1'when outputCounter="1" else '0';
 ImmdiateValue<=instruction;
+
+-----------------------
+
 ID_EX:entity work.Reg(RegArch)  generic map(n=>179) port map(input=>ID_EXRegIN,en=>ID_EXwrite,rst=>rst,clk=>clk,output=>ID_EXRegOUT);
 	
 ---------------------------------------ID_EX Buffer -----------------------------------------------------------------

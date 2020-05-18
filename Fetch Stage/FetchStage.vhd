@@ -13,7 +13,7 @@ ENTITY FetchStage IS
 			DecodePC,DecodeTargetAddress,MemoryPC:IN std_logic_vector(PCSize-1 downto 0);
 			T_NT:IN std_logic_vector(1 downto 0);
 			INPORTValue:IN std_logic_vector(31 downto 0);
-
+		
 			instruction: out STD_LOGIC_VECTOR(wordSize-1 DOWNTO 0);
 			InstrPC,INPORTValueFetchOut : out std_logic_vector(PCSize-1 downto 0);
 			intSignal,rstSignal,RRI,IF_IDFlush : out std_logic --interrupt signal output 
