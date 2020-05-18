@@ -10,9 +10,9 @@ force -freeze sim:/system/rst 1 0
 run
 force -freeze sim:/system/rst 0 0
 run
-force -freeze sim:/system/INPORT 32'h4 0
+force -freeze sim:/system/INPORT 32'h1 0
 run
-force -freeze sim:/system/INPORT 32'h3 0
+force -freeze sim:/system/INPORT 32'h5 0
 run 
 
 run
