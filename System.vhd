@@ -124,7 +124,7 @@ ID_EX:entity work.Reg(RegArch)  generic map(n=>179) port map(input=>ID_EXRegIN,e
 ---------------------------------------ID_EX Buffer -----------------------------------------------------------------
 ID_EXRegIN(31 downto 0 ) <= Rsrc; --Rscr1 
 ID_EXRegIN(63 downto 32) <= Rdst; -- Rscr2 
-ID_EXRegIN(95 downto 64) <=(others=>'0') when instruction(0)='1' else instructionDecodeout;
+ID_EXRegIN(95 downto 64) <= instructionDecodeout;
 ID_EXRegIN(127 downto 96) <= pcDecodeout; --PC after incremented 
 
 ID_EXRegIN(143) <= RRI; --RRI signal 

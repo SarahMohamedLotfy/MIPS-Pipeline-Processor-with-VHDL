@@ -401,7 +401,7 @@ begin
 	     ALU <= "0101";
 	     PCWrite <= '0';
 	     IMM_EA <= '1';
-	     sign <= '1';
+	     sign <= '0';
 	     CRR <= '0';
 	     In_enable <= '0';
 	     Out_enable <= '0';
