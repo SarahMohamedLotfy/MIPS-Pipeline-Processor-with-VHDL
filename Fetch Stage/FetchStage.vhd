@@ -37,7 +37,7 @@ BEGIN
     PC_Reg: entity work.Reg(RegFalling) generic map(32) port map(input=>tempPCnew,en=>ActualPCWrite,rst=>'0',clk=>clk,output=>PCRegValue);
 	intSignal <=interrupt;
 
-	INPORTValueFetchOut<=INPORTValue;
+	INPORTValueFetchOut<=INPORTValue when reset ='0' else (others=>'0') when reset='1';
 	--reset signal output 
 	rstSignal <=reset;
 	RRI<=RRISignal;

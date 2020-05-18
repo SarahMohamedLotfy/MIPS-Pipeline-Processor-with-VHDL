@@ -11,7 +11,10 @@
 .ORG 10
 in   R1       #add 5 in R1
 in   R2       #add 19 in R2
-
 IADD R2,R1,2  #R5 = FFFF , flags no change
+nop
+nop
+nop
+
 
 

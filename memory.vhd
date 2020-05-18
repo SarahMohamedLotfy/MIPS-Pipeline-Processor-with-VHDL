@@ -50,7 +50,7 @@ SP => SP_output,
 SPout => circ_output
 );
 
-mux:entity work.mux(behavioral) port map(
+mux:entity work.mux8(behavioral) port map(
 sel => EX_MEM(109 downto 108),
 add => EX_MEM( 99 downto 68),
 SP1 => SP_input,
@@ -78,7 +78,7 @@ MEMsignals<=EX_MEM(111 downto 108);
 
 WBsignals<=EX_MEM(114 downto 112);
 
-MemoryReuslt<= outputMEm;
+MemoryReuslt<= outputMEm when EX_MEM(108)='1' else (others=>'0');
 --TODO 
 --MemoryReadSignalToFetch from memory stage decision circuit in RTI or RET or reset or INT become 1 to make PC reg read 
 --its value from PC memory which is read from data memory.

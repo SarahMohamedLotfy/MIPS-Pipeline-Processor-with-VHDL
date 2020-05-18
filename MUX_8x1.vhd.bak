@@ -9,10 +9,10 @@ entity mux8 is
          SP2:in STD_LOGIC_VECTOR(31 downto 0);
          output: out std_logic_vector(31 downto 0)
      );
-end mux8;
+end mux;
 
 
-architecture behavioral of mux8 is
+architecture behavioral of mux is
 
 begin
     with sel select

@@ -99,7 +99,10 @@ AddrressEA_IMM<=B;
 
 ALU:entity work.ALU2 generic map (size=>32) port map(S=>ALUSelectors,A=>A,B=>B,F=>ALUResult,ZF=>CCRRegister(0),SignF=>CCRRegister(1),OVF=>OVF,Cout=>CCRRegister(2));
 
---Forwarding:entity work.ForwardingUnit port map(MEM_WBRegisterRd,EX_MEMRegisterRd,Rs,Rt,EX_MEMRegWrite,MEM_WBRegWrite,EX_MEMSWAP,MEM_WBSWAP,MUXASel,MUXBSel);
+Forwarding:entity work.ForwardingUnit port map(MEM_WBRegisterRd,EX_MEMRegisterRd,Rs,Rt,EX_MEMRegWrite,MEM_WBRegWrite,EX_MEMSWAP,MEM_WBSWAP,MUXASel,MUXBSel);
 
+SignExtendModule:entity work.signextend port map(signType=>signType,-- 0 extend IMM , 1 extend EA
+Address=>UpperInstr,
+output=>SignExtendOut);
 
 end EXeStagearch ; 
