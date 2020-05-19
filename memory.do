@@ -9,12 +9,11 @@ mem load -i instructionMemory.mem  /fetch/instruction_memory/ram
 force -freeze sim:/system/rst 1 0
 run
 force -freeze sim:/system/rst 0 0
+force -freeze sim:/system/INPORT 32'h2 0
 run
-force -freeze sim:/system/INPORT 32'h0CDAFE19 0
+force -freeze sim:/system/INPORT 32'h3 0
 run
-force -freeze sim:/system/INPORT 32'hFFFF 0
-run
-force -freeze sim:/system/INPORT 32'hF320 0
+force -freeze sim:/system/INPORT 32'h4 0
 run
 run
 run
