@@ -10,7 +10,7 @@ port(
 
   Rsrc2,ALUresult, MemoryReuslt,MemoryPC :out std_logic_vector(31 downto 0);
   SWAP,MemoryReadSignalToFetch :out std_logic;
-  Rs,Rd,WBsignals :out std_logic_vector(2 downto 0)
+  Rt,Rd,WBsignals :out std_logic_vector(2 downto 0)
  
 );
 end entity;
@@ -18,7 +18,7 @@ end entity;
 architecture memory_arch of memory is
 ---------------------------------SP Signaaaaaaaals-----------------------------------
 ----------------------/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\-------------------------
-signal SP_input:std_logic_vector(31 downto 0);
+--signal SP_input:std_logic_vector(31 downto 0);
 signal SP_output:std_logic_vector(31 downto 0);
 signal circ_output:std_logic_vector(31 downto 0);
 ----------------------/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\--------------------------
@@ -34,12 +34,11 @@ signal circ_output:std_logic_vector(31 downto 0);
 	signal notSig : std_logic;
   
 begin
-notSig <= not EX_MEM(109);
-SP_input <= "00000000000000000000000000001010";
+SP_input <= circ_output;
 SP:entity work.Reg(RegArch) generic map(n=>32) port map(
 input => SP_input,
 en => notSig,
-rst => '0',
+rst => reset,
 clk => clk,
 output => SP_output
 );
@@ -50,10 +49,10 @@ SP => SP_output,
 SPout => circ_output
 );
 
-mux:entity work.mux(behavioral) port map(
+mux:entity work.mux8(behavioral) port map(
 sel => EX_MEM(109 downto 108),
 add => EX_MEM( 99 downto 68),
-SP1 => SP_input,
+SP1 => SP_output,
 SP2 => circ_output,
 output => Address
 );
@@ -67,7 +66,7 @@ outputMEm);
 
 Rsrc2 <= EX_MEM( 31 downto 0);
 SWAP <= EX_MEM(32);
-Rs <= EX_MEM( 35 downto 33);
+Rt <= EX_MEM( 35 downto 33);
 ALUresult <= EX_MEM( 67 downto 36);
 --Address <= EX_MEM( 99 downto 68);
 Rd<= EX_MEM( 102 downto 100);
@@ -78,7 +77,7 @@ MEMsignals<=EX_MEM(111 downto 108);
 
 WBsignals<=EX_MEM(114 downto 112);
 
-MemoryReuslt<= outputMEm;
+MemoryReuslt<= outputMEm when EX_MEM(108)='1' else (others=>'0');
 --TODO 
 --MemoryReadSignalToFetch from memory stage decision circuit in RTI or RET or reset or INT become 1 to make PC reg read 
 --its value from PC memory which is read from data memory.
