@@ -82,9 +82,9 @@ for instr in instrComponent:
 	if instr[0] ==".ORG":
 		ORGCount=ORGCount+1
 		if ORGCount in [0 ,1] :
-			dataCount=int(instr[1])
+			dataCount=int(instr[1],16)
 		else:
-			instrCount = int(instr[1])
+			instrCount = int(instr[1],16)
 		
 		
 
@@ -172,20 +172,26 @@ for instr in instrComponent:
 		if instr[0] not in NoOperandInstructions:
 			if ORGCount in [0,1]:
 				Value="{0:016b}".format((int(instr[0]))&0xffff)
-				DataFile.write(("{}: "+Value+"\n").format(dataCount))
+				DataFile.write(("{}: "+Value+"\n").format(hex(dataCount)[2:]))
 		else:
 			#no operand 
 			STR= NoOperandInstructions[instr[0]]
 			instructionsOutput.append(STR)
-			print(STR)									
+			print(STR)
+	if ORGCount>1:
+		for line in instructionsOutput:
+			instrFile.write(hex(instrCount)[2:]+": "+line+"\n")
+			instrCount=instrCount+1
+		instructionsOutput.clear()											
 
 # for test in instrComponent: 
 	
 # 	print(test,len(test))
 
-for line in instructionsOutput:
-	instrFile.write((hex(instrCount))[2:]+": "+line+"\n")
-	instrCount=instrCount+1
+# for line in instructionsOutput:
+		
+# 	instrFile.write(hex(instrCount)[2:]+": "+line+"\n")
+# 	instrCount=instrCount+1
 
 instrFile.close()	
 DataFile.close()

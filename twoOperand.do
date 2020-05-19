@@ -10,10 +10,15 @@ force -freeze sim:/system/rst 1 0
 run
 force -freeze sim:/system/rst 0 0
 
-force -freeze sim:/system/INPORT 32'h4 0
-run
 force -freeze sim:/system/INPORT 32'h5 0
-run 
+run
+force -freeze sim:/system/INPORT 32'h19 0
+run
+force -freeze sim:/system/INPORT 32'hFFFD 0
+run
+force -freeze sim:/system/INPORT 32'hF320 0
+run
+
 add wave -position insertpoint  \
 sim:/system/Execute/EXALUResult \
 sim:/system/Execute/MEMALUResult \

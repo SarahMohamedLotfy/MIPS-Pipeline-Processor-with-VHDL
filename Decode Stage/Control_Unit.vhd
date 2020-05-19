@@ -295,7 +295,7 @@ begin
 	  CALL <= '0';
 	     
 	     -- CALL
-     elsif (OpCode = "01101") then
+     elsif (OpCode = "10101") then
          RegWrite <= '0';
 	     RegDST <= '0';
 	     MemToReg <= '0';
@@ -361,7 +361,7 @@ begin
 	     MemRd <= '0';
 	     MemWR <= '0';
 	     SP <= "11";
-	     ALU <= "0010";
+	     ALU <= "0001";
 	     PCWrite <= '0';
 	     IMM_EA <= '0';
 	     sign <= '0';

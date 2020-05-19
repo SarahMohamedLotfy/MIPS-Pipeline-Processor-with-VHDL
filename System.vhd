@@ -19,7 +19,7 @@ signal probINTsignal,probRstSignal,RRIsignal,IF_IDFlushFromFetch:std_logic;--sig
 
 -----------------------------------------Decode stage signals------------------------------------ 
 signal RegWriteinput,Swapinput,ZFToCheck, Mux_Selector_input:std_logic;
-signal Mem_Wb_Rd,Mem_Wb_Rs: std_logic_vector(2 downto 0);
+signal Mem_Wb_Rd,Mem_Wb_Rt: std_logic_vector(2 downto 0);
 signal value1,value2,INPORTValueDecodeOut: std_logic_vector(31 downto 0);
 signal Target_Address,Rsrc,Rdst,instructionDecodeout,pcDecodeout: std_logic_vector(31 downto 0);
 signal REGdstSignal,probINTDecodeout: std_logic;
@@ -34,7 +34,7 @@ signal T_NTtoFetch:std_logic_vector(1 downto 0);
 signal EXALUResult,INPORTValueEXEOut:std_logic_vector(31 downto 0);
 signal EX_MEMRegisterRd:std_logic_vector(2 downto 0);
 signal EX_MEMRegWrite,EX_MEMSWAP:std_logic;
-signal RegDstToExe_MEM,RsEXEOUT,RegDSTtofetchForwardingunit :std_logic_vector(2 downto 0);
+signal RegDstToExe_MEM,RtEXEOUT,RegDSTtofetchForwardingunit :std_logic_vector(2 downto 0);
 signal CCR:std_logic_vector(2 downto 0);
 signal ZF:std_logic;
 signal DataOut:std_logic_vector(31 downto 0);
@@ -93,7 +93,7 @@ IF_ID:entity work.Reg(RegArch)  generic map(n=>83) port map(input=>IF_IDRegIN,en
 --------------------------------------------------------------Decode ->>Execute ------------------------------------------
 Decode:entity work.DecodeStage port map(clk=>clk,rst=>rst,INT=>INT,Mux_Selector=>Mux_Selector_input,IF_ID=>IF_IDRegOUT,
 RegWriteFromWB=>RegWriteinput,SWAPFromWB=>Swapinput,
-MEM_WBRd=>Mem_Wb_Rd,MEM_WBRs=>Mem_Wb_Rs,RsFromFetch=>Rs_from_fetch,
+MEM_WBRd=>Mem_Wb_Rd,MEM_WBRs=>Mem_Wb_Rt,RsFromFetch=>Rs_from_fetch,
 Value1=>value1,Value2=>value2,
 ImmdiateValue=>ImmdiateValue,ReadImmd=>ReadImmd,
 TargetAddress=>Target_Address,SRC1=>Rsrc,SRC2=>Rdst,instruction=>instructionDecodeout,PC=>pcDecodeout,INPORTValueDecodeOut=>INPORTValueDecodeOut,
@@ -160,7 +160,7 @@ MEM_WBSWAP=>MEM_WBSWAP,
 
 RegDst=>RegDstToExe_MEM,
 CCR=>CCR,
-RsReg=>RsEXEOUT,
+RtReg=>RtEXEOUT,
 WBsignals=>EX_MEMRegIN(114 downto 112),
 MEMSignals=>EX_MEMRegIN(111 downto 108),
 ZF=>ZFToCheck,
@@ -172,7 +172,7 @@ AddrressEA_IMM=>AddrressEA_IMM
 
 EX_MEMRegIN(102 downto 100)<=RegDstToExe_MEM;
 RegDSTtofetchForwardingunit<=RegDstToExe_MEM;
-EX_MEMRegIN(35 downto 33)<=RsEXEOUT;
+EX_MEMRegIN(35 downto 33)<=RtEXEOUT;
 EX_MEMRegIN(107 downto 105)<=CCR;
 CRRFlags<=CCR;
 EX_MEMRegIN(67 downto 36)<=DataOut;
@@ -199,7 +199,7 @@ Rsrc2=>MEM_WBRegIN(31 downto 0),
 ALUresult=>MEM_WBRegIN(105 downto 74),
  MemoryReuslt=>MEM_WBRegIN(73 downto 42)
   ,SWAP=>MEM_WBRegIN(32)
-  ,Rs=>MEM_WBRegIN(35 downto 33)
+  ,Rt=>MEM_WBRegIN(35 downto 33)
   ,Rd=>MEM_WBRegIN(38 downto 36),
   WBsignals=>MEM_WBRegIN(41 downto 39),
   MemoryReadSignalToFetch=>MemoryReadSignalToFetch,MemoryPC=>MemoryPC);
@@ -207,7 +207,7 @@ ALUresult=>MEM_WBRegIN(105 downto 74),
 
 MEM_WB:entity work.Reg(RegArch)  generic map(n=>106) port map(input=>MEM_WBRegIN,en=>MEM_WBwrite,rst=>rst,clk=>clk,output=>MEM_WBRegOUT);
 
-WBStage:entity work.WBStage port map (clk=>clk,rst=>rst,MEM_WB=>MEM_WBRegOUT,RegWriteToRegisterFile=>RegWriteinput,Swap=>Swapinput,PortOut=>OUTPort,Value1=>value1,Value2=>value2,Rs=>Mem_Wb_Rs,Rd=>Mem_Wb_Rd);
+WBStage:entity work.WBStage port map (clk=>clk,rst=>rst,MEM_WB=>MEM_WBRegOUT,RegWriteToRegisterFile=>RegWriteinput,Swap=>Swapinput,PortOut=>OUTPort,Value1=>value1,Value2=>value2,RtToDecode=>Mem_Wb_Rt,RdToDecode=>Mem_Wb_Rd);
 
 -----------------------------------------------------------------------------------------------------------------------------------------
 
