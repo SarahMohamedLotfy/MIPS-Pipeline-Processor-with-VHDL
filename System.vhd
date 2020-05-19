@@ -59,14 +59,21 @@ signal IF_IDFlush,ID_EXFlush,EX_MEMFlush,MEM_WBFlush:std_logic:='0';
 signal IF_IDwrite,ID_EXwrite,EX_MEMwrite,MEM_WBwrite:std_logic:='1';
 ------------------------------------------------------------------------------------------------
 
+-----------------------------------------Memory system signals------------------------------------ 
+signal memorySystemRd,memorySystemWr,InstrRequest,DataRequest,FetchStall,DataStall:std_logic;
+signal MemoryInstrOut:std_logic_vector(15 downto 0);
+signal MemoryDataToWrite,MemoryDataRead:std_logic_vector(31 downto 0);
+signal AddressToMemory:std_logic_vector(31 downto 0);
+------------------------------------------------------------------------------------------------
+
 begin
 --------------------------------------------------------------Fetch ->> Decode------------------------------------------
 Fetch:entity work.FetchStage  Generic map (wordSize=>16,PCSize=>32) 
-port map(clk=>clk,reset=>rst,interrupt=>INT,pcWrite=>'1',MemoryReadSignal=>MemoryReadSignalToFetch,
+port map(clk=>clk,reset=>rst,interrupt=>INT,pcWrite=>'1',instruction=>MemoryInstrOut,FetchStall=>FetchStall,MemoryReadSignal=>MemoryReadSignalToFetch,
 DecodePC=>pcDecodeout,DecodeTargetAddress=>Target_Address,MemoryPC=>MemoryPC,T_NT=>T_NTtoFetch,INPORTValue=>INPORT,
 
-instruction=>instruction,InstrPC=>CurrentPC,RRI=>RRIsignal,intSignal=>probINTsignal,rstSignal=>probRstSignal,IF_IDFlush=>IF_IDFlushFromFetch,INPORTValueFetchOut=>INPORTValueFetchOut);
-IF_IDRegIN(15 downto 0) <=instruction;
+InstrPC=>CurrentPC,RRI=>RRIsignal,intSignal=>probINTsignal,rstSignal=>probRstSignal,IF_IDFlush=>IF_IDFlushFromFetch,INPORTValueFetchOut=>INPORTValueFetchOut);
+IF_IDRegIN(15 downto 0) <=MemoryInstrOut when FetchStall = '0'  else (others=>'0') when FetchStall = '1' ;
 IF_IDRegIN(47 downto 16) <=CurrentPC;
 IF_IDRegIN(48) <=probINTsignal;
 IF_IDRegIN(49) <=RRIsignal;
@@ -173,6 +180,7 @@ ALUresult=>MEM_WBRegIN(105 downto 74),
   ,Rs=>MEM_WBRegIN(35 downto 33)
   ,Rd=>MEM_WBRegIN(38 downto 36),
   WBsignals=>MEM_WBRegIN(41 downto 39),
+  rd=>memorySystemRd,Wr=>memorySystemWr,DataToWrite=>MemoryDataToWrite,DataRead=>,DataRequest=>DataRequest,
   MemoryReadSignalToFetch=>MemoryReadSignalToFetch,MemoryPC=>MemoryPC);
 
 
@@ -182,7 +190,10 @@ WBStage:entity work.WBStage port map (clk=>clk,rst=>rst,MEM_WB=>MEM_WBRegOUT,Reg
 
 -----------------------------------------------------------------------------------------------------------------------------------------
 
+MemorySystem:work.memorysystem port map(clk=>clk,rst=>rst,WR=>memorySystemWr,RD=>memorySystemRd,Instr=>InstrRequest,Data=>DataRequest,address=>AddressToMemory,Datain=>MemoryDataToWrite,
 
+DataStall=>DataStall,InstrStall=>FetchStall,
+DataOut=>);
 
 ----------------------------------------------------------Hazard Detection Unit --------------------------------------------------------------------------
 --Hazard_detection_unit:entity work.hazard_detection_unit port map(ID_EX_RegisterRt=> instructionDecodeout(7 downto 5), IF_ID_RegisterRs=> IF_IDRegIN(10 downto 8),IF_ID_RegisterRt=> IF_IDRegIN(7 downto 5),ID_EX_MemRead => MEMSignalsDecodeOut(3),reset => rst, PCwrite=>PCwrite ,IF_ID_write =>tempIF_IDwrite,ControlUnit_Mux_Selector => Mux_Selector_input);

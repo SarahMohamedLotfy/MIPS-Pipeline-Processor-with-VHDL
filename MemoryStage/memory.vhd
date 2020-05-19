@@ -9,9 +9,9 @@ port(
   EX_MEM:in std_logic_vector(114 downto 0);
 
   Rsrc2,ALUresult, MemoryReuslt,MemoryPC :out std_logic_vector(31 downto 0);
-  SWAP,MemoryReadSignalToFetch :out std_logic;
+  SWAP,MemoryReadSignalToFetch,rd,Wr :out std_logic;
   Rs,Rd,WBsignals :out std_logic_vector(2 downto 0)
- 
+  DataToWrite=>MemoryDataToWrite,DataRead=>,DataRequest=>DataRequest,
 );
 end entity;
 

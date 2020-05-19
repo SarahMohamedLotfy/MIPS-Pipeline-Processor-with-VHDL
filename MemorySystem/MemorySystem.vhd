@@ -60,7 +60,7 @@ Cache_read=>CacheRead, Cache_write=>CacheWrite,Cache_Bus_Write=>Cache_Bus_Write
 ,Memory_Bus_Read=>Memory_Bus_Read,Cache_Bus_Read=>Cache_Bus_Read,Memory_Bus_Write=>Memory_Bus_Write,
 hit_miss=>Dhit_miss,Stall=>DataStall);
 
-InstrMemoryController:entity work.instrcontroller port map(tag=>tag,index=>index,clk=>clk,rst=>InstrControllerRst,rd=>RD,memory_ready=>memoryReadyFromMainMemoryFromInstr,
+InstrMemoryController:entity work.instrcontroller port map(tag=>tag,index=>index,clk=>clk,rst=>InstrControllerRst,rd=>Instr,memory_ready=>memoryReadyFromMainMemoryFromInstr,
 
 Cache_read=>ICacheRead,Cache_Bus_Write=>ICache_Bus_Write
 ,Memory_Bus_Read=>IMemory_Bus_Read,Cache_Bus_Read=>ICache_Bus_Read,Memory_Bus_Write=>IMemory_Bus_Write,
