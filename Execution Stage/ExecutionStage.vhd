@@ -9,7 +9,7 @@ entity ExeStage is
     EXALUResult,MEMALUResult:in std_logic_vector(31 downto 0);--IN port value is an input from system that read in execute cycle direct from system.
     MEM_WBRegisterRd,EX_MEMRegisterRd:IN std_logic_vector(2 downto 0);
     EX_MEMRegWrite,MEM_WBRegWrite,EX_MEMSWAP,MEM_WBSWAP:IN std_logic;
-    RegDst,CCR,RsReg,WBsignals:out std_logic_vector(2 downto 0);--CCR output of reg , but ZF output direct from ALU to use in feedback check in branch decision.
+    RegDst,CCR,RtReg,WBsignals:out std_logic_vector(2 downto 0);--CCR output of reg , but ZF output direct from ALU to use in feedback check in branch decision.
     MEMSignals:out std_logic_vector(3 downto 0);
     ZF,SWAP,INTSignal,RRI:OUT std_logic;
     DataOut,AddrressEA_IMM,SRC2out:out std_logic_vector(31 downto 0)
@@ -27,15 +27,19 @@ signal PC_1,SRC1,SRC2,SignExtendOut,tempA,A,B,ALUResult,MUXSRC2_signOutput,INPOR
 signal ALUSelectors,EA_Part:std_logic_vector(3 downto 0);
 signal CCRRegister,Rs,Rt,Rd:std_logic_vector(2 downto 0);--ZF,SignFlag,Carry
 signal MUXASel,MUXBSel:std_logic_vector(1 downto 0):="00";
-
+signal CRREnable:std_logic:='0';
+signal Opcode:std_logic_vector(4 downto 0);
 begin
-CCR_Reg:entity work.Reg generic map(n=>3) port map(input=>CCRRegister,en=>'1',rst=>rst,clk=>clk,output=>CCR);
+  --in 00101 ,out 00100 ,swap 00110 ,nop 00000
+CRREnable<='0' when (Opcode="00101" or Opcode="00100" or Opcode="00110"  or Opcode="00000") else '1'; 
+CCR_Reg:entity work.Reg generic map(n=>3) port map(input=>CCRRegister,en=>CRREnable,rst=>rst,clk=>clk,output=>CCR);
 ZF<=CCRRegister(0);
 SRC1<=ID_EX(31 downto 0);
 SRC2 <= ID_EX(63 downto 32);
 SRC2out <=ID_EX(63 downto 32);
+Opcode<=ID_EX(79 downto 75);
 Rs<=ID_EX(74 downto 72);
-RsReg<=ID_EX(74 downto 72);
+RtReg<=ID_EX(71 downto 69);
 Rt <= ID_EX(71 downto 69);
 Rd <= ID_EX(68 downto 66);
 EA_Part<=ID_EX(68 downto 65);
@@ -101,5 +105,8 @@ ALU:entity work.ALU2 generic map (size=>32) port map(S=>ALUSelectors,A=>A,B=>B,F
 
 Forwarding:entity work.ForwardingUnit port map(MEM_WBRegisterRd,EX_MEMRegisterRd,Rs,Rt,EX_MEMRegWrite,MEM_WBRegWrite,EX_MEMSWAP,MEM_WBSWAP,MUXASel,MUXBSel);
 
+SignExtendModule:entity work.signextend port map(signType=>signType,-- 0 extend IMM , 1 extend EA
+Address=>UpperInstr,
+output=>SignExtendOut);
 
 end EXeStagearch ; 

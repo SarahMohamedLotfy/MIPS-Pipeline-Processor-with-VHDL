@@ -14,7 +14,9 @@ ENTITY FetchStage IS
 			T_NT:IN std_logic_vector(1 downto 0);
 			INPORTValue:IN std_logic_vector(31 downto 0);
 
-			instruction: in STD_LOGIC_VECTOR(wordSize-1 DOWNTO 0);
+--			instruction: in STD_LOGIC_VECTOR(wordSize-1 DOWNTO 0);
+		
+			instruction: out STD_LOGIC_VECTOR(wordSize-1 DOWNTO 0);
 			InstrPC,INPORTValueFetchOut : out std_logic_vector(PCSize-1 downto 0);
 			intSignal,rstSignal,RRI,IF_IDFlush : out std_logic --interrupt signal output 
 			  --restet signal output 
@@ -31,21 +33,20 @@ signal tempPCnew: STD_LOGIC_VECTOR(PCSize-1 DOWNTO 0);
 signal PCReg,PCRegValue: STD_LOGIC_VECTOR(PCSize-1 DOWNTO 0);
 BEGIN
 
-   --instruction_memory: entity work.ram generic map(1) port map (clk,'0','1',PCRegValue,tmp,tempInstruction);
+   instruction_memory: entity work.ram generic map(1) port map (clk,'0','1',PCRegValue,tmp,tempInstruction);
   --PCnew is a value of pc after incremented 
    	--PCAdder:entity work.adder generic map(PCSize)port map(PCReg,"00000000000000000000000000000001",'0',tempPCnew,dummy);
     PC_Reg: entity work.Reg(RegFalling) generic map(32) port map(input=>tempPCnew,en=>ActualPCWrite,rst=>'0',clk=>clk,output=>PCRegValue);
 	intSignal <=interrupt;
 
-	INPORTValueFetchOut<=INPORTValue;
+	INPORTValueFetchOut<=INPORTValue when reset ='0' else (others=>'0') when reset='1' ;
 	--reset signal output 
 	rstSignal <=reset;
 	RRI<=RRISignal;
-	--instruction<=(others=>'0') when reset = '1' else tempInstruction when reset ='0';
-	PCReg <="00000000000000000000000000001010" when (reset ='1') else PCRegValue when reset='0';
+	instruction<=(others=>'0') when reset = '1' else tempInstruction when reset ='0';
+	PCReg <="00000000000000000000000000010000" when (reset ='1') else PCRegValue when reset='0';
 	InstrPC<=PCReg;
 	ActualPCWrite<=RRIPCWrite or pcWrite;
-	
 	DecisionCircuit:entity work.decision port map(PCreg=>PCReg,DecodePC=>DecodePC,TargetAddress=>DecodeTargetAddress,MemoryPC=>MemoryPC,
 	rst=>reset,clk=>clk,ReadFromMemorySignal=>MemoryReadSignal,JZ=>JZ,UnconditionBranch=>UnconditionBranch,
 	T_NT=>T_NT,State=>"00",

@@ -11,6 +11,6 @@ end entity SignExtend;
 architecture arch of SignExtend is
 begin
     output(15 downto 0)<=Address(15 downto 0);
-    output(19 downto 16)<= (others=>Address(15)) when signType ='0' else Address(19 downto 16);
-    output(31 downto 20) <= (others=>Address(15)) when signType ='0' else (others=>Address(19));
+    output(19 downto 16)<= (others=>Address(15)) when signType ='0' else Address(19 downto 16)when signType='1';
+    output(31 downto 20) <= (others=>Address(15)) when signType ='0' else (others=>Address(19))when signType='1';
 end arch ; 
