@@ -83,10 +83,8 @@ for instr in instrComponent:
 		ORGCount=ORGCount+1
 		if ORGCount in [0 ,1] :
 			dataCount=int(instr[1],16)
-			print("dataCount",dataCount)
 		else:
 			instrCount = int(instr[1],16)
-			print("instrCount",instrCount)
 		
 		
 
@@ -181,7 +179,6 @@ for instr in instrComponent:
 			instructionsOutput.append(STR)
 			print(STR)
 	if ORGCount>1:
-		print("HexinstrCount:",hex(instrCount)[2:])
 		for line in instructionsOutput:
 			instrFile.write(hex(instrCount)[2:]+": "+line+"\n")
 			instrCount=instrCount+1
