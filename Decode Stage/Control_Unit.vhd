@@ -166,14 +166,12 @@ begin
        -- PUSH       
      elsif (OpCode = "01110") then 
          RegWrite <= '0';
-	     RegDST <= '0';
 	     MemToReg <= '0';
 	     MemRd <= '0';
 	     MemWR <= '1';
 	     SP <= "00";
 	     ALU <= "0001";
-	     PCWrite <= '0';
-	     IMM_EA <= '0';
+	     PCWrite <= '1';
 	     sign <= '1';
 	     CRR <= '0';
 	     In_enable <= '0';
@@ -192,7 +190,7 @@ begin
 	     MemWR <= '0';
 	     SP <= "01";
 	     ALU <= "0000";
-	     PCWrite <= '0';
+	     PCWrite <= '1';
 	     IMM_EA <= '0';
 	     sign <= '1';
 	     CRR <= '0';
@@ -210,7 +208,7 @@ begin
 	     MemWR <= '0';
 	     SP <= "10";
 	     ALU <= "0001";
-	     PCWrite <= '0';
+	     PCWrite <= '1';
 	     IMM_EA <= '1';
 	     sign <= '1';
 	     CRR <= '0';
@@ -229,7 +227,7 @@ begin
 	     MemWR <= '0';
 	     SP <= "10";
 	     ALU <= "0000";
-	     PCWrite <= '0';
+	     PCWrite <= '1';
 	     IMM_EA <= '1';
 	     sign <= '0';
 	     CRR <= '0';
@@ -247,7 +245,7 @@ begin
 	     MemWR <= '1';
 	     SP <= "10";
 	     ALU <= "0001";
-	     PCWrite <= '0';
+	     PCWrite <= '1';
 	     IMM_EA <= '1';
 	     sign <= '0';
 	     CRR <= '0';
