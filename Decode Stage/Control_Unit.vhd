@@ -205,10 +205,10 @@ begin
      elsif (OpCode = "10000") then 
        RegWrite <= '1';
 	     RegDST <= '1';
-	     MemToReg <= '1';
+	     MemToReg <= '0';
 	     MemRd <= '0';
 	     MemWR <= '0';
-	     SP <= "10";
+	     SP <= "11";
 	     ALU <= "0001";
 	     PCWrite <= '0';
 	     IMM_EA <= '1';
