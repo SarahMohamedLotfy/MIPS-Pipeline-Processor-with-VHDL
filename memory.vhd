@@ -35,6 +35,7 @@ signal circ_output:std_logic_vector(31 downto 0);
   
 begin
 SP_input <= circ_output;
+notSig <= not EX_MEM(109);
 SP:entity work.Reg(RegArch) generic map(n=>32) port map(
 input => SP_input,
 en => notSig,

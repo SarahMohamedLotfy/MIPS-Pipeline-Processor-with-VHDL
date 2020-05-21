@@ -18,7 +18,7 @@ end entity;
 architecture memory_arch of memory is
 ---------------------------------SP Signaaaaaaaals-----------------------------------
 ----------------------/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\-------------------------
---signal SP_input:std_logic_vector(31 downto 0);
+signal SP_input:std_logic_vector(31 downto 0);
 signal SP_output:std_logic_vector(31 downto 0);
 signal circ_output:std_logic_vector(31 downto 0);
 ----------------------/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\--------------------------
