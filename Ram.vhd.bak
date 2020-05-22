@@ -13,7 +13,7 @@ ENTITY Ram IS
 
 		address : IN  std_logic_vector(addressBits-1 DOWNTO 0);
 
-		dataIn  : IN  std_logic_vector(15 DOWNTO 0);
+		dataIn  : IN  std_logic_vector(16*n-1 DOWNTO 0);
 		dataOut : OUT std_logic_vector(16*n-1 DOWNTO 0));
 END ENTITY Ram;
 
@@ -28,10 +28,9 @@ ARCHITECTURE syncrama OF Ram IS
 			BEGIN
 				k := -16;
 				j := -1;
-				IF falling_edge(CLK) THEN  
+				if(rising_edge(CLK))then	
 					IF W = '1' THEN
 						ram(to_integer(unsigned(address))) <= dataIn;
-					END IF;
 					elsIF R = '1' THEN
 						loop0: for i in 0 to n-1 loop
 							k := k + 16;
@@ -42,7 +41,7 @@ ARCHITECTURE syncrama OF Ram IS
 					ELSE 
 						dataOut <= (OTHERS=>'Z');
 					END IF;
-				end if;	
+				end if;
 		END PROCESS;
 		
 END syncrama;

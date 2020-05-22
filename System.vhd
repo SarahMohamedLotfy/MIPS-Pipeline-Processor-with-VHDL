@@ -48,14 +48,6 @@ signal MEM_WBRegisterRd:std_logic_vector(2 downto 0);
 signal MEM_WBRegWrite,MEM_WBSWAP,MemoryReadSignalToFetch:std_logic;
 
 ------------------------------------------------------------------------------------------------
-
----------------------------------SP Signaaaaaaaals----------------------------------
-----------------------/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\-------------------------
-signal SP_input:std_logic_vector(31 downto 0);
-signal SP_en:std_logic;
-signal SP_rst:std_logic;
-signal SP_output:std_logic_vector(31 downto 0);
-----------------------/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\--------------------------
 -----------------------------------------intermediate registers signals------------------------------------ 
 signal IF_IDRegIN,IF_IDRegOut:std_logic_vector(82 downto 0);
 signal ID_EXRegIN,ID_EXRegOUT: std_logic_vector(178 downto 0);
@@ -202,7 +194,7 @@ EX_MEM:entity work.Reg(RegArch)  generic map(n=>115) port map(input=>EX_MEMRegIN
 -----------------------------------------------------------------------------------------------------------------------------------------
 
 --------------------------------------------------------------Memory ->> Write Back ------------------------------------------
-SP:entity work.Reg(RegArch)  generic map(n=>32) port map(input=>SP_input,en=>SP_en,rst=>SP_rst,clk=>clk,output=>SP_output);
+
 MemoryStage:entity work.memory port map(reset=>rst, clk=>clk,
 EX_MEM=>EX_MEMRegOUT,
 Rsrc2=>MEM_WBRegIN(31 downto 0),

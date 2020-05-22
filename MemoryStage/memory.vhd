@@ -27,15 +27,32 @@ signal circ_output:std_logic_vector(31 downto 0);
 	signal interrupt,RRI:  std_logic;
 	signal MEMsignals: std_logic_vector(3 downto 0);
 	signal CRR : std_logic_vector(2 downto 0);
-        signal tmp:std_logic_vector(15 downto 0);
+        --signal tmp:std_logic_vector(15 downto 0);
         signal outputMEm :std_logic_vector(31 downto 0);
 	--signal spType :std_logic_vector(2-1 downto 0);
 	signal Address : std_logic_vector(31 downto 0);
 	signal notSig : std_logic;
   
 begin
+<<<<<<< Updated upstream:MemoryStage/memory.vhd
 notSig <= not EX_MEM(109);
 SP_input <= "00000000000000000000000000001010";
+=======
+
+with reset select
+        SP_input <= 
+                  circ_output  when '0',
+                  "00000000000000000000011111111111"  when '1',
+                  "00000000000000000000000000000000" when others;
+
+with reset select
+        notSig <= 
+                  '1'  when '1',
+                  EX_MEM(110)orEX_MEM(111)  when '0',
+                  '0' when others;
+
+--notSig <= not EX_MEM(109);
+>>>>>>> Stashed changes:memory.vhd.bak
 SP:entity work.Reg(RegArch) generic map(n=>32) port map(
 input => SP_input,
 en => notSig,
@@ -53,17 +70,21 @@ SPout => circ_output
 mux:entity work.mux8(behavioral) port map(
 sel => EX_MEM(109 downto 108),
 add => EX_MEM( 99 downto 68),
+<<<<<<< Updated upstream:MemoryStage/memory.vhd
 SP1 => SP_input,
+=======
+>>>>>>> Stashed changes:memory.vhd.bak
 SP2 => circ_output,
+SP1 => SP_output,
 output => Address
 );
 
 DM: entity work.ram generic map(2) port map (clk,
-'0',
-'1',
-Address,
-tmp,
-outputMEm);
+W => EX_MEM(110),
+R => EX_MEM(111),
+address =>Address,
+dataIn => EX_MEM( 67 downto 36),
+dataOut=>outputMEm);
 
 Rsrc2 <= EX_MEM( 31 downto 0);
 SWAP <= EX_MEM(32);
