@@ -74,8 +74,9 @@ Rd<= EX_MEM( 102 downto 100);
 interrupt<= EX_MEM(103);
 RRI<= EX_MEM(104);
 CRR<= EX_MEM(107 downto 105);
+--memRead 3, memWrite 2, spType 0 1 
 MEMsignals<=EX_MEM(111 downto 108);
-
+--outenable 2  regwrite 1  memtoreg 0  
 WBsignals<=EX_MEM(114 downto 112);
 
 MemoryReuslt<= outputMEm when EX_MEM(111)='1' else (others=>'0');
