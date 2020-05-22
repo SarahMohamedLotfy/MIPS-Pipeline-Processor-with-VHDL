@@ -19,7 +19,7 @@ END ENTITY Ram;
 
 ARCHITECTURE syncrama OF Ram IS
 
-	TYPE ram_type IS ARRAY(0 TO 1048575) OF std_logic_vector(16*n-1 DOWNTO 0);
+	TYPE ram_type IS ARRAY(0 TO 1048575) OF std_logic_vector(15 DOWNTO 0);
 	SIGNAL ram : ram_type ;
 	
 	BEGIN
@@ -30,12 +30,17 @@ ARCHITECTURE syncrama OF Ram IS
 				j := -1;
 				if(rising_edge(CLK))then	
 					IF W = '1' THEN
-						ram(to_integer(unsigned(address))) <= dataIn;
-					elsIF R = '1' THEN
+                                                loop1: for i in 0 to n-1 loop
+                                                       k := k + (16);
+				                       j := j + (16);
+                                                       adds := to_integer(unsigned(address)) - i;
+				                       ram(to_integer(unsigned(address))) <= dataIn(j downto k);
+                                                end loop;
+		                         elsIF R = '1' THEN
 						loop0: for i in 0 to n-1 loop
-							k := k + 16;
-							j := j + 16;
-							adds := i + to_integer(unsigned(address));
+							k := k + (16);
+							j := j + (16);
+							adds := to_integer(unsigned(address)) + i;
 							dataOut(j downto k) <= ram(adds);
 						end loop;
 					ELSE 

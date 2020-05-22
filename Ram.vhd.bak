@@ -30,13 +30,20 @@ ARCHITECTURE syncrama OF Ram IS
 				j := -1;
 				if(rising_edge(CLK))then	
 					IF W = '1' THEN
-						ram(to_integer(unsigned(address))) <= dataIn;
-					elsIF R = '1' THEN
+                                                loop1: for i in 0 to n-1 loop
+                                                       k := k + (16);
+				                       j := j + (16);
+                                                       adds := to_integer(unsigned(address)) - i;
+				                       ram(to_integer(unsigned(address))) <= dataIn(j downto k);
+							report to_string(adds);
+                                                end loop;
+		                         elsIF R = '1' THEN
 						loop0: for i in 0 to n-1 loop
-							k := k + 16;
-							j := j + 16;
-							adds := i + to_integer(unsigned(address));
+							k := k + (16);
+							j := j + (16);
+							adds := to_integer(unsigned(address)) + i;
 							dataOut(j downto k) <= ram(adds);
+                                                        report to_string(adds);
 						end loop;
 					ELSE 
 						dataOut <= (OTHERS=>'Z');
