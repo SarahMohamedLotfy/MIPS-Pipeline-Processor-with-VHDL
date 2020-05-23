@@ -70,7 +70,7 @@ SP1 => SP_output,
 output => Address
 );
 
-DM: entity work.ram_mem generic map(2) port map (clk,
+DM: entity work.RAMmem generic map(2) port map (clk,
 W => EX_MEM(110),
 R => EX_MEM(111),
 address =>Address,
