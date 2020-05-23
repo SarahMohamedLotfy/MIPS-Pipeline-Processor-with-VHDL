@@ -2,10 +2,10 @@ LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.numeric_std.all;
 
-ENTITY Ram IS
+ENTITY RAMmem IS
 	--n is the number of lines retrieved. ex => if n = 1 -> dataOut holds 16 bits
 	--if n = 2 -> dataOut holds 32 bits and so on
-	GENERIC(n : INTEGER := 1;
+	GENERIC(n : INTEGER := 2;
 	        addressBits : integer :=32);
 	PORT(
 		CLK : IN std_logic;
@@ -15,9 +15,9 @@ ENTITY Ram IS
 
 		dataIn  : IN  std_logic_vector(16*n-1 DOWNTO 0);
 		dataOut : OUT std_logic_vector(16*n-1 DOWNTO 0));
-END ENTITY Ram;
+END ENTITY RAMmem;
 
-ARCHITECTURE syncrama OF Ram IS
+ARCHITECTURE syncramamem OF RAMmem IS
 
 	TYPE ram_type IS ARRAY(0 TO 1048575) OF std_logic_vector(15 DOWNTO 0);
 	SIGNAL ram : ram_type ;
@@ -30,12 +30,17 @@ ARCHITECTURE syncrama OF Ram IS
 				j := -1;
 				if(rising_edge(CLK))then	
 					IF W = '1' THEN
-				                       ram(to_integer(unsigned(address))) <= dataIn;
-		                         elsIF R = '1' THEN
+                                loop1: for i in 0 to n-1 loop
+                                       k := k + (16);
+				                       j := j + (16);
+                                       adds := to_integer(unsigned(address)) - i;
+				                       ram(adds) <= dataIn(j downto k);
+                                                end loop;
+		            elsIF R = '1' THEN
 						loop0: for i in 0 to n-1 loop
 							k := k + (16);
 							j := j + (16);
-							adds := to_integer(unsigned(address)) + i;
+							adds := to_integer(unsigned(address)) - i;
 							dataOut(j downto k) <= ram(adds);
 						end loop;
 					ELSE 
@@ -44,4 +49,4 @@ ARCHITECTURE syncrama OF Ram IS
 				end if;
 		END PROCESS;
 		
-END syncrama;
+END syncramamem;

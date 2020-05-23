@@ -8,7 +8,6 @@ force -freeze sim:/system/clk 1 0, 0 {50 ps} -r 100
 force -freeze sim:/system/INT 0 0
 force -freeze sim:/system/rst 0 0
 mem load -i instructionMemory2.mem  /fetch/instruction_memory/ram
-mem load -i DataMemory.mem  /MemoryStage/DM/ram
 force -freeze sim:/system/rst 1 0
 run
 force -freeze sim:/system/rst 0 0
