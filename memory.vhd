@@ -44,7 +44,7 @@ with reset select
 with reset select
         notSig <= 
                   '1'  when '1',
-                  EX_MEM(110)or EX_MEM(111)  when '0',
+                  (EX_MEM(110)or EX_MEM(111))and(not EX_MEM(109))  when '0',
                   '0' when others;
 
 --notSig <= not EX_MEM(109);
@@ -75,6 +75,7 @@ W => EX_MEM(110),
 R => EX_MEM(111),
 address =>Address,
 dataIn => EX_MEM( 67 downto 36),
+SP => EX_MEM(109),
 dataOut=>outputMEm);
 
 Rsrc2 <= EX_MEM( 31 downto 0);

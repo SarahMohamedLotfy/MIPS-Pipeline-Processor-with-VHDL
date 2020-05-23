@@ -9,10 +9,10 @@ ENTITY RAMmem IS
 	        addressBits : integer :=32);
 	PORT(
 		CLK : IN std_logic;
-		W,R : IN std_logic;
+		W,R,SP : IN std_logic;
 
 		address : IN  std_logic_vector(addressBits-1 DOWNTO 0);
-
+		
 		dataIn  : IN  std_logic_vector(16*n-1 DOWNTO 0);
 		dataOut : OUT std_logic_vector(16*n-1 DOWNTO 0));
 END ENTITY RAMmem;
@@ -33,14 +33,22 @@ ARCHITECTURE syncramamem OF RAMmem IS
                                 loop1: for i in 0 to n-1 loop
                                        k := k + (16);
 				                       j := j + (16);
-                                       adds := to_integer(unsigned(address)) - i;
+									   if(SP = '0')then
+											adds := to_integer(unsigned(address)) - i;
+										else
+											adds := to_integer(unsigned(address)) + i;
+										end if;
 				                       ram(adds) <= dataIn(j downto k);
                                                 end loop;
 		            elsIF R = '1' THEN
 						loop0: for i in 0 to n-1 loop
 							k := k + (16);
 							j := j + (16);
-							adds := to_integer(unsigned(address)) - i;
+							if(SP = '0')then
+									adds := to_integer(unsigned(address)) - i;
+							else
+									adds := to_integer(unsigned(address)) + i;
+							end if;
 							dataOut(j downto k) <= ram(adds);
 						end loop;
 					ELSE 
