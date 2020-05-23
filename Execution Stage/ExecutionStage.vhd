@@ -25,7 +25,7 @@ signal signType,OVF:std_logic;
 signal UpperInstr:std_logic_vector(19 downto 0);
 signal PC_1,SRC1,SRC2,SignExtendOut,tempA,A,B,ALUResult,MUXSRC2_signOutput,INPORTValue:std_logic_vector(31 downto 0); 
 signal ALUSelectors,EA_Part:std_logic_vector(3 downto 0);
-signal CCRRegister,Rs,Rt,Rd:std_logic_vector(2 downto 0);--ZF,SignFlag,Carry
+signal CCRRegister,Rs,Rt,Rd:std_logic_vector(2 downto 0);--ZF2,SignFlag1,Carry0
 signal MUXASel,MUXBSel:std_logic_vector(1 downto 0):="00";
 signal CRREnable:std_logic:='0';
 signal Opcode:std_logic_vector(4 downto 0);

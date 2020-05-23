@@ -91,7 +91,8 @@ DecodePC=>pcDecodeout,DecodeTargetAddress=>Target_Address,MemoryPC=>MemoryPC,T_N
 -- InstrPC=>CurrentPC,RRI=>RRIsignal,intSignal=>probINTsignal,rstSignal=>probRstSignal,IF_IDFlush=>IF_IDFlushFromFetch,INPORTValueFetchOut=>INPORTValueFetchOut);
 -- IF_IDRegIN(15 downto 0) <=MemoryInstrOut when FetchStall = '0'  else (others=>'0') when FetchStall = '1' ;
 instruction=>instruction,InstrPC=>CurrentPC,RRI=>RRIsignal,intSignal=>probINTsignal,rstSignal=>probRstSignal,IF_IDFlush=>IF_IDFlushFromFetch,  INPORTValueFetchOut=>INPORTValueFetchOut);
-IF_IDRegIN(15 downto 0) <=(others=>'0')when outputCounter="1" else instruction;
+IF_IDFlush <= outputCounter(0) or IF_IDFlushFromFetch;  
+IF_IDRegIN(15 downto 0) <=(others=>'0')when IF_IDFlush ='1' else instruction;
 IF_IDRegIN(47 downto 16) <=CurrentPC;
 IF_IDRegIN(48) <=probINTsignal;
 IF_IDRegIN(49) <=RRIsignal;
@@ -105,7 +106,7 @@ Decode:entity work.DecodeStage port map(clk=>clk,rst=>rst,INT=>INT,Mux_Selector=
 RegWriteFromWB=>RegWriteinput,SWAPFromWB=>Swapinput,
 MEM_WBRd=>Mem_Wb_Rd,MEM_WBRs=>Mem_Wb_Rt,RsFromFetch=>Rs_from_fetch,
 Value1=>value1,Value2=>value2,
-ImmdiateValue=>ImmdiateValue,ReadImmd=>ReadImmd,
+ImmdiateValue=>ImmdiateValue,ReadImmd=>ReadImmd,ZF=>ZFToCheck,
 TargetAddress=>Target_Address,SRC1=>Rsrc,SRC2=>Rdst,instruction=>instructionDecodeout,PC=>pcDecodeout,INPORTValueDecodeOut=>INPORTValueDecodeOut,
 RRI=>RRI,SWAP=>SWAP,CALL=>CALL,INTOut=>probINTDecodeout,SignExtendSignal=>sign,
 IMM_EASignal=>IMM_EA,RegDST=>REGdstSignal,InEnable=>In_enable,sig32_16=>thirtyTwo_Sixteen,IF_IDWrite=>tempIF_IDwrite,
