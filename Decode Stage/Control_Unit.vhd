@@ -36,7 +36,7 @@ begin
 	  MemWR <= '0';
 	  SP <= "11";
 	  ALU <= "0000";
-	  PCWrite <= '0';
+	  PCWrite <= '1';
 	  IMM_EA <= '0';
 	  sign <= '0';
 	  CRR <= '0';
@@ -166,7 +166,8 @@ begin
        -- PUSH       
      elsif (OpCode = "01110") then 
          RegWrite <= '0';
-	     MemToReg <= '0';
+		 RegDST <= '1';
+		 MemToReg <= '0';
 	     MemRd <= '0';
 	     MemWR <= '1';
 	     SP <= "00";

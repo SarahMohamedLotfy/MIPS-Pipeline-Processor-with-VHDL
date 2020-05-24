@@ -9,7 +9,7 @@ ENTITY RAMmem IS
 	        addressBits : integer :=32);
 	PORT(
 		CLK : IN std_logic;
-		W,R,SP : IN std_logic;
+		W,R: IN std_logic;
 
 		address : IN  std_logic_vector(addressBits-1 DOWNTO 0);
 		
@@ -19,37 +19,34 @@ END ENTITY RAMmem;
 
 ARCHITECTURE syncramamem OF RAMmem IS
 
-	TYPE ram_type IS ARRAY(0 TO 1048575) OF std_logic_vector(15 DOWNTO 0);
+	TYPE ram_type IS ARRAY(0 TO 2**11) OF std_logic_vector(15 DOWNTO 0);
 	SIGNAL ram : ram_type ;
 	
 	BEGIN
 		PROCESS(CLK, W, R , address) IS
-		VARIABLE k, j, adds:INTEGER;
+		VARIABLE adds:INTEGER;
 			BEGIN
-				k := -16;
-				j := -1;
-				if(rising_edge(CLK))then	
+				if(falling_edge(CLK))then	
 					IF W = '1' THEN
                                 loop1: for i in 0 to n-1 loop
-                                       k := k + (16);
-				                       j := j + (16);
-									   if(SP = '0')then
-											adds := to_integer(unsigned(address)) - i;
-										else
-											adds := to_integer(unsigned(address)) + i;
+                                       if i=0 then
+										adds := to_integer(unsigned(address));
+										ram(adds) <= dataIn(15 downto 0);
+										elsif i=1 then
+										adds := to_integer(unsigned(address)) + i;
+										ram(adds) <= dataIn(31 downto 16);
 										end if;
-				                       ram(adds) <= dataIn(j downto k);
-                                                end loop;
+                                        end loop;
 		            elsIF R = '1' THEN
 						loop0: for i in 0 to n-1 loop
-							k := k + (16);
-							j := j + (16);
-							if(SP = '0')then
-									adds := to_integer(unsigned(address)) - i;
+							if(i=0)then
+									adds := to_integer(unsigned(address));
+									dataOut(15 downto 0) <= ram(adds);
 							else
 									adds := to_integer(unsigned(address)) + i;
+									dataOut(31 downto 16) <= ram(adds);
 							end if;
-							dataOut(j downto k) <= ram(adds);
+							
 						end loop;
 					ELSE 
 						dataOut <= (OTHERS=>'Z');

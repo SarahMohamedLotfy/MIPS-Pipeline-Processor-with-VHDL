@@ -46,7 +46,7 @@ BEGIN
 	instruction<=(others=>'0') when reset = '1' else tempInstruction when reset ='0';
 	PCReg <="00000000000000000000000000010000" when (reset ='1') else PCRegValue when reset='0';
 	InstrPC<=PCReg;
-	ActualPCWrite<=RRIPCWrite or pcWrite;
+	ActualPCWrite<=RRIPCWrite and pcWrite;
 	DecisionCircuit:entity work.decision port map(PCreg=>PCReg,DecodePC=>DecodePC,TargetAddress=>DecodeTargetAddress,MemoryPC=>MemoryPC,
 	rst=>reset,clk=>clk,ReadFromMemorySignal=>MemoryReadSignal,JZ=>JZ,UnconditionBranch=>UnconditionBranch,
 	T_NT=>T_NT,State=>"00",

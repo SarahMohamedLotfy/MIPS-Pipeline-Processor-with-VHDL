@@ -41,7 +41,7 @@ ALU=>ALUSelectors,PCWrite=>IF_IDWrite,IMM_EA=>IMM_EASignal,sign=>SignExtendSigna
 In_enable=>InEnable,Out_enable=>WBSignals(2),thirtyTwo_Sixteen=>sig32_16,SWAP=>SWAP, CALL=>CALL);
 INTOut<=IF_ID(48);
 RRI<=IF_ID(49);
-instruction(31 downto 16)<=ImmdiateValue when (ReadImmd='1')else (others=>'0');
+instruction(31 downto 16)<=ImmdiateValue when (ReadImmd='1');
 instruction(15 downto 0)<=IF_ID(15 downto 0);
 PC<=IF_ID(47 downto 16);
 --TODO 

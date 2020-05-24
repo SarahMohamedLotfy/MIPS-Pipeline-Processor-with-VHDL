@@ -28,6 +28,7 @@ signal PCWrite,IMM_EA,sign: std_logic;
 signal In_enable,Out_enable,thirtyTwo_Sixteen,RRI,SWAP, CALL,tempIF_IDwrite: std_logic;
 signal Rs_from_fetch,WBsignalsDecodeOut: std_logic_vector(2 downto 0);
 signal T_NTtoFetch:std_logic_vector(1 downto 0);
+signal PCwriteHDU,tempIF_IDwriteHDU:std_logic;
 ------------------------------------------------------------------------------------------------
 
 -----------------------------------------Execute stage signals------------------------------------ 
@@ -77,18 +78,19 @@ signal ReadImmd      : std_logic:='0';--enble to read immdiate
 begin
 --------------------------------------------------------------Fetch ->> Decode------------------------------------------
 Fetch:entity work.FetchStage  Generic map (wordSize=>16,PCSize=>32) 
-port map(clk=>clk,reset=>rst,interrupt=>INT,pcWrite=>'1',MemoryReadSignal=>MemoryReadSignalToFetch,
+port map(clk=>clk,reset=>rst,interrupt=>INT,pcWrite=>PCwriteHDU,MemoryReadSignal=>MemoryReadSignalToFetch,
 DecodePC=>pcDecodeout,DecodeTargetAddress=>Target_Address,MemoryPC=>MemoryPC,T_NT=>T_NTtoFetch,INPORTValue=>INPORT,
 
 -- InstrPC=>CurrentPC,RRI=>RRIsignal,intSignal=>probINTsignal,rstSignal=>probRstSignal,IF_IDFlush=>IF_IDFlushFromFetch,INPORTValueFetchOut=>INPORTValueFetchOut);
 -- IF_IDRegIN(15 downto 0) <=MemoryInstrOut when FetchStall = '0'  else (others=>'0') when FetchStall = '1' ;
 instruction=>instruction,InstrPC=>CurrentPC,RRI=>RRIsignal,intSignal=>probINTsignal,rstSignal=>probRstSignal,IF_IDFlush=>IF_IDFlushFromFetch,  INPORTValueFetchOut=>INPORTValueFetchOut);
-IF_IDRegIN(15 downto 0) <=(others=>'0')when outputCounter="1" else instruction;
+IF_IDRegIN(15 downto 0) <=(others=>'0')when outputCounter="1" and Mux_Selector_input ='1'  else instruction;
 IF_IDRegIN(47 downto 16) <=CurrentPC;
 IF_IDRegIN(48) <=probINTsignal;
 IF_IDRegIN(49) <=RRIsignal;
 IF_IDRegIN(50) <=probRstSignal;
 IF_IDRegIN(82 downto 51)<=INPORTValueFetchOut;
+IF_IDwrite<= tempIF_IDwriteHDU;
 IF_ID:entity work.Reg(RegArch)  generic map(n=>83) port map(input=>IF_IDRegIN,en=>IF_IDwrite,rst=>rst,clk=>clk,output=>IF_IDRegOUT);
 -----------------------------------------------------------------------------------------------------------------------------------------
 
@@ -129,19 +131,19 @@ ID_EXRegIN(63 downto 32) <= Rdst; -- Rscr2
 ID_EXRegIN(95 downto 64) <= instructionDecodeout;
 ID_EXRegIN(127 downto 96) <= pcDecodeout; --PC after incremented 
 
-ID_EXRegIN(143) <= RRI; --RRI signal 
-ID_EXRegIN(144) <= SWAP;
-ID_EXRegIN(145) <= CALL;
-ID_EXRegIN(146) <= probINTDecodeout;
+ID_EXRegIN(143) <= RRI ; --RRI signal 
+ID_EXRegIN(144) <= SWAP ;
+ID_EXRegIN(145) <= CALL ;
+ID_EXRegIN(146) <= probINTDecodeout ;
 
 ID_EXRegIN(142 downto 139) <=MEMSignalsDecodeOut;
-ID_EXRegIN(134 downto 131) <=ALUSelectors;
-ID_EXRegIN(135) <=sign;
-ID_EXRegIN(136) <=IMM_EA;
-ID_EXRegIN(137) <=REGdstSignal;
-ID_EXRegIN(138) <=In_enable;
+ID_EXRegIN(134 downto 131) <=ALUSelectors ;
+ID_EXRegIN(135) <=sign ;
+ID_EXRegIN(136) <=IMM_EA ;
+ID_EXRegIN(137) <=REGdstSignal ;
+ID_EXRegIN(138) <=In_enable ;
 
-ID_EXRegIN(130 downto 128) <=WBsignalsDecodeOut;
+ID_EXRegIN(130 downto 128) <=WBsignalsDecodeOut ;
 ID_EXRegIN(178 downto 147) <=INPORTValueDecodeOut;
 
 
@@ -221,7 +223,7 @@ WBStage:entity work.WBStage port map (clk=>clk,rst=>rst,MEM_WB=>MEM_WBRegOUT,Reg
 counter:entity work.counter generic map(1) port map(enable=>enableCounter, reset=>resetCounter, clk=>clk, output=>outputCounter);
 
 ----------------------------------------------------------Hazard Detection Unit --------------------------------------------------------------------------
---Hazard_detection_unit:entity work.hazard_detection_unit port map(ID_EX_RegisterRt=> instructionDecodeout(7 downto 5), IF_ID_RegisterRs=> IF_IDRegIN(10 downto 8),IF_ID_RegisterRt=> IF_IDRegIN(7 downto 5),ID_EX_MemRead => MEMSignalsDecodeOut(3),reset => rst, PCwrite=>PCwrite ,IF_ID_write =>tempIF_IDwrite,ControlUnit_Mux_Selector => Mux_Selector_input);
+Hazard_detection_unit:entity work.hazard_detection_unit port map(ID_EX_RegisterRegdst=> RegDstToExe_MEM, IF_ID_RegisterRs=> IF_IDRegOUT(10 downto 8),IF_ID_RegisterRt=> IF_IDRegOUT(7 downto 5),ID_EX_MemRead => EX_MEMRegIN(111),reset => rst, PCwrite=>PCwriteHDU ,IF_ID_write =>tempIF_IDwriteHDU,ControlUnit_Mux_Selector => Mux_Selector_input);
 
 -----------------------------------------------------------------------------------------------------------
 

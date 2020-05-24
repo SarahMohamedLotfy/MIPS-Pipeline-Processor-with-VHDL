@@ -34,10 +34,8 @@ signal circ_output:std_logic_vector(31 downto 0);
 	signal notSig : std_logic;
   
 begin
-<<<<<<< Updated upstream:MemoryStage/memory.vhd
 notSig <= not EX_MEM(109);
 SP_input <= "00000000000000000000000000001010";
-=======
 
 with reset select
         SP_input <= 
@@ -52,7 +50,6 @@ with reset select
                   '0' when others;
 
 --notSig <= not EX_MEM(109);
->>>>>>> Stashed changes:memory.vhd.bak
 SP:entity work.Reg(RegArch) generic map(n=>32) port map(
 input => SP_input,
 en => notSig,
@@ -70,10 +67,7 @@ SPout => circ_output
 mux:entity work.mux8(behavioral) port map(
 sel => EX_MEM(109 downto 108),
 add => EX_MEM( 99 downto 68),
-<<<<<<< Updated upstream:MemoryStage/memory.vhd
 SP1 => SP_input,
-=======
->>>>>>> Stashed changes:memory.vhd.bak
 SP2 => circ_output,
 SP1 => SP_output,
 output => Address

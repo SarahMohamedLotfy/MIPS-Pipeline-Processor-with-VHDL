@@ -2,21 +2,7 @@ vsim -gui work.system
 add wave -position insertpoint sim:/system/*
 add wave -position insertpoint  \
 sim:/system/Decode/RegisterFile/registers
-force -freeze sim:/system/clk 1 0, 0 {50 ps} -r 100
-force -freeze sim:/system/INT 0 0
-force -freeze sim:/system/rst 0 0
-mem load -i instructionMemory.mem  /fetch/instruction_memory/ram
-force -freeze sim:/system/rst 1 0
-run
-force -freeze sim:/system/rst 0 0
-force -freeze sim:/system/INPORT 32'h5 0
-run
-force -freeze sim:/system/INPORT 32'h19 0
-run
-force -freeze sim:/system/INPORT 32'hFFFD 0
-run
-force -freeze sim:/system/INPORT 32'hF320 0
-run
+
 add wave -position insertpoint  \
 sim:/system/Execute/EXALUResult \
 sim:/system/Execute/MEMALUResult \
@@ -69,6 +55,54 @@ sim:/system/Execute/Rt \
 sim:/system/Execute/Rd \
 sim:/system/Execute/MUXASel \
 sim:/system/Execute/MUXBSel
+# (vish-4014) No objects found matching '/system/Execute/RsReg'.
+add wave -position insertpoint  \
+sim:/system/MemoryStage/Rsrc2 \
+sim:/system/MemoryStage/ALUresult \
+sim:/system/MemoryStage/MemoryReuslt \
+sim:/system/MemoryStage/MemoryPC \
+sim:/system/MemoryStage/SWAP \
+sim:/system/MemoryStage/MemoryReadSignalToFetch \
+sim:/system/MemoryStage/Rt \
+sim:/system/MemoryStage/Rd \
+sim:/system/MemoryStage/WBsignals \
+sim:/system/MemoryStage/SP_input \
+sim:/system/MemoryStage/SP_output \
+sim:/system/MemoryStage/circ_output \
+sim:/system/MemoryStage/interrupt \
+sim:/system/MemoryStage/RRI \
+sim:/system/MemoryStage/MEMsignals \
+sim:/system/MemoryStage/CRR \
+sim:/system/MemoryStage/outputMEm \
+sim:/system/MemoryStage/Address \
+sim:/system/MemoryStage/notSig
+add wave -position insertpoint  \
+sim:/system/MemoryStage/spType
+add wave -position insertpoint  \
+sim:/system/MemoryStage/EX_MEM
+add wave -position insertpoint sim:/system/Hazard_detection_unit/*
+force -freeze sim:/system/clk 1 0, 0 {50 ps} -r 100
+force -freeze sim:/system/INT 0 0
+force -freeze sim:/system/rst 0 0
+mem load -i instructionMemory.mem  /fetch/instruction_memory/ram
+mem load -i DataMemory.mem  /MemoryStage/DM/ram
+force -freeze sim:/system/rst 1 0
+
+run
+force -freeze sim:/system/rst 0 0
+force -freeze sim:/system/INPORT 32'h0CDAFE19 0
+
+
+run
+force -freeze sim:/system/INPORT 32'hFFFF 0
+
+run
+force -freeze sim:/system/INPORT 32'hF320 0
+
+run
+run
+
+
 run
 run
 run
@@ -84,4 +118,6 @@ run
 run
 run
 run
+run
+
 run
