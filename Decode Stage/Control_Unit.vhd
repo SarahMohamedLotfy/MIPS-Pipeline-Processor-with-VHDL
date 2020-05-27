@@ -15,7 +15,7 @@ port(
 	-- nop:0000    A: 0001    B :0010   INC:0011
 	 -- DEC:0100 ADD:0101  SUB:0110  NOT: 0111  AND: 1000  OR:    1001  SHL:1010  SHR:  1011
 	ALU: out std_logic_vector(4-1 downto 0) ;
-	PCWrite,IMM_EA,sign,CRR: out std_logic;
+	PCWrite,IMM_EA,sign: out std_logic;
 	In_enable,Out_enable,thirtyTwo_Sixteen,SWAP, CALL: out std_logic
 );
 end entity;
@@ -39,7 +39,7 @@ begin
 	  PCWrite <= '1';
 	  IMM_EA <= '0';
 	  sign <= '0';
-	  CRR <= '0';
+	   
 	  In_enable <= '0';
 	  Out_enable <= '0';
 	  thirtyTwo_Sixteen<= '0';
@@ -63,7 +63,7 @@ begin
 	     PCWrite <= '1';
 	     IMM_EA <= '0';
 	     sign <= '0';
-	     CRR <= '0';
+	      
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     SWAP<= '0';
@@ -81,7 +81,7 @@ begin
 	     PCWrite <= '1';
 	     IMM_EA <= '0';
 	     sign <= '0';
-	     CRR <= '0';
+	      
 	     In_enable <= '0';
 	     Out_enable <= '0';
 		 SWAP<= '0';
@@ -100,7 +100,7 @@ begin
 	     PCWrite <= '1';
 	     IMM_EA <= '0';
 	     sign <= '0';
-	     CRR <= '0';
+	      
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     SWAP<= '0';
@@ -118,7 +118,7 @@ begin
 	     PCWrite <= '1';
 	     IMM_EA <= '0';
 	     sign <= '0';
-	     CRR <= '0';
+	      
 	     In_enable <= '0';
 	     Out_enable <= '0';
 		 SWAP<= '0';
@@ -136,7 +136,7 @@ begin
 	     PCWrite <= '1';
 	     IMM_EA <= '0';
 	     sign <= '0';
-	     CRR <= '0';
+	      
 	     In_enable <= '0';
 	     Out_enable <= '1';
 	     SWAP<= '0';
@@ -155,7 +155,7 @@ begin
 	     PCWrite <= '1';
 	     IMM_EA <= '0';
 	     sign <= '0';
-	     CRR <= '0';
+	      
 	     In_enable <= '1';
 	     Out_enable <= '0'; 
 		 SWAP<= '0';
@@ -174,7 +174,7 @@ begin
 	     ALU <= "0001";
 	     PCWrite <= '1';
 	     sign <= '1';
-	     CRR <= '0';
+	      
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     SWAP<= '0';
@@ -194,7 +194,7 @@ begin
 	     PCWrite <= '1';
 	     IMM_EA <= '0';
 	     sign <= '1';
-	     CRR <= '0';
+	      
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     thirtyTwo_Sixteen <='0';
@@ -212,7 +212,7 @@ begin
 	     PCWrite <= '1';
 	     IMM_EA <= '1';
 	     sign <= '1';
-	     CRR <= '0';
+	      
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     thirtyTwo_Sixteen <='1';
@@ -231,7 +231,7 @@ begin
 	     PCWrite <= '1';
 	     IMM_EA <= '1';
 	     sign <= '0';
-	     CRR <= '0';
+	      
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     thirtyTwo_Sixteen <='1';
@@ -249,7 +249,7 @@ begin
 	     PCWrite <= '1';
 	     IMM_EA <= '1';
 	     sign <= '0';
-	     CRR <= '0';
+	      
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     thirtyTwo_Sixteen <='1';
@@ -268,7 +268,7 @@ begin
 	     PCWrite <= '0';
 	     IMM_EA <= '0';
 	     sign <= '0';
-	     CRR <= '0';
+	      
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     thirtyTwo_Sixteen <='0';
@@ -280,13 +280,13 @@ begin
 	     RegDST <= '0';
 	     MemToReg <= '0';
 	     MemRd <= '0';
-	     MemWR <= '1';
-	     SP <= "00";
+	     MemWR <= '0';
+	     SP <= "11";
 	     ALU <= "0000";
 	     PCWrite <= '0';
 	     IMM_EA <= '0';
 	     sign <= '0';
-	     CRR <= '0';
+	      
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     thirtyTwo_Sixteen <='0';
@@ -305,7 +305,7 @@ begin
 	     PCWrite <= '0';
 	     IMM_EA <= '0';
 	     sign <= '0';
-	     CRR <= '1';
+	      
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     thirtyTwo_Sixteen <='0';
@@ -325,7 +325,7 @@ begin
 	     PCWrite <= '0';
 	     IMM_EA <= '0';
 	     sign <= '0';
-	     CRR <= '1';
+	      
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     thirtyTwo_Sixteen <='0';
@@ -344,7 +344,7 @@ begin
 	     PCWrite <= '0';
 	     IMM_EA <= '0';
 	     sign <= '0';
-	     CRR <= '1';
+	      
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     thirtyTwo_Sixteen <='0';
@@ -364,7 +364,7 @@ begin
 	     PCWrite <= '0';
 	     IMM_EA <= '0';
 	     sign <= '0';
-	     CRR <= '0';
+	      
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     thirtyTwo_Sixteen<= '0';
@@ -382,7 +382,7 @@ begin
 	     PCWrite <= '0';
 	     IMM_EA <= '0';
 	     sign <= '0';
-	     CRR <= '0';
+	      
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     SWAP<= '0';
@@ -401,7 +401,7 @@ begin
 	     PCWrite <= '0';
 	     IMM_EA <= '1';
 	     sign <= '0';
-	     CRR <= '0';
+	      
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     SWAP<= '0';
@@ -419,7 +419,7 @@ begin
 	     PCWrite <= '0';
 	     IMM_EA <= '0';
 	     sign <= '0';
-	     CRR <= '0';
+	      
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     SWAP<= '0';
@@ -437,7 +437,7 @@ begin
 	     PCWrite <= '0';
 	     IMM_EA <= '0';
 	     sign <= '0';
-	     CRR <= '0';
+	      
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     SWAP<= '0';
@@ -455,7 +455,7 @@ begin
 	     PCWrite <= '0';
 	     IMM_EA <= '0';
 	     sign <= '0';
-	     CRR <= '0';
+	      
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     SWAP<= '0';
@@ -474,7 +474,7 @@ begin
 	     PCWrite <= '0';
 	     IMM_EA <= '1';
 	     sign <= '1';
-	     CRR <= '0';
+	      
 	     In_enable <= '0';
 	     Out_enable <= '0';
 		 SWAP<= '0';
@@ -492,7 +492,7 @@ begin
 	     PCWrite <= '0';
 	     IMM_EA <= '1';
 	     sign <= '1';
-	     CRR <= '0';
+	      
 	     In_enable <= '0';
 	     Out_enable <= '0';
 	     SWAP<= '0';

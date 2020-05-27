@@ -5,13 +5,13 @@ use work.bus_multiplexer_pkg.all;
 entity ExeStage is
   port (
     clk,rst,INT:in std_logic;
-    ID_EX:in std_logic_vector(178 downto 0);
+    ID_EX:in std_logic_vector(179 downto 0);
     EXALUResult,MEMALUResult:in std_logic_vector(31 downto 0);--IN port value is an input from system that read in execute cycle direct from system.
     MEM_WBRegisterRd,EX_MEMRegisterRd:IN std_logic_vector(2 downto 0);
     EX_MEMRegWrite,MEM_WBRegWrite,EX_MEMSWAP,MEM_WBSWAP:IN std_logic;
-    RegDst,CCR,RtReg,WBsignals:out std_logic_vector(2 downto 0);--CCR output of reg , but ZF output direct from ALU to use in feedback check in branch decision.
+    RegDst,CRR,RtReg,WBsignals:out std_logic_vector(2 downto 0);--CRR output of reg , but ZF output direct from ALU to use in feedback check in branch decision.
     MEMSignals:out std_logic_vector(3 downto 0);
-    ZF,SWAP,INTSignal,RRI:OUT std_logic;
+    ZF,SWAP,INTSignal,RET,RTI,CALL:OUT std_logic;
     DataOut,AddrressEA_IMM,SRC2out:out std_logic_vector(31 downto 0)
 ) ;
 end ExeStage ;
@@ -25,15 +25,15 @@ signal signType,OVF:std_logic;
 signal UpperInstr:std_logic_vector(19 downto 0);
 signal PC_1,SRC1,SRC2,SignExtendOut,tempA,A,B,ALUResult,MUXSRC2_signOutput,INPORTValue:std_logic_vector(31 downto 0); 
 signal ALUSelectors,EA_Part:std_logic_vector(3 downto 0);
-signal CCRRegister,Rs,Rt,Rd:std_logic_vector(2 downto 0);--ZF,SignFlag,Carry
+signal CRRRegister,Rs,Rt,Rd:std_logic_vector(2 downto 0);--ZF2,SignFlag1,Carry0
 signal MUXASel,MUXBSel:std_logic_vector(1 downto 0):="00";
 signal CRREnable:std_logic:='0';
 signal Opcode:std_logic_vector(4 downto 0);
 begin
   --in 00101 ,out 00100 ,swap 00110 ,nop 00000
 CRREnable<='0' when (Opcode="00101" or Opcode="00100" or Opcode="00110"  or Opcode="00000") else '1'; 
-CCR_Reg:entity work.Reg generic map(n=>3) port map(input=>CCRRegister,en=>CRREnable,rst=>rst,clk=>clk,output=>CCR);
-ZF<=CCRRegister(0);
+CRR_Reg:entity work.Reg generic map(n=>3) port map(input=>CRRRegister,en=>CRREnable,rst=>rst,clk=>clk,output=>CRR);
+ZF<=CRRRegister(0);
 SRC1<=ID_EX(31 downto 0);
 SRC2 <= ID_EX(63 downto 32);
 SRC2out <=ID_EX(63 downto 32);
@@ -57,9 +57,11 @@ INEnableSignal(0)<=ID_EX(138);
 --memRead,memWrite,spType
 MEMSignals<=ID_EX(142 downto 139);
 
-RRI<=ID_EX(143);
+RET<=ID_EX(143);
+RTI<=ID_EX(179);
 SWAP<=ID_EX(144);
 CallBit(0)<=ID_EX(145);
+CALL<=ID_EX(145);
 INTSignal<=ID_EX(146);
 INPORTValue<=ID_EX(178 downto 147);
 
@@ -92,16 +94,16 @@ MUXBInput(1)<=MEMALUResult;
 MUXB:entity work.mux generic map(bus_width=>32,sel_width=>2) port map(input=>MUXBInput,sel=>MUXBSel,output=>B);
 
 MUXALUResult_PC1Input(0)<=ALUResult;
-MUXALUResult_PC1Input(1)<=std_logic_vector(unsigned(PC_1) + 1);
+MUXALUResult_PC1Input(1)<=std_logic_vector(unsigned(PC_1));
 
 -- alu result or pc+1 mux
-MUXResult:entity work.mux generic map(bus_width=>32,sel_width=>1) port map(input=>MUXALUResult_PC1Input,sel=>CallBit,output=>DataOut);
+MUXResult:entity work.mux generic map(bus_width=>32,sel_width=>1) port map(input=>MUXALUResult_PC1Input,sel=>CallBit or INTSignal ,output=>DataOut);
 
 
 
 AddrressEA_IMM<=B;
 
-ALU:entity work.ALU2 generic map (size=>32) port map(S=>ALUSelectors,A=>A,B=>B,F=>ALUResult,ZF=>CCRRegister(0),SignF=>CCRRegister(1),OVF=>OVF,Cout=>CCRRegister(2));
+ALU:entity work.ALU2 generic map (size=>32) port map(S=>ALUSelectors,A=>A,B=>B,F=>ALUResult,ZF=>CRRRegister(0),SignF=>CRRRegister(1),OVF=>OVF,Cout=>CRRRegister(2));
 
 Forwarding:entity work.ForwardingUnit port map(MEM_WBRegisterRd,EX_MEMRegisterRd,Rs,Rt,EX_MEMRegWrite,MEM_WBRegWrite,EX_MEMSWAP,MEM_WBSWAP,MUXASel,MUXBSel);
 

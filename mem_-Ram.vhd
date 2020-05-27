@@ -9,7 +9,7 @@ ENTITY RAMmem IS
 	        addressBits : integer :=32);
 	PORT(
 		CLK : IN std_logic;
-		W,R: IN std_logic;
+		W,R,SP: IN std_logic; -- SP = 1 for inc the address before fetch from memory. 
 
 		address : IN  std_logic_vector(addressBits-1 DOWNTO 0);
 		
@@ -19,16 +19,54 @@ END ENTITY RAMmem;
 
 ARCHITECTURE syncramamem OF RAMmem IS
 
-	TYPE ram_type IS ARRAY(0 TO 2**11) OF std_logic_vector(15 DOWNTO 0);
+	TYPE ram_type IS ARRAY(0 TO (2**11)+1) OF std_logic_vector(15 DOWNTO 0);
 	SIGNAL ram : ram_type ;
 	
 	BEGIN
-		PROCESS(CLK, W, R , address) IS
+	
+	 dataOut(15 downto 0) <= ram(to_integer(unsigned(address)+2)) when R ='1' and SP='1' 
+	 else  ram(to_integer(unsigned(address))) when R ='1'  and SP='0'
+	 else  (others=>'0') when R='0';
+
+	 dataOut(31 downto 16) <= ram(to_integer(unsigned(address)+3)) when R ='1'  and SP='1' 
+	 else  ram(to_integer(unsigned(address)+1)) when R ='1'  and SP='0'
+	 else  (others=>'0') when R='0';
+	 	
+	-- PROCESS(clk,R,SP,address) IS
+	-- 	VARIABLE adds:INTEGER;
+	-- 		BEGIN
+	-- 				IF R = '1'  THEN
+	-- 				if(falling_edge(clk))then
+	-- 					loop0: for i in 0 to n-1 loop
+	-- 						if(SP='1')then--inc  	
+	-- 							if(i=0)then
+	-- 									adds := to_integer(unsigned(address))+2;
+	-- 									dataOut(15 downto 0) <= ram(adds);
+									
+	-- 							elsif (i=1) then
+	-- 									adds := to_integer(unsigned(address))+3;
+	-- 									dataOut(31 downto 16) <= ram(adds);
+	-- 							end if;
+	-- 						elsif SP='0' then
+	-- 							if(i=0)then
+	-- 								adds := to_integer(unsigned(address));
+	-- 								dataOut(15 downto 0) <= ram(adds);
+								
+	-- 							elsif (i=1) then
+	-- 									adds := to_integer(unsigned(address)) + i;
+	-- 									dataOut(31 downto 16) <= ram(adds);
+	-- 							end if;
+	-- 						end if;
+	-- 					end loop;
+	-- 				end if;	
+	-- 			end if;
+	-- 	END PROCESS;
+	PROCESS(CLK,address ,W) IS
 		VARIABLE adds:INTEGER;
 			BEGIN
-				if(falling_edge(CLK))then	
 					IF W = '1' THEN
-                                loop1: for i in 0 to n-1 loop
+						if(falling_edge(CLK))then			
+							loop1: for i in 0 to n-1 loop
                                        if i=0 then
 										adds := to_integer(unsigned(address));
 										ram(adds) <= dataIn(15 downto 0);
@@ -36,22 +74,10 @@ ARCHITECTURE syncramamem OF RAMmem IS
 										adds := to_integer(unsigned(address)) + i;
 										ram(adds) <= dataIn(31 downto 16);
 										end if;
-                                        end loop;
-		            elsIF R = '1' THEN
-						loop0: for i in 0 to n-1 loop
-							if(i=0)then
-									adds := to_integer(unsigned(address));
-									dataOut(15 downto 0) <= ram(adds);
-							else
-									adds := to_integer(unsigned(address)) + i;
-									dataOut(31 downto 16) <= ram(adds);
-							end if;
-							
-						end loop;
-					ELSE 
-						dataOut <= (OTHERS=>'Z');
+										end loop;
+						end if;		
 					END IF;
-				end if;
+				
 		END PROCESS;
 		
 END syncramamem;

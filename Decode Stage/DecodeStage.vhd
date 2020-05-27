@@ -4,14 +4,15 @@ use ieee.numeric_std.all;
 entity DecodeStage is
   port (
       clk,rst,INT,Mux_Selector:IN std_logic;
-      IF_ID:IN std_logic_vector(82 downto 0);
+      IF_ID:IN std_logic_vector(83 downto 0);
       RegWriteFromWB,SWAPFromWB:IN std_logic;
       MEM_WBRd,MEM_WBRs,RsFromFetch:IN std_logic_vector(2 downto 0);
       Value1,Value2:IN std_logic_vector(31 downto 0);
       ImmdiateValue:IN std_logic_vector(15 downto 0);
-      ReadImmd     :IN std_logic;
+      ReadImmd,ZF     :IN std_logic;
       TargetAddress,SRC1,SRC2,instruction,PC,INPORTValueDecodeOut:OUT std_logic_vector(31 downto 0);--Target address to fetch stage at the same cycle
-      RRI,SWAP,CALL,INTOut,SignExtendSignal,IMM_EASignal,RegDST,InEnable,sig32_16,IF_IDWrite:OUT std_logic;
+      --old target address in case of wrong prediction.
+      RET,RTI,SWAP,CALL,INTOut,SignExtendSignal,IMM_EASignal,RegDST,InEnable,sig32_16,IF_IDWrite:OUT std_logic;
       WBSignals:OUT std_logic_vector(2 downto 0);
       ALUSelectors,MEMSignals:OUT std_logic_vector(3 downto 0);
       T_NT:OUT std_logic_vector(1 downto 0)
@@ -19,7 +20,7 @@ entity DecodeStage is
 end DecodeStage ;
 
 architecture arch of DecodeStage is
-signal CRR:std_logic;
+signal CRR,CALLSig:std_logic; 
 begin
 RegisterFile:entity work.decoder generic map(32) port map(interrupt=>INT,reset=>rst,clk=>clk,
 instr=>IF_ID(15 downto 0),
@@ -37,15 +38,17 @@ RegWrite=>WBSignals(1),RegDST=>RegDST,MemToReg=>WBSignals(0),MemRd=>MEMSignals(3
 SP=>MEMSignals(1 downto 0),
 -- nop:0000    A: 0001    B :0010   INC:0011
  -- DEC:0100 ADD:0101  SUB:0110  NOT: 0111  AND: 1000  OR:    1001  SHL:1010  SHR:  1011
-ALU=>ALUSelectors,PCWrite=>IF_IDWrite,IMM_EA=>IMM_EASignal,sign=>SignExtendSignal,CRR=>CRR,
-In_enable=>InEnable,Out_enable=>WBSignals(2),thirtyTwo_Sixteen=>sig32_16,SWAP=>SWAP, CALL=>CALL);
+ALU=>ALUSelectors,PCWrite=>IF_IDWrite,IMM_EA=>IMM_EASignal,sign=>SignExtendSignal,
+In_enable=>InEnable,Out_enable=>WBSignals(2),thirtyTwo_Sixteen=>sig32_16,SWAP=>SWAP, CALL=>CALLSig);
 INTOut<=IF_ID(48);
-RRI<=IF_ID(49);
-instruction(31 downto 16)<=ImmdiateValue when (ReadImmd='1');
+RET<=IF_ID(49) when Mux_Selector = '0' else '0' when Mux_Selector = '1';
+RTI<=IF_ID(83) when Mux_Selector = '0' else '0' when Mux_Selector = '1';
+instruction(31 downto 16)<=ImmdiateValue when (ReadImmd='1' or Mux_Selector ='1');
 instruction(15 downto 0)<=IF_ID(15 downto 0);
 PC<=IF_ID(47 downto 16);
+CALL<=CALLSig;
 --TODO 
 --predicition check to generate T_NT
-T_NT<="11";
+T_NT<= "00" when ZF ='1' and IF_ID(15 downto 11) ="10011" else "01" when ZF ='0' and IF_ID(15 downto 11) ="10011" else "11" when IF_ID(15 downto 11) /="10011";
 INPORTValueDecodeOut<=IF_ID(82 downto 51);
 end architecture ; 

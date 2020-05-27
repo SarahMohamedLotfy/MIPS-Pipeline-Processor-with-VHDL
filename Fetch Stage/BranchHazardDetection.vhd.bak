@@ -8,7 +8,7 @@ generic (
          selector :integer:=3);
     port(
         reset            : in  std_logic:='0';
-        clk,JZ,CALL_JMP              : in  std_logic;
+        clk,JZ              : in  std_logic;
         Rs_instr_fetch   : in std_logic_vector(RBits-1 downto 0); --1
         Reg_write_decode : in std_logic;--2
         RegDst_decode    : in std_logic;--3
@@ -21,8 +21,6 @@ generic (
         Rd_decode        : in std_logic_vector(RBits-1 downto 0); --10
         Swap_decode      : in std_logic;--11
         ID_EX_swap       : in std_logic;--12
-        Decode_MemRead,ExeMemRead,Mem_memRead:in std_logic;
-        MemRegRd:in std_logic_vector(2 downto 0);
         PC_write         : out std_logic;
         IF_ID_flush      : out std_logic;
         Target_Selector  : out std_logic_vector(selector-1 downto 0)
@@ -35,39 +33,31 @@ end BranchHazard;
 architecture BranchHazardArch of BranchHazard is 
 
 begin
-
-PC_write <='0' when (((Reg_write_decode='1' or Decode_MemRead='1')and RegDst_decode='0' and Rd_instr_decode=Rs_instr_fetch) 
-or ((Reg_write_decode='1' or Decode_MemRead='1') and RegDst_decode='1' and Rs_instr_decode=Rs_instr_fetch)
-or ( ExeMemRead='1' and Reg_Rd_EX=Rs_instr_fetch))
-and (JZ='1' or CALL_JMP='1') else '1' 
+PC_write<='0' when ((Reg_write_decode='1'and RegDst_decode='0' and Rd_instr_decode=Rs_instr_fetch) 
+or (Reg_write_decode='1' and RegDst_decode='1' and Rs_instr_decode=Rs_instr_fetch))and JZ='1' else '1' 
 when((ID_EX_RegWrite='1' and Reg_Rd_EX=Rs_instr_fetch) 
 or(Swap_decode='1' and Rs_instr_decode=Rs_instr_fetch)
  or (Swap_decode='1' and Rs_instr_fetch=Rd_decode)
  or(ID_EX_swap='1' and ID_EX_instr_Rs=Rs_instr_fetch)
- or (ID_EX_swap='1' and ID_EX_instr_Rd=Rs_instr_fetch) )and (JZ='1' or CALL_JMP='1') else '1';
+ or (ID_EX_swap='1' and ID_EX_instr_Rd=Rs_instr_fetch) )and JZ='1' else '1';
 
 
- IF_ID_flush<='1' when (((Reg_write_decode='1' or Decode_MemRead='1')and RegDst_decode='0' and Rd_instr_decode=Rs_instr_fetch) 
- or ((Reg_write_decode='1' or Decode_MemRead='1') and RegDst_decode='1' and Rs_instr_decode=Rs_instr_fetch)
- or ( ExeMemRead='1' and Reg_Rd_EX=Rs_instr_fetch))
- and (JZ='1' or CALL_JMP='1') else '0' 
+ IF_ID_flush<'1' when ((Reg_write_decode='1'and RegDst_decode='0' and Rd_instr_decode=Rs_instr_fetch) 
+ or (Reg_write_decode='1' and RegDst_decode='1' and Rs_instr_decode=Rs_instr_fetch))and JZ='1' else '0' 
  when((ID_EX_RegWrite='1' and Reg_Rd_EX=Rs_instr_fetch) 
  or(Swap_decode='1' and Rs_instr_decode=Rs_instr_fetch)
   or (Swap_decode='1' and Rs_instr_fetch=Rd_decode)
   or(ID_EX_swap='1' and ID_EX_instr_Rs=Rs_instr_fetch)
-  or (ID_EX_swap='1' and ID_EX_instr_Rd=Rs_instr_fetch) )and (JZ='1' or CALL_JMP='1') else '0';
+  or (ID_EX_swap='1' and ID_EX_instr_Rd=Rs_instr_fetch) )and JZ='1' else '0';
 
 
-  Target_Selector <= "111" when  (((Reg_write_decode='1' or Decode_MemRead='1')and RegDst_decode='0' and Rd_instr_decode=Rs_instr_fetch) 
-  or ((Reg_write_decode='1' or Decode_MemRead='1') and RegDst_decode='1' and Rs_instr_decode=Rs_instr_fetch)
-  or ( ExeMemRead='1' and Reg_Rd_EX=Rs_instr_fetch))
-  and (JZ='1' or CALL_JMP='1')
-  else "001" when (ID_EX_RegWrite='1' and Reg_Rd_EX=Rs_instr_fetch)and (JZ='1' or CALL_JMP='1')
-  else "010" when (Swap_decode='1' and Rs_instr_decode=Rs_instr_fetch)and (JZ='1' or CALL_JMP='1')
-  else "011" when (Swap_decode='1' and Rs_instr_fetch=Rd_decode)and (JZ='1' or CALL_JMP='1')
-  else "100" when (ID_EX_swap='1' and ID_EX_instr_Rs=Rs_instr_fetch)and (JZ='1' or CALL_JMP='1')
-  else "101" when (ID_EX_swap='1' and ID_EX_instr_Rd=Rs_instr_fetch)and (JZ='1' or CALL_JMP='1')
-  else "110" when  (Mem_memRead='1' and MemRegRd=Rs_instr_fetch) and (JZ='1' or CALL_JMP='1')
+  Target_Selector <= "111" when  (Reg_write_decode='1'and RegDst_decode='0' and Rd_instr_decode=Rs_instr_fetch)and JZ='1'
+  or (Reg_write_decode='1' and RegDst_decode='1' and Rs_instr_decode=Rs_instr_fetch) and JZ='1'
+  else "001" when (ID_EX_RegWrite='1' and Reg_Rd_EX=Rs_instr_fetch)and JZ='1'
+  else "010" when (Swap_decode='1' and Rs_instr_decode=Rs_instr_fetch)and JZ='1'
+  else "011" when (Swap_decode='1' and Rs_instr_fetch=Rd_decode)and JZ='1'
+  else "100" when (ID_EX_swap='1' and ID_EX_instr_Rs=Rs_instr_fetch)and JZ='1'
+  else "101" when (ID_EX_swap='1' and ID_EX_instr_Rd=Rs_instr_fetch)and JZ='1'
   else "000";
  
    
@@ -128,7 +118,7 @@ or(Swap_decode='1' and Rs_instr_decode=Rs_instr_fetch)
 -- Target_Selector<="000"; --normal data from decode   
 -- end if;    
 
--- end process;
+end process;
 
 
 end architecture;

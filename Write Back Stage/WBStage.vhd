@@ -21,14 +21,14 @@ tempSwap<=MEM_WB(32);
 Swap<=MEM_WB(32);
 Rt<=MEM_WB(35 downto 33);
 Rd<=MEM_WB(38 downto 36);
--- memtoreg , regwrite , outenable
+--outenable 2  regwrite 1  memtoreg 0
 WBsignals<=MEM_WB(41 downto 39);
 MemResult<=MEM_WB(73 downto 42);
 ALUResult<=MEM_WB(105 downto 74);
 RtToDecode <= Rt when tempSwap='0' else Rd when tempSwap='1';--write value 2
 RdToDecode <= Rd when tempSwap='0' else Rt when tempSwap='1';--write value 1
 RegWriteToRegisterFile<=WBsignals(1);
-Value1 <= ALUResult when ( (WBsignals(1) ='1' and WBsignals(0) ='0' ) or (tempSwap='1' and WBsignals(1) = '1')) else MemResult when ( WBsignals(1) ='1' and WBsignals(0) ='1')  ;
+Value1<= ALUResult when (WBsignals(1)='1' or tempSwap='1') and WBsignals(0)='0'   else MemResult when WBsignals(1)='1' and  tempSwap='0' and WBsignals(0)='1'; 
 PortOut<=ALUResult when WBsignals(2)='1';
 Value2 <= SRC2 when (tempSwap='1' and WBsignals(1) = '1');
 

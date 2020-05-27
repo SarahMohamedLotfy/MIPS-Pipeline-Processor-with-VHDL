@@ -77,6 +77,8 @@ instrCount=0
 dataCount =0
 
 for instr in instrComponent:
+	if(len(instr)==0):
+    		continue;
 	instr[0]=instr[0].upper()
 	print(instr)
 	if instr[0] ==".ORG":
@@ -171,8 +173,9 @@ for instr in instrComponent:
 	elif len(instr) == 1:
 		if instr[0] not in NoOperandInstructions:
 			if ORGCount in [0,1]:
-				Value="{0:016b}".format((int(instr[0]))&0xffff)
-				DataFile.write(("{}: "+Value+"\n").format(hex(dataCount)[2:]))
+				Value="{0:032b}".format((int(instr[0],16))&0xffffffff)
+				DataFile.write(("{}: "+Value[16:32]+"\n").format(hex(dataCount)[2:]))
+				DataFile.write(("{}: "+Value[0:16]+"\n").format(hex(dataCount+1)[2:]))
 		else:
 			#no operand 
 			STR= NoOperandInstructions[instr[0]]
