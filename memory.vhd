@@ -106,7 +106,7 @@ MemoryReuslt<= outputMEm when EX_MEM(111)='1'  else (others=>'0');
 ControlBlock:entity work.memorystagecontrol port map(
     clk=>clk,INT=>interrupt,RST=>reset,CALL=>CALL,RET=>RET,RTI=>RTI,WRIn=>EX_MEM(110) ,RDIn=>EX_MEM(111),
     ALUdata=>EX_MEM( 67 downto 36),CRRFlags=>CRRIN,AddressIn=>EX_MEM( 99 downto 68),
-    DataToWrite=>INdata,Address=>tempAddress,SPIN=>EX_MEM(109 downto 108),MEMOUT=>outputMEm,
+    DataToWrite=>INdata,Address=>tempAddress,SPIN=>EX_MEM(109 downto 108),MEMOUT=>outputMEm,FlagsOut=>FlagsControlOut,
     SPType=>spType,MemoryPC=>MemoryPC,INTHandler=>INTHandlerIN,RTIHandler=>RTIHandlerIN,RETHandler=>RETHandlerIN,RTIFlagsEnable=>RTIFlagsEnable,CALLHandler=>CALLHandlerIN,
     WriteSignal=>WriteSig,ReadSignal=>ReadSig,ResumeSignal=>ResumeSignalFromMemorySig,MemoryReadSignal=>MemoryReadSignalToFetch,spEnable=>notSig
   ) ;

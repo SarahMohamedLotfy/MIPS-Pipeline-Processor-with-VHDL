@@ -34,7 +34,7 @@ ARCHITECTURE FetchStageArch of FetchStage is
 
 SIGNAL tmp,tempInstruction:std_logic_vector(15 downto 0); --not used just dummpy variable
 signal dummy,JZ,UnconditionBranch,RRISignal,RRIPCWrite,ActualPCWrite,IF_IDFLUSHSig,RRI: std_logic;
-signal tINTHandler,tempInterrupt,tRTIHandler,tRETHandler:std_logic_vector(0 downto 0):="0";
+signal tINTHandler,tempInterrupt,tRTIHandler,tRETHandler,TempJZTaken,TempJZTakenOut:std_logic_vector(0 downto 0):="0";
 signal tempPCnew: STD_LOGIC_VECTOR(PCSize-1 DOWNTO 0);
 signal PCReg,PCRegValue: STD_LOGIC_VECTOR(PCSize-1 DOWNTO 0);
 signal State:std_logic_vector(1 downto 0);
@@ -63,17 +63,11 @@ BEGIN
 
 	RETHandler<=RET when ResumeSignalFromMemory='0' else '0' when ResumeSignalFromMemory='1';
 
-	--CALLHandler<=CALLSIG when ResumeSignalFromMemory='0' else '0' when ResumeSignalFromMemory='1' ;
 	
 	interruptBit:entity work.reg(RegArch) generic map(1) port map(input=>tempInterrupt,en=>interrupt,rst=>ResumeSignalFromMemory,clk=>clk,output=>tINTHandler);
 	
-	--RTIBit:entity work.reg(RegArch) generic map(1) port map(input=>tRTIHandler,en=>RTI,rst=>ResumeSignalFromMemory,clk=>clk,output=>tRTIHandler);
-	
-	--RETBit:entity work.reg(RegArch) generic map(1) port map(input=>tRETHandler,en=>RET,rst=>ResumeSignalFromMemory,clk=>clk,output=>tRETHandler);
-	
-
-	--oldTargetAddress<=DecodeTargetAddress when jz='1' and falling_edge(clk);
-
+	JZTakenBit:entity work.reg(RegArch) generic map(1) port map(input=>TempJZTaken,en=>'1',rst=>'0',clk=>clk,output=>TempJZTakenOut);
+	JZ_Taken<=TempJZTakenOut(0);
 	oldTargetAddress<=Target when jz='1' ;
 
 	INPORTValueFetchOut<=INPORTValue when reset ='0' else (others=>'0') when reset='1' ;
@@ -94,7 +88,7 @@ BEGIN
 	rst=>reset,clk=>clk,ReadFromMemorySignal=>MemoryReadSignal,JZ=>JZ,UnconditionBranch=>UnconditionBranch,
 	T_NT=>T_NT,State=>State,IF_IDFLUSH=>IF_IDFLUSHSig,
 	
-	PCnext=>tempPCnew,JZ_Taken=>JZ_Taken);
+	PCnext=>tempPCnew,JZ_Taken=>TempJZTaken(0));
 
 	CheckBranch:entity work.Check_Branches port map(OpCode=>instruction(15 downto 11),
 	JZ=>JZ,CALL=>CALLSIG,unconditionalBranch=>UnconditionBranch);

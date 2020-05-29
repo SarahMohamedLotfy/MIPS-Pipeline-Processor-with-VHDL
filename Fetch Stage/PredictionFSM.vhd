@@ -61,7 +61,7 @@ if(reset='0')then
           if taken='0'then
           next_state<= strongly_taken;
           elsif(taken ='1')then
-          next_state<=current_state;
+          next_state<=weakly_not_taken;
           end if;
      when strongly_taken=>
           if taken='0'then

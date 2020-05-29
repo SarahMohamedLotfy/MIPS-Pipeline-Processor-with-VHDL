@@ -9,7 +9,7 @@ entity DecodeStage is
       MEM_WBRd,MEM_WBRs,RsFromFetch:IN std_logic_vector(2 downto 0);
       Value1,Value2:IN std_logic_vector(31 downto 0);
       ImmdiateValue:IN std_logic_vector(15 downto 0);
-      ReadImmd,ZF     :IN std_logic;
+      ReadImmd,ZF,JZ_Taken     :IN std_logic;
       TargetAddress,SRC1,SRC2,instruction,PC,INPORTValueDecodeOut:OUT std_logic_vector(31 downto 0);--Target address to fetch stage at the same cycle
       --old target address in case of wrong prediction.
       RET,RTI,SWAP,CALL,INTOut,SignExtendSignal,IMM_EASignal,RegDST,InEnable,sig32_16,IF_IDWrite:OUT std_logic;
@@ -20,7 +20,7 @@ entity DecodeStage is
 end DecodeStage ;
 
 architecture arch of DecodeStage is
-signal CRR,CALLSig:std_logic; 
+signal CRR,CALLSig,ZFSig:std_logic; 
 begin
 RegisterFile:entity work.decoder generic map(32) port map(interrupt=>INT,reset=>rst,clk=>clk,
 instr=>IF_ID(15 downto 0),
@@ -47,8 +47,10 @@ instruction(31 downto 16)<=ImmdiateValue when (ReadImmd='1' or Mux_Selector ='1'
 instruction(15 downto 0)<=IF_ID(15 downto 0);
 PC<=IF_ID(47 downto 16);
 CALL<=CALLSig;
+--ZFSig<='1' when JZ_Taken='1' else ZF;
+ZFSig<= ZF;
 --TODO 
 --predicition check to generate T_NT
-T_NT<= "00" when ZF ='1' and IF_ID(15 downto 11) ="10011" else "01" when ZF ='0' and IF_ID(15 downto 11) ="10011" else "11" when IF_ID(15 downto 11) /="10011";
+T_NT<= "00" when ZFSig ='1' and IF_ID(15 downto 11) ="10011" else "01" when ZFSig ='0' and IF_ID(15 downto 11) ="10011" else "11" when IF_ID(15 downto 11) /="10011";
 INPORTValueDecodeOut<=IF_ID(82 downto 51);
 end architecture ; 

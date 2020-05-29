@@ -11,7 +11,7 @@ entity ExeStage is
     EX_MEMRegWrite,MEM_WBRegWrite,EX_MEMSWAP,MEM_WBSWAP:IN std_logic;
     RegDst,CRR,RtReg,WBsignals:out std_logic_vector(2 downto 0);--CRR output of reg , but ZF output direct from ALU to use in feedback check in branch decision.
     MEMSignals:out std_logic_vector(3 downto 0);
-    ZF,SWAP,INTSignal,RET,RTI,CALL:OUT std_logic;
+    ZF,SWAP,INTSignal,RET,RTI,CALL,ALUFlagsEnable:OUT std_logic;
     DataOut,AddrressEA_IMM,SRC2out:out std_logic_vector(31 downto 0)
 ) ;
 end ExeStage ;
@@ -21,19 +21,20 @@ signal MUXAInput,MUXBInput :bus_array(3 downto 0)(31 downto 0);
 signal MUXSRC2_signInput,MUXALUResult_PC1Input,MUXTempA_INPORTInput:bus_array(1 downto 0)(31 downto 0);
 signal MUXRt_RdInput:bus_array(1 downto 0)(2 downto 0);
 signal IMM_EAbit,CallBit,REGdstSignal,INEnableSignal:std_logic_vector(0 downto 0);
+signal MUXResultSel:std_logic_vector(0 downto 0):="0";
 signal signType,OVF:std_logic;
 signal UpperInstr:std_logic_vector(19 downto 0);
 signal PC_1,SRC1,SRC2,SignExtendOut,tempA,A,B,ALUResult,MUXSRC2_signOutput,INPORTValue:std_logic_vector(31 downto 0); 
 signal ALUSelectors,EA_Part:std_logic_vector(3 downto 0);
-signal CRRRegister,Rs,Rt,Rd:std_logic_vector(2 downto 0);--ZF2,SignFlag1,Carry0
+signal Rs,Rt,Rd:std_logic_vector(2 downto 0);--ZF2,SignFlag1,Carry0
 signal MUXASel,MUXBSel:std_logic_vector(1 downto 0):="00";
-signal CRREnable:std_logic:='0';
+--signal CRREnable:std_logic:='0';
 signal Opcode:std_logic_vector(4 downto 0);
 begin
   --in 00101 ,out 00100 ,swap 00110 ,nop 00000
-CRREnable<='0' when (Opcode="00101" or Opcode="00100" or Opcode="00110"  or Opcode="00000") else '1'; 
-CRR_Reg:entity work.Reg generic map(n=>3) port map(input=>CRRRegister,en=>CRREnable,rst=>rst,clk=>clk,output=>CRR);
-ZF<=CRRRegister(0);
+  ALUFlagsEnable<='0' when (Opcode="00101" or Opcode="00100" or Opcode="00110"  or Opcode="00000") else '1'; 
+--CRR_Reg:entity work.Reg generic map(n=>3) port map(input=>CRR,en=>CRREnable,rst=>rst,clk=>clk,output=>CRR);
+ZF<=CRR(0);
 SRC1<=ID_EX(31 downto 0);
 SRC2 <= ID_EX(63 downto 32);
 SRC2out <=ID_EX(63 downto 32);
@@ -95,15 +96,15 @@ MUXB:entity work.mux generic map(bus_width=>32,sel_width=>2) port map(input=>MUX
 
 MUXALUResult_PC1Input(0)<=ALUResult;
 MUXALUResult_PC1Input(1)<=std_logic_vector(unsigned(PC_1));
-
+MUXResultSel<="1" when CallBit="1" or INTSignal='1' else "0" when CallBit/="1" and  INTSignal/='1';
 -- alu result or pc+1 mux
-MUXResult:entity work.mux generic map(bus_width=>32,sel_width=>1) port map(input=>MUXALUResult_PC1Input,sel=>CallBit or INTSignal ,output=>DataOut);
+MUXResult:entity work.mux generic map(bus_width=>32,sel_width=>1) port map(input=>MUXALUResult_PC1Input,sel=>MUXResultSel,output=>DataOut);
 
 
 
 AddrressEA_IMM<=B;
 
-ALU:entity work.ALU2 generic map (size=>32) port map(S=>ALUSelectors,A=>A,B=>B,F=>ALUResult,ZF=>CRRRegister(0),SignF=>CRRRegister(1),OVF=>OVF,Cout=>CRRRegister(2));
+ALU:entity work.ALU2 generic map (size=>32) port map(S=>ALUSelectors,A=>A,B=>B,F=>ALUResult,ZF=>CRR(0),SignF=>CRR(1),OVF=>OVF,Cout=>CRR(2));
 
 Forwarding:entity work.ForwardingUnit port map(MEM_WBRegisterRd,EX_MEMRegisterRd,Rs,Rt,EX_MEMRegWrite,MEM_WBRegWrite,EX_MEMSWAP,MEM_WBSWAP,MUXASel,MUXBSel);
 

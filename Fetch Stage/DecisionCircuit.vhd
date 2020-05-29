@@ -22,7 +22,7 @@ signal PC_1,DecodePC_1,tempPCNext:std_logic_vector(n-1 downto 0);
 
 begin
 PC_1<=std_logic_vector(unsigned(PCreg) + 1);
-DecodePC_1<=std_logic_vector(unsigned(PCreg) + 1);
+DecodePC_1<=std_logic_vector(unsigned(DecodePC) + 1);
 
 
 PCnext<= TargetAddress when (JZ ='1' and (T_NT ="11" or T_NT ="10") and (State = "10" or State = "11"))and  (ReadFromMemorySignal='0')
@@ -39,7 +39,7 @@ MemoryPC when (ReadFromMemorySignal='1')
 else 
 PC_1;
 
-JZ_Taken<='1' when((JZ ='1' and (T_NT ="11" or T_NT ="10") and (State = "10" or State = "11"))and  (ReadFromMemorySignal='0')) 
+JZ_Taken<='1' when (IF_IDFLUSH='0'	 and T_NT = "00")
 or
 ((IF_IDFLUSH='1' and T_NT = "00")and (ReadFromMemorySignal='0'))else '0';
 

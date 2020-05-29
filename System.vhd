@@ -13,11 +13,12 @@ end system ;
 architecture arch of system is
 
   ---------------------------------------System Signals----------------------------------------
-  signal RTIHandler,INTHandler,RETHandler,CALLHandler:std_logic;
+  signal RTIHandler,INTHandler,RETHandler,CALLHandler:std_logic:='0';
+  signal temp_CRR:std_logic_vector(2 downto 0);
   ---------------------------------------------------------------------------------------------
 -----------------------------------------fetch stage signals------------------------------------ 
 signal instruction:std_logic_vector(15 downto 0);
-signal CurrentPC,INPORTValueFetchOut,EXDataOut,DecodeSrc1,DecodeSrc2,EXSrc1,EXSrc2:std_logic_vector(31 downto 0);
+signal CurrentPC,INPORTValueFetchOut,EXSrc1,EXSrc2:std_logic_vector(31 downto 0);
 signal probINTsignal,probRstSignal,RTIsignal,RETsignal,IF_IDFlushFromFetch:std_logic;--signals to propagte in the next stages.
 signal RegWriteFromDecode,RegDstFromDecode,IDEXRegWriteToFetch,SwapFromDecode,IDEXSwapToFetch: std_logic;
 signal RegRdFromEXE,RsFromDecode,RdFromDecode,IDEXRsTofetch,IDEXRtTofetch,RtFromDecode: std_logic_vector(2 downto 0);
@@ -46,7 +47,7 @@ signal EX_MEMRegisterRd:std_logic_vector(2 downto 0);
 signal EX_MEMRegWrite,EX_MEMSWAP:std_logic;
 signal RegDstToExe_MEM,RtEXEOUT,RegDSTtofetchForwardingunit :std_logic_vector(2 downto 0);
 signal CRR:std_logic_vector(2 downto 0);
-signal ZF,ZFfromExe:std_logic;
+signal ZF,ZFfromExe,ALUFlagsEnable:std_logic;
 signal DataOut:std_logic_vector(31 downto 0);
 signal AddrressEA_IMM:std_logic_vector(31 downto 0);
 
@@ -68,11 +69,12 @@ signal IF_IDwrite,ID_EXwrite,EX_MEMwrite,MEM_WBwrite:std_logic:='1';
 ------------------------------------------------------------------------------------------------
 
 -----------------------------------------Memory system signals------------------------------------ 
-signal memorySystemRd,memorySystemWr,InstrRequest,DataRequest,FetchStall,DataStall,RTIFlagsEnable:std_logic;
-signal MemoryInstrOut:std_logic_vector(15 downto 0);
-signal MemoryDataToWrite,MemoryDataRead,MemResultSig,MemResultFromMemory:std_logic_vector(31 downto 0);
-signal AddressToMemory:std_logic_vector(31 downto 0);
-signal FlagsMemoryOut:std_logic_vector(2 downto 0);
+signal memorySystemRd,memorySystemWr,InstrRequest,DataRequest,FetchStall,DataStall:std_logic:='0';
+signal RTIFlagsEnable:std_logic;
+signal MemoryInstrOut:std_logic_vector(15 downto 0):=(others=>'0');
+signal MemoryDataToWrite,MemoryDataRead,MemResultSig,MemResultFromMemory:std_logic_vector(31 downto 0):=(others=>'0');
+signal AddressToMemory:std_logic_vector(31 downto 0):=(others=>'0');
+signal FlagsMemoryOut:std_logic_vector(2 downto 0):=(others=>'0');
 ------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------------
@@ -121,7 +123,7 @@ Decode:entity work.DecodeStage port map(clk=>clk,rst=>rst,INT=>INT,Mux_Selector=
 RegWriteFromWB=>RegWriteinput,SWAPFromWB=>Swapinput,
 MEM_WBRd=>Mem_Wb_Rd,MEM_WBRs=>Mem_Wb_Rt,RsFromFetch=>Rs_from_fetch,
 Value1=>value1,Value2=>value2,
-ImmdiateValue=>ImmdiateValue,ReadImmd=>ReadImmd,ZF=>ZFToCheck,
+ImmdiateValue=>ImmdiateValue,ReadImmd=>ReadImmd,ZF=>ZFToCheck,JZ_Taken=>JZ_Taken,
 TargetAddress=>Target_Address,SRC1=>Rsrc,SRC2=>Rdst,instruction=>instructionDecodeout,PC=>pcDecodeout,INPORTValueDecodeOut=>INPORTValueDecodeOut,
 RET=>RETDecodeOut,RTI=>RTIDecodeOut,SWAP=>SWAP,CALL=>CALLOUT,INTOut=>probINTDecodeout,SignExtendSignal=>sign,
 IMM_EASignal=>IMM_EA,RegDST=>REGdstSignal,InEnable=>In_enable,sig32_16=>thirtyTwo_Sixteen,IF_IDWrite=>tempIF_IDwrite,
@@ -200,7 +202,7 @@ EX_MEMSWAP=>EX_MEMSWAP,
 MEM_WBSWAP=>MEM_WBSWAP,
 
 
-RegDst=>RegDstToExe_MEM,
+RegDst=>RegDstToExe_MEM,ALUFlagsEnable=>ALUFlagsEnable,
 CRR=>CRR,
 RtReg=>RtEXEOUT,
 WBsignals=>EX_MEMRegIN(114 downto 112),
@@ -218,19 +220,37 @@ EX_MEMRegIN(35 downto 33)<=RtEXEOUT;
 EX_MEMRegIN(107 downto 105)<=CRR;
 
 
+-- Flags2_1: process(RTIFlagsEnable,ResumeSignalFromMemory,ALUFlagsEnable,JZ_Taken,FlagsMemoryOut,CRR)
+-- begin
+--   if(RTIFlagsEnable='1' and ResumeSignalFromMemory='0')then
+--     CRRFlags(2 downto 1)<=FlagsMemoryOut(2 downto 1);
+--     elsif(ALUFlagsEnable='1')then
+--       CRRFlags(2 downto 1)<=CRR(2 downto 1);
+--   end if;  
+-- end process Flags2_1;
+-- Flags0: process(RTIFlagsEnable,ResumeSignalFromMemory,ALUFlagsEnable,JZ_Taken,FlagsMemoryOut,CRR)
+-- begin
+--     if(JZ_Taken='1')then
+--       CRRFlags(0) <='0';
+--     elsif(RTIFlagsEnable='1' and ResumeSignalFromMemory='0')then
+--     CRRFlags(0)<=FlagsMemoryOut(0);
+--     elsif(ALUFlagsEnable='1')then
+--       CRRFlags(0)<=CRR(0);
+--   end if;  
+-- end process Flags0;
 --Flags Logic
-CRRFlags(2 downto 1)<=FlagsMemoryOut(2 downto 1) when RTIFlagsEnable='1' and ResumeSignalFromMemory='0' else CRR(2 downto 1);
+temp_CRR(2 downto 1)<=FlagsMemoryOut(2 downto 1) when RTIFlagsEnable='1' and ResumeSignalFromMemory='0' else CRR(2 downto 1) when ALUFlagsEnable='1';
 --ZF 
-CRRFlags(0) <='0' when JZ_Taken='1' and falling_edge(clk) else FlagsMemoryOut(0) when RTIFlagsEnable='1'and ResumeSignalFromMemory='0' else  CRR(0);
+temp_CRR(0) <='0' when JZ_Taken='1' else FlagsMemoryOut(0) when RTIFlagsEnable='1'and ResumeSignalFromMemory='0' else  CRR(0)when ALUFlagsEnable='1';
 
-
+CRRFlags<=temp_CRR when JZ_Taken='1' or (RTIFlagsEnable='1'and ResumeSignalFromMemory='0') or ALUFlagsEnable='1';
 
 EX_MEMRegIN(67 downto 36)<=DataOut;
 EX_MEMRegIN(99 downto 68)<=AddrressEA_IMM;
 
 
 --zero flag to decode check is zf from alu or zeroflag from memory in case of interrupt return
-ZFToCheck <= CRRFlags(0);
+ZFToCheck <=CRRFlags(0);
 
 EXALUResult <= EX_MEMRegOUT( 67 downto 36);
 EX_MEMRegisterRd<=EX_MEMRegOUT( 102 downto 100);

@@ -2,33 +2,8 @@ vsim -gui work.system
 add wave -position insertpoint sim:/system/*
 add wave -position insertpoint  \
 sim:/system/Decode/RegisterFile/registers
-add wave -position insertpoint  \
-sim:/system/Fetch/pcWrite \
-sim:/system/Fetch/MemoryReadSignal \
-sim:/system/Fetch/DecodePC \
-sim:/system/Fetch/DecodeTargetAddress \
-sim:/system/Fetch/MemoryPC \
-sim:/system/Fetch/T_NT \
-sim:/system/Fetch/INPORTValue \
-sim:/system/Fetch/instruction \
-sim:/system/Fetch/InstrPC \
-sim:/system/Fetch/INPORTValueFetchOut \
-sim:/system/Fetch/intSignal \
-sim:/system/Fetch/rstSignal \
-sim:/system/Fetch/RRI \
-sim:/system/Fetch/IF_IDFlush \
-sim:/system/Fetch/tmp \
-sim:/system/Fetch/tempInstruction \
-sim:/system/Fetch/dummy \
-sim:/system/Fetch/JZ \
-sim:/system/Fetch/UnconditionBranch \
-sim:/system/Fetch/RRISignal \
-sim:/system/Fetch/RRIPCWrite \
-sim:/system/Fetch/ActualPCWrite \
-sim:/system/Fetch/tempPCnew \
-sim:/system/Fetch/PCReg \
-sim:/system/Fetch/PCRegValue \
-sim:/system/Fetch/State
+add wave -position insertpoint sim:/system/Fetch/*
+add wave -position insertpoint sim:/system/Fetch/DecisionCircuit/*
 add wave -position insertpoint sim:/system/Fetch/Predicition/*
 add wave -position insertpoint  \
 sim:/system/Fetch/Predicition/Table/table
@@ -156,10 +131,6 @@ run
 run
 run
     run
-run
-run
-run
-run
 run
 run
 run
