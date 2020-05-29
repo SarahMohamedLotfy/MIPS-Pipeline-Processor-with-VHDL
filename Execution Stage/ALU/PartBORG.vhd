@@ -15,17 +15,15 @@ ARCHITECTURE Behavioral OF PartB IS
 BEGIN
 	PROCESS(S,A,B)
 		BEGIN
-		FOR i IN 0 TO size-1 LOOP
 		 IF(S="1000")THEN 
-			F(i) <= A(i) and B(i);
+			F <= A and B;
 		 ELSIF (S="1001")THEN 
-			F(i) <= A(i) or B(i);
+			F <= A or B;
 		 ELSIF(S="0111")then   
-			F(i) <= not A(i);
+			F <= not A;
 		else
-			F(i)<='0';	
-		 END IF;
-		END LOOP;
-
+			F<=(others=>'0');	
+		END IF;
+		
 	END PROCESS;
 END Behavioral;
