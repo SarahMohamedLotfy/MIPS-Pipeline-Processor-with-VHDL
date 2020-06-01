@@ -44,6 +44,7 @@ INTOut<=IF_ID(48);
 RET<=IF_ID(49) when Mux_Selector = '0' else '0' when Mux_Selector = '1';
 RTI<=IF_ID(83) when Mux_Selector = '0' else '0' when Mux_Selector = '1';
 instruction(31 downto 16)<=ImmdiateValue when (ReadImmd='1' or Mux_Selector ='1');
+
 instruction(15 downto 0)<=IF_ID(15 downto 0);
 PC<=IF_ID(47 downto 16);
 CALL<=CALLSig;

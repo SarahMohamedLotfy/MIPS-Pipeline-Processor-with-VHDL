@@ -108,7 +108,7 @@ IF_IDRegIN(15 downto 0) <=(others=>'0')when  IF_IDFlush ='1' or Mux_Selector_inp
 IF_IDFlush <= outputCounter(0) or IF_IDFlushFromFetch;  
 
 IF_IDRegIN(47 downto 16) <=CurrentPC;
-IF_IDRegIN(48) <=probINTsignal;
+IF_IDRegIN(48) <=probINTsignal when probINTsignal='0' or probINTsignal='1' else '0';
 IF_IDRegIN(49) <=RETsignal;
 IF_IDRegIN(50) <=probRstSignal;
 --IF_IDRegIN(82 downto 51)<=INPORTValueFetchOut ;

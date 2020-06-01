@@ -30,7 +30,7 @@ PC:entity work.PartC generic map (size=>size) PORT MAP(S,A,B,outputC,CarryC);
 		 
 		process(temp,S)
 		begin
-			 Cout <= CarryA  when(S(3 downto 0) = "0000" or S(3 downto 0) = "0001" or S(3 downto 0) = "0010" or S(3 downto 0) = "0011" or S(3 downto 0) = "0100" or S(3 downto 0) = "0101" or S(3 downto 0) = "0110") else 
+			 Cout <= CarryA  when(S(3 downto 0) = "0000" or S(3 downto 0) = "0011" or S(3 downto 0) = "0100" or S(3 downto 0) = "0101" or S(3 downto 0) = "0110") else 
 			 CarryC  when (S(3 downto 0) = "1010" or S(3 downto 0) = "1011"); 	 
 			 F <= temp;	
 			ZF <= '1' when(temp = (std_logic_vector(to_unsigned(0,size))))else'0' ;

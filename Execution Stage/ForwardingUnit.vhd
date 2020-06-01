@@ -17,6 +17,6 @@ ForwardA <= "10" when ((EX_MEMRegWrite='1' or EX_MEMSWAP='1')  and (EX_MEMRegist
 
  -- hasRt =0  then one operand that means that rt feild always equal zeros 
  ForwardB <= "10" when ((EX_MEMRegWrite='1' or EX_MEMSWAP='1')and (EX_MEMRegisterRd = ID_EXRegisterRt)and HasRt='1')    else
-  "01"  when  ((MEM_WBRegWrite='1' or MEM_WBSWAP='1')and (MEM_WBRegisterRd = ID_EXRegisterRt)and HasRt='1') else "00" when HasRt='0'; 
+  "01"  when  ((MEM_WBRegWrite='1' or MEM_WBSWAP='1')and (MEM_WBRegisterRd = ID_EXRegisterRt)and HasRt='1') else "00"; 
 
 end architecture ; 

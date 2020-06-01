@@ -66,8 +66,8 @@ for instruction in instructionList:
 		IRValueList.remove('')
 	instrComponent.append(IRValueList)
 
-instrFile =open("instructionMemory.mem",'w') 
-DataFile =open("DataMemory.mem",'w') 
+instrFile =open(fileName.replace(".asm","")+"instructionMemory.mem",'w') 
+DataFile =open(fileName.replace(".asm","")+"DataMemory.mem",'w') 
 #format line to be read in modelsim 
 DataFile.writelines("// format=mti addressradix=h dataradix=b version=1.0 wordsperline=1"+"\n")
 instrFile.writelines("// format=mti addressradix=h dataradix=b version=1.0 wordsperline=1"+"\n")
