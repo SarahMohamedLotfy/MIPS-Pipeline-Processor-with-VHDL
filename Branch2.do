@@ -143,4 +143,39 @@ run
 run
 force -freeze sim:/system/INPORT 32'h200 0
 run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+force -freeze sim:/system/INT 1 0
+run
+force -freeze sim:/system/INT 0 0
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
 

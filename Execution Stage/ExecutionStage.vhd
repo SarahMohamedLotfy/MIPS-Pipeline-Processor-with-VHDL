@@ -30,7 +30,9 @@ signal Rs,Rt,Rd:std_logic_vector(2 downto 0);--ZF2,SignFlag1,Carry0
 signal MUXASel,MUXBSel:std_logic_vector(1 downto 0):="00";
 --signal CRREnable:std_logic:='0';
 signal Opcode:std_logic_vector(4 downto 0);
+signal HasRt:std_logic;
 begin
+  HasRt<=(not(Opcode(4)) and Opcode(3) and not(Opcode(2))) or(not(Opcode(4)) and Opcode(2) and not(Opcode(3))and Opcode(1));--to indicate that the instruction has rt field to use in forwarding not to neglect data hazard with Rt 
   --in 00101 ,out 00100 ,swap 00110 ,nop 00000
   ALUFlagsEnable<='0' when (Opcode="00101" or Opcode="00100" or Opcode="00110"  or Opcode="00000") else '1'; 
 --CRR_Reg:entity work.Reg generic map(n=>3) port map(input=>CRR,en=>CRREnable,rst=>rst,clk=>clk,output=>CRR);
@@ -106,7 +108,7 @@ AddrressEA_IMM<=B;
 
 ALU:entity work.ALU2 generic map (size=>32) port map(S=>ALUSelectors,A=>A,B=>B,F=>ALUResult,ZF=>CRR(0),SignF=>CRR(1),OVF=>OVF,Cout=>CRR(2));
 
-Forwarding:entity work.ForwardingUnit port map(MEM_WBRegisterRd,EX_MEMRegisterRd,Rs,Rt,EX_MEMRegWrite,MEM_WBRegWrite,EX_MEMSWAP,MEM_WBSWAP,MUXASel,MUXBSel);
+Forwarding:entity work.ForwardingUnit port map(HasRt,MEM_WBRegisterRd,EX_MEMRegisterRd,Rs,Rt,EX_MEMRegWrite,MEM_WBRegWrite,EX_MEMSWAP,MEM_WBSWAP,MUXASel,MUXBSel);
 
 SignExtendModule:entity work.signextend port map(signType=>signType,-- 0 extend IMM , 1 extend EA
 Address=>UpperInstr,

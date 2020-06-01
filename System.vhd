@@ -47,7 +47,7 @@ signal EX_MEMRegisterRd:std_logic_vector(2 downto 0);
 signal EX_MEMRegWrite,EX_MEMSWAP:std_logic;
 signal RegDstToExe_MEM,RtEXEOUT,RegDSTtofetchForwardingunit :std_logic_vector(2 downto 0);
 signal CRR:std_logic_vector(2 downto 0);
-signal ZF,ZFfromExe,ALUFlagsEnable:std_logic;
+signal ZFfromExe,ALUFlagsEnable:std_logic;
 signal DataOut:std_logic_vector(31 downto 0);
 signal AddrressEA_IMM:std_logic_vector(31 downto 0);
 
@@ -111,7 +111,8 @@ IF_IDRegIN(47 downto 16) <=CurrentPC;
 IF_IDRegIN(48) <=probINTsignal;
 IF_IDRegIN(49) <=RETsignal;
 IF_IDRegIN(50) <=probRstSignal;
-IF_IDRegIN(82 downto 51)<=INPORTValueFetchOut;
+--IF_IDRegIN(82 downto 51)<=INPORTValueFetchOut ;
+IF_IDRegIN(82 downto 51)<=INPORT;
 IF_IDRegIN(83) <=RTIsignal;
 
 IF_IDwrite<= tempIF_IDwriteHDU;

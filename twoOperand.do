@@ -69,6 +69,8 @@ sim:/system/Execute/Rt \
 sim:/system/Execute/Rd \
 sim:/system/Execute/MUXASel \
 sim:/system/Execute/MUXBSel
+add wave -position insertpoint  \
+sim:/system/Execute/CRR
 run
 run
 run
@@ -84,14 +86,4 @@ run
 run
 run
 run
-run
-run
-run
-run
-run
-run
-run
-run
-run
-
 run

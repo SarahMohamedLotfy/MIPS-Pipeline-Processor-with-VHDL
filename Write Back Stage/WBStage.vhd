@@ -29,7 +29,7 @@ RtToDecode <= Rt when tempSwap='0' else Rd when tempSwap='1';--write value 2
 RdToDecode <= Rd when tempSwap='0' else Rt when tempSwap='1';--write value 1
 RegWriteToRegisterFile<=WBsignals(1);
 Value1<= ALUResult when (WBsignals(1)='1' or tempSwap='1') and WBsignals(0)='0'   else MemResult when WBsignals(1)='1' and  tempSwap='0' and WBsignals(0)='1' else (others=>'0'); 
-PortOut<=ALUResult when WBsignals(2)='1' else (others=>'0');
+PortOut<=ALUResult when WBsignals(2)='1';
 Value2 <= SRC2 when (tempSwap='1' and WBsignals(1) = '1')else (others=>'0');
 
 end architecture ; -- arch
